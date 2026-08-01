@@ -158,13 +158,9 @@
       <button onclick="centerOnUserLocation()" class="w-11 h-11 rounded-2xl bg-white border border-slate-200 text-sky-600 shadow-xl flex items-center justify-center active:scale-95 transition backdrop-blur-md">
         <i class="fa-solid fa-location-crosshairs text-lg"></i>
       </button>
-
-      <button onclick="openSOSModal()" class="w-11 h-11 rounded-2xl bg-red-600 text-white shadow-xl shadow-red-600/30 flex items-center justify-center active:scale-95 transition animate-bounce">
-        <i class="fa-solid fa-triangle-exclamation text-lg"></i>
-      </button>
     </div>
 
-    <!-- BANNER DE RESERVA VIRTUAL ACTIVA (PUNTO 1) -->
+    <!-- BANNER DE RESERVA VIRTUAL ACTIVA -->
     <div id="activeReservationBanner" class="hidden fixed top-28 left-3 right-3 z-20 bg-amber-500 text-slate-950 border border-amber-300 rounded-2xl p-3 shadow-2xl backdrop-blur-md flex items-center justify-between">
       <div class="flex items-center gap-3">
         <div class="w-9 h-9 rounded-xl bg-slate-950 text-amber-400 flex items-center justify-center shrink-0 font-bold text-sm">
@@ -248,11 +244,6 @@
         <button onclick="closeDrawerAndExecute(() => openAddChargerModal())" class="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl hover:bg-slate-100">
           <i class="fa-solid fa-circle-plus text-base w-5 text-center text-emerald-600"></i>
           <span>Registrar Nuevo Punto (Público/Wallbox)</span>
-        </button>
-
-        <button onclick="closeDrawerAndExecute(() => switchTab('sos'))" class="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl hover:bg-slate-100">
-          <i class="fa-solid fa-kit-medical text-base w-5 text-center text-red-500"></i>
-          <span>Solicitar Auxilio SOS</span>
         </button>
 
         <button onclick="closeDrawerAndExecute(() => openOfflineEmergencyModal())" class="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl hover:bg-slate-100 text-indigo-700 bg-indigo-50/50 border border-indigo-100">
@@ -400,7 +391,7 @@
     </div>
   </div>
 
-  <!-- MODAL: CONVERSOR DE AUTONOMÍA Y CÁLCULO AHORRO (PUNTO 2) -->
+  <!-- MODAL: CONVERSOR DE AUTONOMÍA Y CÁLCULO AHORRO -->
   <div id="rangeConverterModal" class="hidden fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4">
     <div class="bg-white border border-slate-200 w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
       <div class="flex justify-between items-center mb-3">
@@ -459,7 +450,7 @@
     </div>
   </div>
 
-  <!-- MODAL: CONTACTOS Y PUNTOS DE EMERGENCIA OFFLINE (PUNTO 5) -->
+  <!-- MODAL: CONTACTOS Y PUNTOS DE EMERGENCIA OFFLINE -->
   <div id="offlineEmergencyModal" class="hidden fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4">
     <div class="bg-white border border-slate-200 w-full max-w-lg rounded-t-3xl sm:rounded-3xl p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
       <div class="flex justify-between items-center mb-3">
@@ -513,7 +504,7 @@
     </div>
   </div>
 
-  <!-- MODAL: FILTROS RÁPIDOS -->
+  <!-- MODAL: FILTROS RÁPIDOS EDITABLES Y VISUALES -->
   <div id="filterModal" class="hidden fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4">
     <div class="bg-white border border-slate-200 w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 shadow-2xl">
       <div class="flex justify-between items-center mb-4">
@@ -526,29 +517,29 @@
       </div>
 
       <div class="space-y-2.5 text-xs">
-        <button onclick="toggleFilter('mavesa')" id="btnFilterMavesa" class="w-full flex items-center justify-between p-3 rounded-xl border border-slate-200 bg-slate-50 font-semibold">
+        <button onclick="toggleFilter('mavesa')" id="btnFilterMavesa" class="w-full flex items-center justify-between p-3 rounded-xl border border-slate-200 bg-slate-50 font-semibold transition-colors">
           <span class="flex items-center gap-2"><i class="fa-solid fa-shield-halved text-sky-600"></i> Solo Red Mavesa</span>
-          <i class="fa-solid fa-check hidden text-sky-600"></i>
+          <i class="fa-solid fa-check hidden text-sky-600 text-sm"></i>
         </button>
-        <button onclick="toggleFilter('google')" id="btnFilterGoogle" class="w-full flex items-center justify-between p-3 rounded-xl border border-slate-200 bg-slate-50 font-semibold">
+        <button onclick="toggleFilter('google')" id="btnFilterGoogle" class="w-full flex items-center justify-between p-3 rounded-xl border border-slate-200 bg-slate-50 font-semibold transition-colors">
           <span class="flex items-center gap-2"><i class="fa-solid fa-map-location-dot text-red-600"></i> Puntos Google Maps EV</span>
-          <i class="fa-solid fa-check hidden text-red-600"></i>
+          <i class="fa-solid fa-check hidden text-sky-600 text-sm"></i>
         </button>
-        <button onclick="toggleFilter('residencial')" id="btnFilterResidencial" class="w-full flex items-center justify-between p-3 rounded-xl border border-slate-200 bg-slate-50 font-semibold">
+        <button onclick="toggleFilter('residencial')" id="btnFilterResidencial" class="w-full flex items-center justify-between p-3 rounded-xl border border-slate-200 bg-slate-50 font-semibold transition-colors">
           <span class="flex items-center gap-2"><i class="fa-solid fa-house-chimney-window text-indigo-600"></i> Carga Residencial / Wallbox Airbnb</span>
-          <i class="fa-solid fa-check hidden text-indigo-600"></i>
+          <i class="fa-solid fa-check hidden text-sky-600 text-sm"></i>
         </button>
-        <button onclick="toggleFilter('gratis')" id="btnFilterGratis" class="w-full flex items-center justify-between p-3 rounded-xl border border-slate-200 bg-slate-50 font-semibold">
+        <button onclick="toggleFilter('gratis')" id="btnFilterGratis" class="w-full flex items-center justify-between p-3 rounded-xl border border-slate-200 bg-slate-50 font-semibold transition-colors">
           <span class="flex items-center gap-2"><i class="fa-solid fa-tag text-emerald-600"></i> Carga Gratuita</span>
-          <i class="fa-solid fa-check hidden text-emerald-600"></i>
+          <i class="fa-solid fa-check hidden text-sky-600 text-sm"></i>
         </button>
-        <button onclick="toggleFilter('libre')" id="btnFilterLibre" class="w-full flex items-center justify-between p-3 rounded-xl border border-slate-200 bg-slate-50 font-semibold">
+        <button onclick="toggleFilter('libre')" id="btnFilterLibre" class="w-full flex items-center justify-between p-3 rounded-xl border border-slate-200 bg-slate-50 font-semibold transition-colors">
           <span class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Solo Libres Ahora</span>
-          <i class="fa-solid fa-check hidden text-emerald-600"></i>
+          <i class="fa-solid fa-check hidden text-sky-600 text-sm"></i>
         </button>
-        <button onclick="toggleFilter('gbt')" id="btnFilterGBT" class="w-full flex items-center justify-between p-3 rounded-xl border border-slate-200 bg-slate-50 font-semibold">
+        <button onclick="toggleFilter('gbt')" id="btnFilterGBT" class="w-full flex items-center justify-between p-3 rounded-xl border border-slate-200 bg-slate-50 font-semibold transition-colors">
           <span class="flex items-center gap-2"><i class="fa-solid fa-plug text-amber-500"></i> Conector GB/T DC (Nammi)</span>
-          <i class="fa-solid fa-check hidden text-amber-600"></i>
+          <i class="fa-solid fa-check hidden text-sky-600 text-sm"></i>
         </button>
       </div>
 
@@ -558,7 +549,7 @@
     </div>
   </div>
 
-  <!-- MODAL: PERFIL DE USUARIO POR PLACA -->
+  <!-- MODAL: PERFIL DE USUARIO POR PLACA Y EDICIÓN -->
   <div id="profileModal" class="hidden fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4">
     <div class="bg-white border border-slate-200 w-full max-w-lg rounded-t-3xl sm:rounded-3xl p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
       <div class="flex justify-between items-center mb-4">
@@ -570,16 +561,22 @@
         </button>
       </div>
 
-      <div class="space-y-3.5 text-xs">
+      <!-- VISTA DE PERFIL -->
+      <div id="profileDisplaySection" class="space-y-3.5 text-xs">
         <div class="p-4 bg-slate-50 border border-slate-200 rounded-2xl flex items-center justify-between">
           <div>
             <span class="bg-amber-400 text-slate-950 font-black text-sm px-3 py-1 rounded-xl uppercase tracking-widest border border-amber-300" id="profileDisplayPlaca">PBA-1234</span>
             <p class="text-slate-900 font-bold text-sm mt-2" id="profileDisplayName">Carlos Mendoza</p>
             <p class="text-sky-600 font-semibold" id="profileDisplayCar">Dongfeng Nammi 06</p>
           </div>
-          <button onclick="logoutUser()" class="px-3 py-1.5 bg-red-100 hover:bg-red-200 text-red-600 rounded-xl font-bold border border-red-200">
-            Salir
-          </button>
+          <div class="flex flex-col gap-2">
+            <button onclick="toggleProfileEditMode()" class="px-3 py-1.5 bg-sky-100 hover:bg-sky-200 text-sky-700 rounded-xl font-bold border border-sky-200 transition">
+              <i class="fa-solid fa-pen"></i> Editar
+            </button>
+            <button onclick="logoutUser()" class="px-3 py-1.5 bg-red-100 hover:bg-red-200 text-red-600 rounded-xl font-bold border border-red-200 transition">
+              Salir
+            </button>
+          </div>
         </div>
 
         <div class="grid grid-cols-2 gap-3 text-slate-700">
@@ -588,19 +585,59 @@
             <p class="font-bold text-slate-900 text-sm" id="profileDisplayKm">330 km (CLTC)</p>
           </div>
           <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
-            <p class="text-slate-500">Conector</p>
+            <p class="text-slate-500">Conector Principal</p>
             <p class="font-bold text-amber-600 text-sm" id="profileDisplayPlug">GB/T DC</p>
           </div>
         </div>
-
         <div class="p-3.5 bg-sky-50 border border-sky-200 rounded-xl text-sky-800 text-[11px] leading-relaxed">
           <i class="fa-solid fa-shield-halved text-sky-600 mr-1"></i> Sincronizado automáticamente con Google Sheets por Placa Vehicular.
         </div>
       </div>
+
+      <!-- FORMULARIO DE EDICIÓN DE PERFIL -->
+      <form id="profileEditSection" onsubmit="submitEditProfile(event)" class="hidden space-y-3.5 text-xs">
+        <div class="grid grid-cols-2 gap-2.5">
+          <div>
+            <label class="block text-slate-600 font-semibold mb-1">Marca del EV</label>
+            <input type="text" id="editMarca" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 font-medium">
+          </div>
+          <div>
+            <label class="block text-slate-600 font-semibold mb-1">Modelo</label>
+            <input type="text" id="editModelo" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900">
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-2.5">
+          <div>
+            <label class="block text-slate-600 font-semibold mb-1">Autonomía (KM)</label>
+            <input type="number" id="editAutonomia" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900">
+          </div>
+          <div>
+            <label class="block text-slate-600 font-semibold mb-1">Estándar</label>
+            <select id="editEstandarRange" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 font-medium">
+              <option value="CLTC">CLTC</option>
+              <option value="NEDC">NEDC</option>
+              <option value="WLTP">WLTP</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="block text-slate-600 font-semibold mb-1">Conector Principal</label>
+          <select id="editConector" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 font-medium">
+            <option value="GB/T DC">GB/T DC</option>
+            <option value="CCS2">CCS2</option>
+            <option value="Type 2">Type 2</option>
+            <option value="GB/T AC">GB/T AC</option>
+          </select>
+        </div>
+        <div class="flex gap-2 pt-2">
+          <button type="button" onclick="toggleProfileEditMode()" class="flex-1 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl transition">Cancelar</button>
+          <button type="submit" class="flex-1 py-3 bg-sky-600 hover:bg-sky-500 text-white font-bold rounded-xl shadow-lg transition">Guardar Cambios</button>
+        </div>
+      </form>
     </div>
   </div>
 
-  <!-- MODAL: AGREGAR NUEVO PUNTO DE CARGA (INCLUYE RESIDENCIAL/PUNTO 4) -->
+  <!-- MODAL: AGREGAR NUEVO PUNTO DE CARGA -->
   <div id="addChargerModal" class="hidden fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4">
     <div class="bg-white border border-slate-200 w-full max-w-lg rounded-t-3xl sm:rounded-3xl p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
       <div class="flex justify-between items-center mb-4">
@@ -630,7 +667,7 @@
           </div>
           <div>
             <label class="block text-slate-600 mb-1 font-semibold">Ciudad</label>
-            <input type="text" id="newCiudad" required placeholder="Ej. Portoviejo / Quito" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900">
+            <select id="newCiudad" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 font-medium"></select>
           </div>
         </div>
 
@@ -712,23 +749,13 @@
           <div>
             <label class="block text-slate-600 mb-1 font-semibold">Ciudad Origen</label>
             <select id="tripOrigen" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 font-medium">
-              <option value="Quito">Quito</option>
-              <option value="Guayaquil">Guayaquil</option>
-              <option value="Manta">Manta</option>
-              <option value="Portoviejo">Portoviejo</option>
-              <option value="Santo Domingo">Santo Domingo</option>
-              <option value="Cuenca">Cuenca</option>
-              <option value="Ambato">Ambato</option>
+              <!-- Cargado via JS -->
             </select>
           </div>
           <div>
             <label class="block text-slate-600 mb-1 font-semibold">Ciudad Destino</label>
             <select id="tripDestino" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 font-medium">
-              <option value="Manta">Manta</option>
-              <option value="Portoviejo">Portoviejo</option>
-              <option value="Guayaquil">Guayaquil</option>
-              <option value="Quito">Quito</option>
-              <option value="Cuenca">Cuenca</option>
+              <!-- Cargado via JS -->
             </select>
           </div>
         </div>
@@ -739,13 +766,13 @@
             <input type="number" id="tripBateria" value="90" min="10" max="100" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900">
           </div>
           <div>
-            <label class="block text-slate-600 mb-1 font-semibold">Autonomía Max (KM)</label>
-            <input type="number" id="tripAutonomiaKm" value="330" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900">
+            <label class="block text-slate-600 mb-1 font-semibold">Autonomía (Tu Perfil)</label>
+            <input type="number" id="tripAutonomiaKm" value="330" readonly class="w-full bg-slate-100 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-600">
           </div>
         </div>
 
         <button onclick="calculateTripRoute()" class="w-full py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl shadow-md active:scale-95 transition">
-          <i class="fa-solid fa-calculator mr-1"></i> Calcular Puntos de Carga en Ruta
+          <i class="fa-solid fa-calculator mr-1"></i> Calcular Ruta (Aplica penalidad Sierra)
         </button>
       </div>
 
@@ -764,50 +791,8 @@
         <div id="tripStopsList" class="space-y-2"></div>
 
         <a id="btnOpenGoogleMapsTrip" target="_blank" class="w-full py-3 bg-red-600 hover:bg-red-500 text-white font-bold rounded-xl shadow-lg flex items-center justify-center gap-2 text-xs transition">
-          <i class="fa-solid fa-map-location-dot text-base"></i> Abrir Viaje Completo con Paradas en Google Maps
+          <i class="fa-solid fa-map-location-dot text-base"></i> Abrir Ruta Completa con Paradas en Google Maps
         </a>
-      </div>
-    </div>
-  </div>
-
-  <!-- MODAL: AUXILIO Y EMERGENCIA SOS -->
-  <div id="sosModal" class="hidden fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4">
-    <div class="bg-white border border-red-200 w-full max-w-lg rounded-t-3xl sm:rounded-3xl p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
-      <div class="flex justify-between items-center mb-4">
-        <h3 class="text-base font-bold text-red-600 flex items-center gap-2">
-          <i class="fa-solid fa-triangle-exclamation"></i> Alertas de Auxilio SOS
-        </h3>
-        <button onclick="closeModal('sosModal')" class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center">
-          <i class="fa-solid fa-xmark"></i>
-        </button>
-      </div>
-
-      <form id="sosForm" onsubmit="sendSOSAlert(event)" class="space-y-3 text-xs mb-5">
-        <div>
-          <label class="block text-slate-600 mb-1 font-semibold">Tipo de Emergencia</label>
-          <select id="sosTipo" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 font-medium">
-            <option value="Sin Bateria">🔋 Sin Batería / 0% Carga</option>
-            <option value="Falla Mecanica">🔧 Falla Mecánica / Eléctrica</option>
-            <option value="Neumatico">🛞 Neumático Averiado</option>
-            <option value="Grua Mavesa">🏢 Solicitud Grúa / Soporte Mavesa</option>
-          </select>
-        </div>
-
-        <div>
-          <label class="block text-slate-600 mb-1 font-semibold">Ubicación / Mensaje para la Comunidad</label>
-          <textarea id="sosMensaje" rows="2" placeholder="Ej. Varado en km 15 vía Portoviejo - Manta" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-red-500"></textarea>
-        </div>
-
-        <button type="submit" class="w-full py-3 bg-red-600 hover:bg-red-500 text-white font-bold rounded-xl shadow-lg shadow-red-600/30 active:scale-95 transition">
-          <i class="fa-solid fa-bullhorn mr-1"></i> EMITIR ALERTA DE AUXILIO POR PLACA
-        </button>
-      </form>
-
-      <div class="border-t border-slate-200 pt-3">
-        <h4 class="font-bold text-slate-700 mb-2 text-xs flex items-center gap-1.5">
-          <i class="fa-solid fa-tower-broadcast text-amber-500"></i> Solicitudes Activas
-        </h4>
-        <div id="activeSOSList" class="space-y-2 text-xs max-h-40 overflow-y-auto"></div>
       </div>
     </div>
   </div>
@@ -826,17 +811,14 @@
 
       <form id="occupyForm" onsubmit="submitOccupyCharger(event)" class="space-y-3.5 text-xs">
         <input type="hidden" id="occupyPuntoId">
-        
         <div>
           <p class="text-slate-500 mb-0.5">Punto Seleccionado:</p>
           <p class="text-slate-900 font-bold text-sm" id="occupyPuntoNombre">Cargador Mavesa</p>
         </div>
-
         <div>
           <label class="block text-slate-600 mb-1 font-semibold">¿Hasta qué hora estimas terminar la carga?</label>
           <input type="time" id="occupyHoraFin" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-slate-900 text-base focus:outline-none focus:border-sky-500">
         </div>
-
         <button type="submit" class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl shadow-lg active:scale-95 transition">
           Confirmar y Notificar Ocupado por Mi Placa
         </button>
@@ -867,69 +849,106 @@
   </div>
 
   <script>
-    const DEFAULT_API_URL = 'https://script.google.com/macros/s/AKfycbw-e53A_NOu6LECUUpNuFiFN3nuK52UmaNYAvHBGEot1muVDHo022psA2d1NCLDou3d/exec';
+    // URL DEFINITIVA GOOGLE APPS SCRIPT
+    const DEFAULT_API_URL = 'https://script.google.com/macros/s/AKfycbxJpWzDj-JYK4MtmvmiImldHoe2Da1IAsGt6a3-4ozZ_un1MREhaNy8aZ_3hs1m9oOT/exec';
     
     let apiUrl = DEFAULT_API_URL;
     let currentUser = JSON.parse(localStorage.getItem('ev_user_session_placa')) || null;
-
-    function cleanPlaca(str) {
-      if (!str) return '';
-      return str.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
-    }
-    
     let activeChargeSession = JSON.parse(localStorage.getItem('ev_active_charge_session')) || null;
     let activeVirtualReservation = JSON.parse(localStorage.getItem('ev_active_reservation')) || null;
     let reservationTimerInterval = null;
+    let currentOpenPuntoId = null; 
 
     let map = null;
     let currentTileLayer = null;
-    let currentTileStyleIndex = 1; // Voyager Light Mode
+    let currentTileStyleIndex = 0; // Claro
     let markersLayer = null;
     let userMarker = null;
     let userCoords = { lat: -1.0542, lng: -80.4533 };
     let gpsFetchedOnce = false;
     let searchQuery = '';
 
-    // BASE DE DATOS DE PUNTOS SEMILLA (MAVESA + GOOGLE MAPS + RESIDENCIALES EN ECUADOR)
-    let puntosCarga = [
-      { ID_PUNTO: 'MAV-PVO', NOMBRE: 'Mavesa Portoviejo', RED: 'Grupo Mavesa', CIUDAD: 'Portoviejo', PROVINCIA: 'Manabí', LATITUD: -1.0542, LONGITUD: -80.4533, TIPO_CONECTOR: 'GB/T DC', POTENCIA_KW: 60, COSTO: 'Gratis', COMPATIBILIDAD: 'Exclusivo Nammi / Mavesa', ESTADO_ACTUAL: 'OPERATIVO', RATING_GOOGLE: '4.8', DIRECCION: 'Av. 15 de Abril y Calle Bolivia' },
-      { ID_PUNTO: 'MAV-MNT', NOMBRE: 'Mavesa Manta', RED: 'Grupo Mavesa', CIUDAD: 'Manta', PROVINCIA: 'Manabí', LATITUD: -0.9631, LONGITUD: -80.7125, TIPO_CONECTOR: 'GB/T DC, CCS2', POTENCIA_KW: 60, COSTO: 'Gratis', COMPATIBILIDAD: 'Multimarca', ESTADO_ACTUAL: 'OPERATIVO', RATING_GOOGLE: '4.9', DIRECCION: 'Vía Manta - Rocafuerte km 2' },
-      { ID_PUNTO: 'MAV-GYE-T', NOMBRE: 'Mavesa Guayaquil Tanca', RED: 'Grupo Mavesa', CIUDAD: 'Guayaquil', PROVINCIA: 'Guayas', LATITUD: -2.1523, LONGITUD: -79.9011, TIPO_CONECTOR: 'GB/T DC, GB/T AC', POTENCIA_KW: 60, COSTO: 'Gratis', COMPATIBILIDAD: 'Multimarca', ESTADO_ACTUAL: 'OPERATIVO', RATING_GOOGLE: '4.7', DIRECCION: 'Av. Juan Tanca Marengo km 4.5' },
-      { ID_PUNTO: 'MAV-UIO-N', NOMBRE: 'Mavesa Quito Norte', RED: 'Grupo Mavesa', CIUDAD: 'Quito', PROVINCIA: 'Pichincha', LATITUD: -0.1415, LONGITUD: -78.4792, TIPO_CONECTOR: 'GB/T DC, CCS2', POTENCIA_KW: 60, COSTO: 'Gratis', COMPATIBILIDAD: 'Multimarca', ESTADO_ACTUAL: 'OPERATIVO', RATING_GOOGLE: '4.9', DIRECCION: 'Av. 6 de Diciembre y El Inca' },
-      { ID_PUNTO: 'MAV-STD', NOMBRE: 'Mavesa Santo Domingo', RED: 'Grupo Mavesa', CIUDAD: 'Santo Domingo', PROVINCIA: 'Santo Domingo', LATITUD: -0.2541, LONGITUD: -79.1764, TIPO_CONECTOR: 'GB/T DC', POTENCIA_KW: 60, COSTO: 'Gratis', COMPATIBILIDAD: 'Multimarca', ESTADO_ACTUAL: 'OPERATIVO', RATING_GOOGLE: '4.8', DIRECCION: 'Vía a Quevedo km 1.5' },
-      { ID_PUNTO: 'MAV-CUE', NOMBRE: 'Mavesa Cuenca', RED: 'Grupo Mavesa', CIUDAD: 'Cuenca', PROVINCIA: 'Azuay', LATITUD: -2.8872, LONGITUD: -78.9893, TIPO_CONECTOR: 'GB/T DC, Type 2', POTENCIA_KW: 60, COSTO: 'Gratis', COMPATIBILIDAD: 'Multimarca', ESTADO_ACTUAL: 'OPERATIVO', RATING_GOOGLE: '4.9', DIRECCION: 'Av. España y Elia Liut' },
-      { ID_PUNTO: 'PUN-ALOAG', NOMBRE: 'Electrolinera Peaje Alóag', RED: 'Pública', CIUDAD: 'Alóag', PROVINCIA: 'Pichincha', LATITUD: -0.4589, LONGITUD: -78.5833, TIPO_CONECTOR: 'GB/T DC, CCS2', POTENCIA_KW: 50, COSTO: 'De Pago', COMPATIBILIDAD: 'Multimarca', ESTADO_ACTUAL: 'OPERATIVO', RATING_GOOGLE: '4.5', DIRECCION: 'Estación Peaje Alóag' },
-      { ID_PUNTO: 'RES-PVO-1', NOMBRE: 'Wallbox GB/T Residencia San Antonio', RED: 'Residencial / Airbnb', CIUDAD: 'Portoviejo', PROVINCIA: 'Manabí', LATITUD: -1.0489, LONGITUD: -80.4612, TIPO_CONECTOR: 'GB/T AC', POTENCIA_KW: 7, COSTO: 'Consumo del Local', COMPATIBILIDAD: 'Exclusivo Nammi / Mavesa', ESTADO_ACTUAL: 'OPERATIVO', RATING_GOOGLE: '5.0', DIRECCION: 'Urbanización San Antonio' }
-    ];
+    // DICCIONARIO DE 21 CIUDADES DE ECUADOR CON COORDENADAS Y REGIÓN (PARA CÁLCULO DE TOPOGRAFÍA)
+    const ECUADOR_CITIES = {
+      "Ambato": { lat: -1.2491, lng: -78.6168, region: 'Sierra' },
+      "Babahoyo": { lat: -1.8022, lng: -79.5342, region: 'Costa' },
+      "Cuenca": { lat: -2.9001, lng: -78.9983, region: 'Sierra' },
+      "Esmeraldas": { lat: 0.9682, lng: -79.6517, region: 'Costa' },
+      "Guaranda": { lat: -1.5922, lng: -78.9981, region: 'Sierra' },
+      "Guayaquil": { lat: -2.1894, lng: -79.8891, region: 'Costa' },
+      "Ibarra": { lat: 0.3517, lng: -78.1223, region: 'Sierra' },
+      "Lago Agrio": { lat: 0.0847, lng: -76.8828, region: 'Oriente' },
+      "Latacunga": { lat: -0.9328, lng: -78.6152, region: 'Sierra' },
+      "Loja": { lat: -3.9931, lng: -79.2042, region: 'Sierra' },
+      "Machala": { lat: -3.2581, lng: -79.9554, region: 'Costa' },
+      "Manta": { lat: -0.9685, lng: -80.6865, region: 'Costa' },
+      "Milagro": { lat: -2.1342, lng: -79.5942, region: 'Costa' },
+      "Portoviejo": { lat: -1.0542, lng: -80.4533, region: 'Costa' },
+      "Puyo": { lat: -1.4886, lng: -78.0025, region: 'Oriente' },
+      "Quevedo": { lat: -1.0225, lng: -79.4604, region: 'Costa' },
+      "Quito": { lat: -0.1807, lng: -78.4678, region: 'Sierra' },
+      "Riobamba": { lat: -1.6730, lng: -78.6483, region: 'Sierra' },
+      "Santo Domingo": { lat: -0.2530, lng: -79.1753, region: 'Costa' },
+      "Tena": { lat: -0.9938, lng: -77.8128, region: 'Oriente' },
+      "Tulcán": { lat: 0.8116, lng: -77.7172, region: 'Sierra' }
+    };
 
-    let alertasSOS = [];
-    let activeFilters = { mavesa: false, google: false, residencial: false, gratis: false, libre: false, gbt: false, ccs2: false };
+    // BASE NATIVA INFALIBLE: MAVESA Y GOOGLE MAPS EV
+    const puntosCargaBase = [
+      { ID_PUNTO: 'MAV-GYE-MAT', NOMBRE: 'Mavesa Matriz Juan Tanca', RED: 'Grupo Mavesa', CIUDAD: 'Guayaquil', LATITUD: -2.152861, LONGITUD: -79.897417, TIPO_CONECTOR: 'CCS2, GB/T DC, Type 2', POTENCIA_KW: 60, COSTO: 'Gratis', ESTADO_ACTUAL: 'OPERATIVO', DIRECCION: 'Av. Juan Tanca Marengo' },
+      { ID_PUNTO: 'MAV-GYE-CEI', NOMBRE: 'Mavesa Ceibos', RED: 'Grupo Mavesa', CIUDAD: 'Guayaquil', LATITUD: -2.173889, LONGITUD: -79.936028, TIPO_CONECTOR: 'Type 2 AC', POTENCIA_KW: 7, COSTO: 'Gratis', ESTADO_ACTUAL: 'OPERATIVO', DIRECCION: 'Vía a la Costa, Ceibos' },
+      { ID_PUNTO: 'MAV-GYE-JT2', NOMBRE: 'Mavesa Agencia JuanTanca 2', RED: 'Grupo Mavesa', CIUDAD: 'Guayaquil', LATITUD: -2.158444, LONGITUD: -79.894306, TIPO_CONECTOR: 'CCS2, GB/T DC', POTENCIA_KW: 60, COSTO: 'Gratis', ESTADO_ACTUAL: 'OPERATIVO', DIRECCION: 'Av. Juan Tanca Marengo' },
+      { ID_PUNTO: 'MAV-UIO-SSB', NOMBRE: 'Mavesa Sur San Bartolo', RED: 'Grupo Mavesa', CIUDAD: 'Quito', LATITUD: -0.258833, LONGITUD: -78.530194, TIPO_CONECTOR: 'Type 2 AC', POTENCIA_KW: 7, COSTO: 'Gratis', ESTADO_ACTUAL: 'OPERATIVO', DIRECCION: 'Sur San Bartolo' },
+      { ID_PUNTO: 'MAV-UIO-PAS', NOMBRE: 'Mavesa Panamericana Sur', RED: 'Grupo Mavesa', CIUDAD: 'Quito', LATITUD: -0.274111, LONGITUD: -78.536111, TIPO_CONECTOR: 'CCS2, GB/T DC', POTENCIA_KW: 60, COSTO: 'Gratis', ESTADO_ACTUAL: 'OPERATIVO', DIRECCION: 'Panamericana Sur' },
+      { ID_PUNTO: 'MAV-UIO-BAK', NOMBRE: 'Mavesa Baker Quito Norte', RED: 'Grupo Mavesa', CIUDAD: 'Quito', LATITUD: -0.137861, LONGITUD: -78.472778, TIPO_CONECTOR: 'CCS2, GB/T DC', POTENCIA_KW: 60, COSTO: 'Gratis', ESTADO_ACTUAL: 'OPERATIVO', DIRECCION: 'Quito Norte Baker' },
+      { ID_PUNTO: 'MAV-UIO-QNO', NOMBRE: 'Mavesa Quito Norte', RED: 'Grupo Mavesa', CIUDAD: 'Quito', LATITUD: -0.122611, LONGITUD: -78.468194, TIPO_CONECTOR: 'GB/T DC', POTENCIA_KW: 15, COSTO: 'Gratis', ESTADO_ACTUAL: 'OPERATIVO', DIRECCION: 'Quito Norte' },
+      { ID_PUNTO: 'MAV-UIO-SFC', NOMBRE: 'Mavesa Paseo San Francisco', RED: 'Grupo Mavesa', CIUDAD: 'Quito', LATITUD: -0.198167, LONGITUD: -78.436000, TIPO_CONECTOR: 'Type 2 AC', POTENCIA_KW: 7, COSTO: 'Gratis', ESTADO_ACTUAL: 'OPERATIVO', DIRECCION: 'Cumbayá' },
+      { ID_PUNTO: 'MAV-STD-QUE', NOMBRE: 'Mavesa Vía Quevedo', RED: 'Grupo Mavesa', CIUDAD: 'Santo Domingo', LATITUD: -0.292500, LONGITUD: -79.182400, TIPO_CONECTOR: 'CCS2, GB/T DC', POTENCIA_KW: 60, COSTO: 'Gratis', ESTADO_ACTUAL: 'OPERATIVO', DIRECCION: 'Vía Quevedo' },
+      { ID_PUNTO: 'MAV-CUE-AME', NOMBRE: 'Mavesa Cuenca Av Americas', RED: 'Grupo Mavesa', CIUDAD: 'Cuenca', LATITUD: -2.880556, LONGITUD: -78.983194, TIPO_CONECTOR: 'CCS2, GB/T DC', POTENCIA_KW: 60, COSTO: 'Gratis', ESTADO_ACTUAL: 'OPERATIVO', DIRECCION: 'Av. de las Américas' },
+      { ID_PUNTO: 'MAV-MCH-JUN', NOMBRE: 'Mavesa Av 25 de Junio', RED: 'Grupo Mavesa', CIUDAD: 'Machala', LATITUD: -3.256222, LONGITUD: -79.945778, TIPO_CONECTOR: 'CCS2, GB/T DC', POTENCIA_KW: 60, COSTO: 'Gratis', ESTADO_ACTUAL: 'OPERATIVO', DIRECCION: 'Av. 25 de Junio' },
+      { ID_PUNTO: 'MAV-AMB-IND', NOMBRE: 'Mavesa Av Indoamerica', RED: 'Grupo Mavesa', CIUDAD: 'Ambato', LATITUD: -1.223800, LONGITUD: -78.618500, TIPO_CONECTOR: 'CCS2, GB/T DC', POTENCIA_KW: 60, COSTO: 'Gratis', ESTADO_ACTUAL: 'OPERATIVO', DIRECCION: 'Av. Indoamérica' },
+      { ID_PUNTO: 'MAV-RIO-CRA', NOMBRE: 'Mavesa Riobamba C. Ramos', RED: 'Grupo Mavesa', CIUDAD: 'Riobamba', LATITUD: -1.654167, LONGITUD: -78.665278, TIPO_CONECTOR: 'CCS2, GB/T DC', POTENCIA_KW: 60, COSTO: 'Gratis', ESTADO_ACTUAL: 'OPERATIVO', DIRECCION: 'C. Ramos' },
+      { ID_PUNTO: 'MAV-MNT-JAR', NOMBRE: 'Mavesa Manta Vía Jaramijó', RED: 'Grupo Mavesa', CIUDAD: 'Manta', LATITUD: -0.963417, LONGITUD: -80.686500, TIPO_CONECTOR: 'CCS2, GB/T DC', POTENCIA_KW: 60, COSTO: 'Gratis', ESTADO_ACTUAL: 'OPERATIVO', DIRECCION: 'Vía Manta - Jaramijó' },
+      { ID_PUNTO: 'GOOGLE-UIO-1', NOMBRE: 'Electrolinera Parque La Carolina', RED: 'Google Maps', CIUDAD: 'Quito', LATITUD: -0.1834, LONGITUD: -78.4831, TIPO_CONECTOR: 'Type 2 AC', POTENCIA_KW: 11, COSTO: 'De Pago', ESTADO_ACTUAL: 'OPERATIVO', DIRECCION: 'Av. Amazonas' },
+      { ID_PUNTO: 'GOOGLE-GYE-1', NOMBRE: 'Mall del Sol EV Station', RED: 'Google Maps', CIUDAD: 'Guayaquil', LATITUD: -2.1558, LONGITUD: -79.8961, TIPO_CONECTOR: 'CCS2, Type 2', POTENCIA_KW: 50, COSTO: 'Consumo del Local', ESTADO_ACTUAL: 'OPERATIVO', DIRECCION: 'Parqueo Mall del Sol' }
+    ];
+    
+    let puntosCarga = [...puntosCargaBase]; // Se inicializa con la base infalible
+    
+    let activeFilters = { mavesa: false, google: false, residencial: false, gratis: false, libre: false, gbt: false };
 
     const MAP_STYLES = [
-      { name: '☀️ Modo Claro (Voyager)', url: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', subdomains: 'abcd', maxNativeZoom: 18, maxZoom: 19, labelShort: 'Modo Claro' },
-      { name: '🌙 Modo Oscuro (Dark)', url: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', subdomains: 'abcd', maxNativeZoom: 18, maxZoom: 19, labelShort: 'Modo Oscuro' },
-      { name: '🛰️ Satélite HD', url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', subdomains: [], maxNativeZoom: 17, maxZoom: 19, labelShort: 'Satélite HD' }
+      { name: '☀️ Modo Claro (Voyager)', url: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', subdomains: 'abcd', maxNativeZoom: 18, maxZoom: 19 },
+      { name: '🌙 Modo Oscuro (Dark)', url: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', subdomains: 'abcd', maxNativeZoom: 18, maxZoom: 19 }
     ];
 
     window.onload = function() {
-      loadSavedCustomChargers();
+      populateCityDropdowns();
       initMap();
-      checkAuthStatus(); // OBLIGA A LOGIN PRIMERO SI NO HAY SESIÓN POR PLACA
+      checkAuthStatus();
       checkActiveChargeBanner();
       checkActiveReservationBanner();
-      fetchDataFromBackend();
-      getUserGPSOnce(); // GPS UNA SOLA VEZ
+      fetchDataFromBackend(); // 1er Escaneo de Backend
+      getUserGPSOnce(); 
 
       window.addEventListener('online', updateOnlineStatus);
       window.addEventListener('offline', updateOnlineStatus);
       updateOnlineStatus();
+
+      // TIEMPO REAL: REFRESCAR CADA 5 SEGUNDOS
+      setInterval(fetchDataFromBackend, 5000); 
     };
+
+    function cleanPlaca(str) {
+      if (!str) return '';
+      return str.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
+    }
 
     function updateOnlineStatus() {
       const offlineBadge = document.getElementById('offlineBadge');
       if (!navigator.onLine) {
         offlineBadge.classList.remove('hidden');
-        showToast('Conexión perdida. Usando datos almacenados en caché offline.', 'info');
+        showToast('Modo Offline: Sin conexión a Internet', 'error');
       } else {
         offlineBadge.classList.add('hidden');
       }
@@ -943,52 +962,33 @@
         toast.className = 'fixed top-5 left-1/2 -translate-x-1/2 z-50 px-4 py-3 rounded-2xl shadow-2xl font-bold text-xs flex items-center gap-2.5 transition-all duration-300 -translate-y-12 opacity-0 backdrop-blur-md pointer-events-none max-w-[90vw]';
         document.body.appendChild(toast);
       }
-      
-      const bgColors = {
-        success: 'bg-emerald-600 text-white border border-emerald-400',
-        error: 'bg-red-600 text-white border border-red-400',
-        info: 'bg-slate-900 text-white border border-slate-700'
-      };
-      
+      const bgColors = { success: 'bg-emerald-600 text-white', error: 'bg-red-600 text-white', info: 'bg-slate-900 text-white' };
       toast.className = `fixed top-5 left-1/2 -translate-x-1/2 z-50 px-4 py-3 rounded-2xl shadow-2xl font-bold text-xs flex items-center gap-2.5 transition-all duration-300 ${bgColors[type] || bgColors.info}`;
-      toast.innerHTML = `<i class="fa-solid ${type === 'success' ? 'fa-circle-check' : type === 'error' ? 'fa-circle-exclamation' : 'fa-circle-info'} text-sm"></i> <span>${message}</span>`;
-      
+      toast.innerHTML = `<i class="fa-solid ${type === 'success' ? 'fa-circle-check' : type === 'error' ? 'fa-triangle-exclamation' : 'fa-info-circle'}"></i> <span>${message}</span>`;
       setTimeout(() => toast.classList.remove('-translate-y-12', 'opacity-0'), 10);
       setTimeout(() => toast.classList.add('-translate-y-12', 'opacity-0'), 3500);
     }
 
     function initMap() {
-      map = L.map('map', { 
-        zoomControl: false,
-        maxZoom: 19,
-        minZoom: 5
-      }).setView([-1.0542, -80.4533], 7);
-      
-      setMapTileStyle(0); // Carto Voyager Light por defecto
+      map = L.map('map', { zoomControl: false, maxZoom: 19, minZoom: 5 }).setView([-1.0542, -80.4533], 7);
+      setMapTileStyle(0);
       markersLayer = L.layerGroup().addTo(map);
-      renderMapMarkers();
     }
 
     function setMapTileStyle(styleIndex) {
       currentTileStyleIndex = styleIndex;
       const config = MAP_STYLES[styleIndex];
-      
       if (currentTileLayer) map.removeLayer(currentTileLayer);
-
       currentTileLayer = L.tileLayer(config.url, {
         attribution: '&copy; OpenStreetMap &copy; CARTO',
         subdomains: config.subdomains,
         maxNativeZoom: config.maxNativeZoom,
         maxZoom: config.maxZoom
       }).addTo(map);
-
-      document.getElementById('mapStyleBadge').innerHTML = `<span class="w-2 h-2 rounded-full ${styleIndex === 0 ? 'bg-sky-500' : 'bg-amber-400'}"></span> ${config.name}`;
-      document.getElementById('drawerMapStyleLabel').innerText = config.labelShort;
     }
 
     function cycleMapTileStyle() {
-      const nextIndex = (currentTileStyleIndex + 1) % MAP_STYLES.length;
-      setMapTileStyle(nextIndex);
+      setMapTileStyle((currentTileStyleIndex + 1) % MAP_STYLES.length);
     }
 
     function renderMapMarkers() {
@@ -996,6 +996,7 @@
       markersLayer.clearLayers();
 
       puntosCarga.forEach(punto => {
+        // Filtrado por Búsqueda
         if (searchQuery) {
           const matchName = punto.NOMBRE.toLowerCase().includes(searchQuery);
           const matchCity = punto.CIUDAD.toLowerCase().includes(searchQuery);
@@ -1003,27 +1004,22 @@
           if (!matchName && !matchCity && !matchPlug) return;
         }
 
+        // Filtrado Botones Interactivos
         if (activeFilters.mavesa && !punto.RED.toLowerCase().includes('mavesa')) return;
-        if (activeFilters.google && !punto.RED.toLowerCase().includes('google')) return;
-        if (activeFilters.residencial && !punto.RED.toLowerCase().includes('residencial')) return;
-        if (activeFilters.gratis && punto.COSTO !== 'Gratis') return;
         if (activeFilters.libre && punto.ESTADO_ACTUAL !== 'OPERATIVO') return;
         if (activeFilters.gbt && !punto.TIPO_CONECTOR.includes('GB/T')) return;
 
         const isOccupied = punto.ESTADO_ACTUAL === 'OCUPADO';
         const isReserved = punto.ESTADO_ACTUAL === 'RESERVADO';
         const isMavesa = punto.RED.toLowerCase().includes('mavesa');
-        const isResidencial = punto.RED.toLowerCase().includes('residencial');
         
-        let markerClass = isMavesa ? 'marker-mavesa' : (isResidencial ? 'bg-indigo-600 text-white rounded-full border-2 border-white' : 'marker-free');
+        let markerClass = isMavesa ? 'marker-mavesa' : 'marker-free';
         if (isOccupied) markerClass += ' marker-occupied';
         if (isReserved) markerClass += ' marker-reserved';
 
         const customIcon = L.divIcon({
           className: 'custom-div-icon',
-          html: `<div class="${markerClass} w-9 h-9 flex items-center justify-center text-xs shadow-lg">
-                  <i class="fa-solid ${isMavesa ? 'fa-charging-station' : (isResidencial ? 'fa-house-chimney-window' : 'fa-bolt')}"></i>
-                 </div>`,
+          html: `<div class="${markerClass} w-9 h-9 flex items-center justify-center text-xs shadow-lg"><i class="fa-solid fa-charging-station"></i></div>`,
           iconSize: [36, 36],
           iconAnchor: [18, 18]
         });
@@ -1047,19 +1043,22 @@
       if (!currentUser) return;
       const placaStr = cleanPlaca(currentUser.placa || 'MBH3511');
       currentUser.placa = placaStr;
-      const badgeText = `PLACA: ${placaStr} • ${currentUser.modelo || 'Nammi 06'}`;
       
-      document.getElementById('headerUserBadge').innerText = badgeText;
+      document.getElementById('headerUserBadge').innerText = `PLACA: ${placaStr} • ${currentUser.modelo || 'Nammi 06'}`;
       document.getElementById('menuDisplayPlaca').innerText = `PLACA: ${placaStr}`;
       document.getElementById('menuDisplayName').innerText = currentUser.nombre || 'Conductor EV';
       document.getElementById('menuDisplayCar').innerText = `${currentUser.marca || 'Dongfeng Nammi'} ${currentUser.modelo || '06'}`;
-      document.getElementById('menuDisplayEmail').innerText = `Placa: ${placaStr} • Registrado`;
 
       document.getElementById('profileDisplayPlaca').innerText = placaStr;
       document.getElementById('profileDisplayName').innerText = currentUser.nombre || 'Conductor EV';
       document.getElementById('profileDisplayCar').innerText = `${currentUser.marca || 'Dongfeng Nammi'} ${currentUser.modelo || '06'}`;
       document.getElementById('profileDisplayKm').innerText = `${currentUser.autonomiaKm || 330} km (${currentUser.estandarRange || 'CLTC'})`;
       document.getElementById('profileDisplayPlug').innerText = currentUser.conector || 'GB/T DC';
+
+      // Auto-Llenar Autonomía en el Modal de Planificador
+      if(document.getElementById('tripAutonomiaKm')) {
+        document.getElementById('tripAutonomiaKm').value = currentUser.autonomiaKm || 330;
+      }
     }
 
     function toggleAuthTab(tab) {
@@ -1080,16 +1079,12 @@
       e.preventDefault();
       const placa = cleanPlaca(document.getElementById('loginPlaca').value);
       const password = document.getElementById('loginPassword').value.trim();
-
-      if (!placa) {
-        showToast('Ingresa una placa válida solo con letras y números.', 'error');
-        return;
-      }
+      if (!placa) { showToast('Placa inválida', 'error'); return; }
 
       fetch(apiUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain' },
-        body: JSON.stringify({ action: 'loginUser', data: { email: placa, placa: placa, password: password } })
+        body: JSON.stringify({ action: 'loginUser', data: { placa: placa, password: password } })
       })
       .then(res => res.json())
       .then(data => {
@@ -1100,36 +1095,22 @@
           checkAuthStatus();
           showToast(`¡Bienvenido Placa ${currentUser.placa}!`, 'success');
         } else {
-          currentUser = { placa: placa, nombre: `Conductor ${placa}`, marca: 'Dongfeng Nammi', modelo: 'Nammi 06', autonomiaKm: 330, conector: 'GB/T DC' };
-          localStorage.setItem('ev_user_session_placa', JSON.stringify(currentUser));
-          checkAuthStatus();
-          showToast(`Ingresado con Placa ${placa}`, 'success');
+          showToast(data.message || 'Placa no encontrada, inténtalo de nuevo.', 'error');
         }
       })
-      .catch(() => {
-        currentUser = { placa: placa, nombre: `Conductor ${placa}`, marca: 'Dongfeng Nammi', modelo: 'Nammi 06', autonomiaKm: 330, conector: 'GB/T DC' };
-        localStorage.setItem('ev_user_session_placa', JSON.stringify(currentUser));
-        checkAuthStatus();
-        showToast(`Ingresado correctamente con Placa ${placa}`, 'success');
-      });
+      .catch(() => showToast(`Error de conexión con Base de Datos.`, 'error'));
     }
 
     function handleRegisterSubmit(e) {
       e.preventDefault();
       const rawPlaca = document.getElementById('regPlaca').value;
       const cleanP = cleanPlaca(rawPlaca);
-
-      if (!cleanP) {
-        showToast('Ingresa una placa válida solo con letras y números.', 'error');
-        return;
-      }
-
-      const emailRef = document.getElementById('regEmail') ? document.getElementById('regEmail').value.trim() : '';
+      if (!cleanP) { showToast('Placa inválida', 'error'); return; }
 
       const userData = {
         placa: cleanP,
         nombre: document.getElementById('regNombre').value.trim(),
-        email: emailRef || `${cleanP}@ev.ec`,
+        email: document.getElementById('regEmail').value.trim() || `${cleanP}@ev.ec`,
         password: document.getElementById('regPassword').value.trim(),
         telefono: document.getElementById('regTelefono').value.trim(),
         marca: document.getElementById('regMarca').value,
@@ -1146,33 +1127,175 @@
       })
       .then(res => res.json())
       .then(data => {
-        if (data.success && data.user) {
-          currentUser = data.user;
-          currentUser.placa = cleanPlaca(currentUser.placa || cleanP);
-          localStorage.setItem('ev_user_session_placa', JSON.stringify(currentUser));
-          checkAuthStatus();
-          showToast(`¡Placa ${currentUser.placa} registrada en EV Ecuador!`, 'success');
-        } else {
-          currentUser = userData;
-          localStorage.setItem('ev_user_session_placa', JSON.stringify(currentUser));
-          checkAuthStatus();
-          showToast(`Placa ${cleanP} registrada correctamente.`, 'success');
-        }
-      })
-      .catch(() => {
         currentUser = userData;
         localStorage.setItem('ev_user_session_placa', JSON.stringify(currentUser));
         checkAuthStatus();
-        showToast(`¡Placa ${cleanP} registrada e ingresado!`, 'success');
+        showToast(`¡Placa ${cleanP} registrada en EV Ecuador!`, 'success');
       });
     }
 
     function logoutUser() {
       localStorage.removeItem('ev_user_session_placa');
       currentUser = null;
-      closeModal('profileModal');
-      checkAuthStatus();
-      showToast('Has cerrado sesión de tu Placa', 'info');
+      closeDrawerAndExecute(() => {
+        closeModal('profileModal');
+        checkAuthStatus();
+      });
+    }
+
+    function toggleProfileEditMode() {
+      const displaySec = document.getElementById('profileDisplaySection');
+      const editSec = document.getElementById('profileEditSection');
+      
+      if (editSec.classList.contains('hidden')) {
+        if(currentUser) {
+          document.getElementById('editMarca').value = currentUser.marca || '';
+          document.getElementById('editModelo').value = currentUser.modelo || '';
+          document.getElementById('editAutonomia').value = currentUser.autonomiaKm || 330;
+          document.getElementById('editEstandarRange').value = currentUser.estandarRange || 'CLTC';
+          document.getElementById('editConector').value = currentUser.conector || 'GB/T DC';
+        }
+        displaySec.classList.add('hidden');
+        editSec.classList.remove('hidden');
+      } else {
+        displaySec.classList.remove('hidden');
+        editSec.classList.add('hidden');
+      }
+    }
+
+    function submitEditProfile(e) {
+      e.preventDefault();
+      if (!currentUser) return;
+
+      const updatedData = {
+        ...currentUser,
+        marca: document.getElementById('editMarca').value.trim(),
+        modelo: document.getElementById('editModelo').value.trim(),
+        autonomiaKm: parseInt(document.getElementById('editAutonomia').value) || 330,
+        estandarRange: document.getElementById('editEstandarRange').value,
+        conector: document.getElementById('editConector').value
+      };
+
+      currentUser = updatedData;
+      localStorage.setItem('ev_user_session_placa', JSON.stringify(currentUser));
+      updateHeaderUserBadge(); 
+      toggleProfileEditMode();
+      showToast('Perfil actualizado. Guardando en nube...', 'success');
+
+      fetch(apiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({ action: 'editUser', data: updatedData })
+      }).catch(err => console.log('Error sincronizando'));
+    }
+
+    function populateCityDropdowns() {
+      const origSelect = document.getElementById('tripOrigen');
+      const destSelect = document.getElementById('tripDestino');
+      const newCitySelect = document.getElementById('newCiudad');
+      
+      let htmlOptions = '';
+      Object.keys(ECUADOR_CITIES).sort().forEach(city => {
+        htmlOptions += `<option value="${city}">${city}</option>`;
+      });
+
+      if (origSelect) origSelect.innerHTML = htmlOptions;
+      if (destSelect) destSelect.innerHTML = htmlOptions;
+      if (newCitySelect) newCitySelect.innerHTML = htmlOptions;
+
+      if (origSelect) origSelect.value = "Portoviejo";
+      if (destSelect) destSelect.value = "Guayaquil";
+    }
+
+    function haversineKmRoad(lat1, lon1, lat2, lon2) {
+      const R = 6371;
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      return R * c * 1.35; // 1.35 factor real de curvatura vial de Ecuador
+    }
+
+    function calculateTripRoute() {
+      const origName = document.getElementById('tripOrigen').value;
+      const destName = document.getElementById('tripDestino').value;
+      const batVal = parseFloat(document.getElementById('tripBateria').value) || 90;
+      
+      if (origName === destName) { showToast("Selecciona dos ciudades distintas.", "error"); return; }
+
+      const origData = ECUADOR_CITIES[origName];
+      const destData = ECUADOR_CITIES[destName];
+      
+      // Penalidad por altitud/sierra
+      const isSierraTrip = origData.region === 'Sierra' || destData.region === 'Sierra';
+      let autoBase = currentUser ? currentUser.autonomiaKm : 330;
+      let std = currentUser ? currentUser.estandarRange : 'CLTC';
+
+      let factorTopografico = 0.72; // Costa CLTC promedio
+      if(std === 'NEDC') factorTopografico = 0.80;
+      if(std === 'WLTP') factorTopografico = 0.90;
+      if(isSierraTrip) factorTopografico -= 0.12; // La sierra gasta mucha mas bateria en subidas
+
+      const distEstRoadKm = Math.round(haversineKmRoad(origData.lat, origData.lng, destData.lat, destData.lng));
+      const rangeAvailableKm = Math.round((batVal / 100) * (autoBase * factorTopografico));
+
+      document.getElementById('tripTotalKm').innerText = `${distEstRoadKm} km`;
+
+      let stopsHtml = '';
+      let waypoints = [];
+
+      if (rangeAvailableKm >= distEstRoadKm) {
+        document.getElementById('tripStopsCount').innerText = '0 paradas';
+        stopsHtml = `<div class="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-900 font-bold">
+                      🟢 ¡Llegas directo! Tienes autonomía estimada de ${rangeAvailableKm} km para un viaje de ${distEstRoadKm} km.
+                     </div>`;
+      } else {
+        document.getElementById('tripStopsCount').innerText = '1 parada requerida';
+        
+        let bestStop = puntosCarga.length > 0 ? puntosCarga[0] : null;
+        let minBonusDist = 9999;
+
+        if (bestStop) {
+          puntosCarga.forEach(p => {
+            const distFromOrig = haversineKmRoad(origData.lat, origData.lng, p.LATITUD, p.LONGITUD);
+            if (distFromOrig <= (rangeAvailableKm - 20)) { // Margen de seguridad 20km
+              const distToDest = haversineKmRoad(p.LATITUD, p.LONGITUD, destData.lat, destData.lng);
+              if (distToDest < minBonusDist) { minBonusDist = distToDest; bestStop = p; }
+            }
+          });
+          waypoints.push(`${bestStop.LATITUD},${bestStop.LONGITUD}`);
+          stopsHtml = `
+            <div class="p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs space-y-1">
+              <p class="font-bold text-amber-900"><i class="fa-solid fa-charging-station mr-1"></i> Parada Estratégica Intermedia (Mavesa):</p>
+              <p class="text-slate-900 font-extrabold text-sm">${bestStop.NOMBRE}</p>
+              <p class="text-slate-600">${bestStop.DIRECCION}</p>
+              ${isSierraTrip ? `<p class="text-[10px] text-red-600 font-bold">Viaje en Sierra: Autonomía castigada un 12% por trepadas.</p>` : ''}
+            </div>
+          `;
+        }
+      }
+
+      document.getElementById('tripStopsList').innerHTML = stopsHtml;
+
+      const wpParam = waypoints.length > 0 ? `&waypoints=${waypoints.join('|')}` : '';
+      const gmapsUrl = `https://www.google.com/maps/dir/?api=1&origin=${origData.lat},${origData.lng}&destination=${destData.lat},${destData.lng}${wpParam}`;
+      document.getElementById('btnOpenGoogleMapsTrip').href = gmapsUrl;
+
+      document.getElementById('tripResultContainer').classList.remove('hidden');
+    }
+
+    function checkActiveChargeBanner() {
+      const banner = document.getElementById('activeChargeBanner');
+      if (!banner) return;
+
+      if (activeChargeSession) {
+        const punto = puntosCarga.find(p => p.ID_PUNTO === activeChargeSession.puntoId);
+        document.getElementById('activeChargeBannerDesc').innerText = punto ? punto.NOMBRE : 'Punto de Carga';
+        document.getElementById('activeChargeBannerTime').innerHTML = `<i class="fa-regular fa-clock mr-1"></i>Fin est: ${activeChargeSession.horaFin}`;
+        banner.classList.remove('hidden');
+      } else {
+        banner.classList.add('hidden');
+      }
     }
 
     function checkActiveReservationBanner() {
@@ -1184,7 +1307,7 @@
         const remainingSec = 15 * 60 - elapsedSec;
 
         if (remainingSec <= 0) {
-          cancelVirtualReservation(true);
+          cancelVirtualReservation();
           return;
         }
 
@@ -1209,116 +1332,133 @@
       }
     }
 
+    function cancelOrFreeActiveCharge() {
+      if (!activeChargeSession) return;
+      freeUpCharger(activeChargeSession.puntoId);
+    }
+
+    function openOccupyModal(puntoId, nombre) {
+      if (!currentUser) { checkAuthStatus(); return; }
+      document.getElementById('occupyPuntoId').value = puntoId;
+      document.getElementById('occupyPuntoNombre').innerText = nombre;
+      
+      // Auto-set time to 45 mins from now
+      const targetTime = new Date(Date.now() + 45 * 60000);
+      document.getElementById('occupyHoraFin').value = targetTime.toLocaleTimeString('es-EC', { hour: '2-digit', minute: '2-digit', hour12: false });
+      
+      openModal('occupyChargerModal');
+    }
+
+    function submitOccupyCharger(e) {
+      e.preventDefault();
+      const puntoId = document.getElementById('occupyPuntoId').value;
+      const horaFin = document.getElementById('occupyHoraFin').value;
+
+      activeChargeSession = { puntoId: puntoId, horaFin: horaFin, timestamp: Date.now() };
+      localStorage.setItem('ev_active_charge_session', JSON.stringify(activeChargeSession));
+
+      fetch(apiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({ action: 'update_status', ID: puntoId, ESTADO: 'OCUPADO', PLACA: currentUser.placa, HORA_FIN: horaFin })
+      }).then(() => fetchDataFromBackend()); // Refrescar rápido tras enviar
+
+      checkActiveChargeBanner();
+      closeBottomSheet();
+      closeModal('occupyChargerModal');
+      showToast(`⚡ Carga registrada hasta las ${horaFin}`, 'success');
+    }
+
+    function freeUpCharger(puntoId) {
+      if (activeChargeSession && activeChargeSession.puntoId === puntoId) {
+        activeChargeSession = null;
+        localStorage.removeItem('ev_active_charge_session');
+        checkActiveChargeBanner();
+      }
+
+      fetch(apiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({ action: 'update_status', ID: puntoId, ESTADO: 'LIBRE', PLACA: '', HORA_FIN: '' })
+      }).then(() => fetchDataFromBackend());
+
+      closeBottomSheet();
+      showToast('🟢 ¡Punto liberado y borrado del historial!', 'success');
+    }
+
     function reserveChargerVirtual(puntoId) {
       if (!currentUser) { checkAuthStatus(); return; }
-
-      const p = puntosCarga.find(item => item.ID_PUNTO === puntoId);
-      if (p) {
-        p.ESTADO_ACTUAL = 'RESERVADO';
-        p.OCUPADO_POR_PLACA = currentUser.placa;
-      }
-
-      activeVirtualReservation = {
-        puntoId: puntoId,
-        timestamp: Date.now()
-      };
+      activeVirtualReservation = { puntoId: puntoId, timestamp: Date.now() };
       localStorage.setItem('ev_active_reservation', JSON.stringify(activeVirtualReservation));
 
+      fetch(apiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({ action: 'update_status', ID: puntoId, ESTADO: 'RESERVADO', PLACA: currentUser.placa, HORA_FIN: 'Reserva15m' })
+      }).then(() => fetchDataFromBackend());
+
       checkActiveReservationBanner();
-      renderMapMarkers();
       closeBottomSheet();
-      showToast(`⏳ Reserva de 15 min activada para Placa ${currentUser.placa}. Dirígete al cargador.`, 'success');
+      showToast(`⏳ Reserva de 15 min activada para Placa ${currentUser.placa}.`, 'success');
     }
 
-    function cancelVirtualReservation(expired = false) {
+    function cancelVirtualReservation() {
       if (!activeVirtualReservation) return;
-
-      const p = puntosCarga.find(item => item.ID_PUNTO === activeVirtualReservation.puntoId);
-      if (p && p.ESTADO_ACTUAL === 'RESERVADO') {
-        p.ESTADO_ACTUAL = 'OPERATIVO';
-        p.OCUPADO_POR_PLACA = '';
-      }
-
+      const pid = activeVirtualReservation.puntoId;
       activeVirtualReservation = null;
       localStorage.removeItem('ev_active_reservation');
+      
+      fetch(apiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({ action: 'update_status', ID: pid, ESTADO: 'LIBRE', PLACA: '', HORA_FIN: '' })
+      }).then(() => fetchDataFromBackend());
+
       checkActiveReservationBanner();
-      renderMapMarkers();
-
-      if (expired) {
-        showToast('⚠️ Tu tiempo de reserva de 15 minutos ha expirado.', 'error');
-      } else {
-        showToast('Reserva de cargador cancelada.', 'info');
-      }
+      showToast('Reserva cancelada y punto liberado.', 'info');
     }
 
-    function openRangeConverterModal() {
-      openModal('rangeConverterModal');
-      calculateRealEcuadorRange();
-    }
+    function fetchDataFromBackend() {
+      fetch(apiUrl + '?action=getAll')
+        .then(res => res.json())
+        .then(data => {
+          if (data.success && data.puntos) {
+            // 1. Reseteamos temporalmente estados a libre
+            puntosCarga = data.puntos.map(p => ({ ...p, ESTADO_ACTUAL: 'OPERATIVO', OCUPADO_POR_PLACA: '' }));
 
-    function calculateRealEcuadorRange() {
-      const kmFabrica = parseFloat(document.getElementById('calcKmFabrica').value) || 330;
-      const estandar = document.getElementById('calcEstandar').value;
+            // 2. Aplicamos la tabla viva de estados activos
+            if (data.estados && data.estados.length > 0) {
+              data.estados.forEach(est => {
+                const idx = puntosCarga.findIndex(p => p.ID_PUNTO === est.ID_PUNTO);
+                if (idx > -1) {
+                  puntosCarga[idx].ESTADO_ACTUAL = est.ESTADO;
+                  puntosCarga[idx].OCUPADO_POR_PLACA = est.PLACA;
+                }
+              });
+            }
 
-      let factorCosta = 0.72;
-      let factorSierra = 0.65;
+            renderMapMarkers();
 
-      if (estandar === 'NEDC') { factorCosta = 0.78; factorSierra = 0.70; }
-      if (estandar === 'WLTP') { factorCosta = 0.88; factorSierra = 0.82; }
-
-      const realCosta = Math.round(kmFabrica * factorCosta);
-      const realSierra = Math.round(kmFabrica * factorSierra);
-
-      document.getElementById('calcKmCosta').innerText = `${realCosta} km`;
-      document.getElementById('calcKmSierra').innerText = `${realSierra} km`;
-    }
-
-    function getUserGPSOnce() {
-      if (gpsFetchedOnce) return;
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(pos => {
-          userCoords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
-          gpsFetchedOnce = true;
-          if (userMarker) map.removeLayer(userMarker);
-          
-          const userIcon = L.divIcon({
-            className: 'user-location-marker',
-            html: `<div class="w-4 h-4 bg-sky-500 border-2 border-white rounded-full shadow-lg animate-ping"></div>`,
-            iconSize: [16, 16]
-          });
-          userMarker = L.marker([userCoords.lat, userCoords.lng], { icon: userIcon }).addTo(map);
-        }, () => {
-          gpsFetchedOnce = true;
-        }, { timeout: 5000 });
-      }
-    }
-
-    function centerOnUserLocation() {
-      if (!gpsFetchedOnce) {
-        getUserGPSOnce();
-      }
-      map.flyTo([userCoords.lat, userCoords.lng], 13);
-    }
-
-    function calculateDistanceKm(lat1, lon1, lat2, lon2) {
-      const R = 6371;
-      const dLat = (lat2 - lat1) * Math.PI / 180;
-      const dLon = (lon2 - lon1) * Math.PI / 180;
-      const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-                Math.sin(dLon/2) * Math.sin(dLon/2);
-      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-      return (R * c).toFixed(1);
+            // Refrescar ficha abierta si el estado cambió para otro usuario
+            const sheet = document.getElementById('chargerBottomSheet');
+            if (currentOpenPuntoId && !sheet.classList.contains('translate-y-full')) {
+              const updatedPunto = puntosCarga.find(p => p.ID_PUNTO === currentOpenPuntoId);
+              if (updatedPunto) openChargerSheet(updatedPunto); 
+            }
+          }
+        })
+        .catch(err => console.log('Sincronizando silente...'));
     }
 
     function openChargerSheet(punto) {
+      currentOpenPuntoId = punto.ID_PUNTO;
       const sheet = document.getElementById('chargerBottomSheet');
       const content = document.getElementById('chargerSheetContent');
       
       const isOccupied = punto.ESTADO_ACTUAL === 'OCUPADO';
       const isReserved = punto.ESTADO_ACTUAL === 'RESERVADO';
+      const distFromUser = (haversineKmRoad(userCoords.lat, userCoords.lng, punto.LATITUD, punto.LONGITUD)).toFixed(1);
       const isMavesa = punto.RED.toLowerCase().includes('mavesa');
-      const distFromUser = calculateDistanceKm(userCoords.lat, userCoords.lng, punto.LATITUD, punto.LONGITUD);
 
       content.innerHTML = `
         <div class="flex items-start justify-between gap-3 mb-3">
@@ -1328,7 +1468,7 @@
                 ${punto.RED.toUpperCase()}
               </span>
               <span class="text-[10px] font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">
-                <i class="fa-solid fa-location-arrow text-sky-600 mr-1"></i>${distFromUser} km de ti
+                <i class="fa-solid fa-location-arrow text-sky-600 mr-1"></i>~${distFromUser} km de ruta
               </span>
             </div>
             <h3 class="text-lg font-bold text-slate-900 mt-1.5 leading-snug">${punto.NOMBRE}</h3>
@@ -1354,10 +1494,9 @@
         </div>
 
         <div class="grid grid-cols-2 gap-2.5 mb-3">
-          <button onclick="navigateGPS('', ${punto.LATITUD}, ${punto.LONGITUD})" class="py-3 bg-red-600 hover:bg-red-500 text-white font-bold rounded-2xl flex items-center justify-center gap-2 shadow-lg text-xs">
+          <button onclick="navigateGPS(${punto.LATITUD}, ${punto.LONGITUD})" class="py-3 bg-red-600 hover:bg-red-500 text-white font-bold rounded-2xl flex items-center justify-center gap-2 shadow-lg text-xs">
             <i class="fa-solid fa-map-location-dot text-base"></i> NAVEGAR
           </button>
-
           ${!isOccupied && !isReserved ? `
             <button onclick="reserveChargerVirtual('${punto.ID_PUNTO}')" class="py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-2xl flex items-center justify-center gap-1.5 shadow-md text-xs">
               <i class="fa-solid fa-hourglass-half"></i> Reservar (15 min)
@@ -1380,20 +1519,35 @@
     }
 
     function closeBottomSheet() {
+      currentOpenPuntoId = null;
       document.getElementById('chargerBottomSheet').classList.add('translate-y-full');
     }
 
-    function navigateGPS(customUrl, lat, lng) {
-      const gmapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
-      window.open(gmapsUrl, '_blank');
+    function toggleFilter(filterName) {
+      activeFilters[filterName] = !activeFilters[filterName];
+      const btnMap = { 'mavesa': 'btnFilterMavesa', 'google': 'btnFilterGoogle', 'residencial': 'btnFilterResidencial', 'gratis': 'btnFilterGratis', 'libre': 'btnFilterLibre', 'gbt': 'btnFilterGBT' };
+      const btn = document.getElementById(btnMap[filterName]);
+      if (btn) {
+        const checkIcon = btn.querySelector('.fa-check');
+        if (activeFilters[filterName]) {
+          btn.classList.add('border-sky-500', 'bg-sky-50');
+          btn.classList.remove('border-slate-200', 'bg-slate-50');
+          if (checkIcon) checkIcon.classList.remove('hidden');
+        } else {
+          btn.classList.remove('border-sky-500', 'bg-sky-50');
+          btn.classList.add('border-slate-200', 'bg-slate-50');
+          if (checkIcon) checkIcon.classList.add('hidden');
+        }
+      }
+      renderMapMarkers();
     }
 
+    function filterChargersBySearch() { searchQuery = document.getElementById('searchInput').value.toLowerCase().trim(); renderMapMarkers(); }
+    function navigateGPS(lat, lng) { window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`, '_blank'); }
     function toggleSideDrawer() {
       const drawer = document.getElementById('sideDrawer');
       const overlay = document.getElementById('sideDrawerOverlay');
-      const isHidden = drawer.classList.contains('-translate-x-full');
-
-      if (isHidden) {
+      if (drawer.classList.contains('-translate-x-full')) {
         drawer.classList.remove('-translate-x-full');
         overlay.classList.remove('hidden');
       } else {
@@ -1401,116 +1555,46 @@
         overlay.classList.add('hidden');
       }
     }
-
-    function closeDrawerAndExecute(fn) {
-      toggleSideDrawer();
-      if (fn) fn();
-    }
-
+    function closeDrawerAndExecute(fn) { toggleSideDrawer(); if (fn) fn(); }
     function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
     function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
-
     function switchTab(tab) {
       if (tab === 'mapa') closeBottomSheet();
       if (tab === 'planificador') openModal('tripPlannerModal');
-      if (tab === 'sos') openModal('sosModal');
     }
 
-    function filterChargersBySearch() {
-      searchQuery = document.getElementById('searchInput').value.toLowerCase().trim();
-      renderMapMarkers();
+    function getUserGPSOnce() {
+      if (gpsFetchedOnce) return;
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(pos => {
+          userCoords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+          gpsFetchedOnce = true;
+          if (userMarker) map.removeLayer(userMarker);
+          const userIcon = L.divIcon({ className: 'user-location-marker', html: `<div class="w-4 h-4 bg-sky-500 border-2 border-white rounded-full shadow-lg animate-ping"></div>`, iconSize: [16, 16] });
+          userMarker = L.marker([userCoords.lat, userCoords.lng], { icon: userIcon }).addTo(map);
+        }, () => { gpsFetchedOnce = true; }, { timeout: 5000 });
+      }
     }
-
-    function toggleFilter(filterName) {
-      activeFilters[filterName] = !activeFilters[filterName];
-      renderMapMarkers();
-    }
-
+    
+    function centerOnUserLocation() { getUserGPSOnce(); map.flyTo([userCoords.lat, userCoords.lng], 13); }
+    function openRangeConverterModal() { openModal('rangeConverterModal'); calculateRealEcuadorRange(); }
     function openOfflineEmergencyModal() { openModal('offlineEmergencyModal'); }
-    function openProfileModal() { openModal('profileModal'); }
     function openAddChargerModal() { openModal('addChargerModal'); }
     function openSOSModal() { openModal('sosModal'); }
     function openFilterModal() { openModal('filterModal'); }
     function openInstallModal() { openModal('installModal'); }
+    function openProfileModal() { openModal('profileModal'); }
+
+    function calculateRealEcuadorRange() {
+      const kmFabrica = parseFloat(document.getElementById('calcKmFabrica').value) || 330;
+      document.getElementById('calcKmCosta').innerText = `${Math.round(kmFabrica * 0.72)} km`;
+      document.getElementById('calcKmSierra').innerText = `${Math.round(kmFabrica * 0.60)} km`;
+    }
 
     function useCurrentGPSForNew() {
       document.getElementById('newLat').value = userCoords.lat;
       document.getElementById('newLng').value = userCoords.lng;
       showToast('Coordenadas GPS capturadas con éxito', 'success');
-    }
-
-    function checkActiveChargeBanner() {
-      const banner = document.getElementById('activeChargeBanner');
-      if (!banner) return;
-
-      if (activeChargeSession) {
-        const punto = puntosCarga.find(p => p.ID_PUNTO === activeChargeSession.puntoId);
-        document.getElementById('activeChargeBannerDesc').innerText = punto ? punto.NOMBRE : 'Punto de Carga';
-        document.getElementById('activeChargeBannerTime').innerHTML = `<i class="fa-regular fa-clock mr-1"></i>Fin est: ${activeChargeSession.horaFin}`;
-        banner.classList.remove('hidden');
-      } else {
-        banner.classList.add('hidden');
-      }
-    }
-
-    function cancelOrFreeActiveCharge() {
-      if (!activeChargeSession) return;
-      freeUpCharger(activeChargeSession.puntoId);
-    }
-
-    function openOccupyModal(puntoId, nombre) {
-      if (!currentUser) { checkAuthStatus(); return; }
-      document.getElementById('occupyPuntoId').value = puntoId;
-      document.getElementById('occupyPuntoNombre').innerText = nombre;
-      
-      const targetTime = new Date(Date.now() + 45 * 60000);
-      document.getElementById('occupyHoraFin').value = targetTime.toLocaleTimeString('es-EC', { hour: '2-digit', minute: '2-digit', hour12: false });
-      
-      openModal('occupyChargerModal');
-    }
-
-    function submitOccupyCharger(e) {
-      e.preventDefault();
-      const puntoId = document.getElementById('occupyPuntoId').value;
-      const horaFin = document.getElementById('occupyHoraFin').value;
-
-      const p = puntosCarga.find(item => item.ID_PUNTO === puntoId);
-      if (p) {
-        p.ESTADO_ACTUAL = 'OCUPADO';
-        p.OCUPADO_POR_PLACA = currentUser ? currentUser.placa : 'PBA-1234';
-        p.HORA_FIN_ESTIMADA = horaFin;
-      }
-
-      activeChargeSession = {
-        puntoId: puntoId,
-        horaFin: horaFin,
-        timestamp: Date.now()
-      };
-      localStorage.setItem('ev_active_charge_session', JSON.stringify(activeChargeSession));
-
-      checkActiveChargeBanner();
-      renderMapMarkers();
-      closeBottomSheet();
-      closeModal('occupyChargerModal');
-      showToast(`⚡ Carga registrada por Placa ${currentUser ? currentUser.placa : ''} hasta las ${horaFin}`, 'success');
-    }
-
-    function freeUpCharger(puntoId) {
-      const p = puntosCarga.find(item => item.ID_PUNTO === puntoId);
-      if (p) {
-        p.ESTADO_ACTUAL = 'OPERATIVO';
-        p.OCUPADO_POR_PLACA = '';
-      }
-
-      if (activeChargeSession && activeChargeSession.puntoId === puntoId) {
-        activeChargeSession = null;
-        localStorage.removeItem('ev_active_charge_session');
-        checkActiveChargeBanner();
-      }
-
-      renderMapMarkers();
-      closeBottomSheet();
-      showToast('🟢 ¡Punto de carga liberado con éxito!', 'success');
     }
 
     function submitNewCharger(e) {
@@ -1519,114 +1603,67 @@
         ID_PUNTO: 'PUN-' + Date.now(),
         NOMBRE: document.getElementById('newNombre').value.trim(),
         RED: document.getElementById('newRed').value,
-        CIUDAD: document.getElementById('newCiudad').value.trim(),
-        PROVINCIA: 'Ecuador',
+        CIUDAD: document.getElementById('newCiudad').value,
         LATITUD: parseFloat(document.getElementById('newLat').value),
         LONGITUD: parseFloat(document.getElementById('newLng').value),
         TIPO_CONECTOR: document.getElementById('newConector').value,
         POTENCIA_KW: parseInt(document.getElementById('newPotencia').value),
         COSTO: document.getElementById('newCosto').value,
-        ESTADO_ACTUAL: 'OPERATIVO',
+        COMPATIBILIDAD: document.getElementById('newCompatibilidad').value,
         DIRECCION: document.getElementById('newDireccion').value.trim()
       };
-
-      puntosCarga.unshift(newP);
-      saveCustomChargersLocally(newP);
-
-      renderMapMarkers();
-      map.flyTo([newP.LATITUD, newP.LONGITUD], 15);
       closeModal('addChargerModal');
-      showToast('¡Punto registrado y guardado localmente!', 'success');
-    }
-
-    function saveCustomChargersLocally(punto) {
-      const customPuntos = JSON.parse(localStorage.getItem('ev_custom_chargers') || '[]');
-      customPuntos.unshift(punto);
-      localStorage.setItem('ev_custom_chargers', JSON.stringify(customPuntos));
-    }
-
-    function loadSavedCustomChargers() {
-      const customPuntos = JSON.parse(localStorage.getItem('ev_custom_chargers') || '[]');
-      customPuntos.forEach(cp => {
-        if (!puntosCarga.some(p => p.ID_PUNTO === cp.ID_PUNTO)) {
-          puntosCarga.unshift(cp);
-        }
-      });
-    }
-
-    function sendSOSAlert(e) {
-      e.preventDefault();
-      if (!currentUser) { checkAuthStatus(); return; }
-
-      const sosObj = {
-        nombre: currentUser.nombre,
-        placa: currentUser.placa,
-        vehiculo: `${currentUser.marca} ${currentUser.modelo}`,
-        tipoEmergencia: document.getElementById('sosTipo').value,
-        mensaje: document.getElementById('sosMensaje').value
-      };
-
-      alertasSOS.unshift(sosObj);
-      renderSOSList();
-      closeModal('sosModal');
-      showToast(`⚠️ Alerta SOS de Placa ${currentUser.placa} emitida`, 'error');
-    }
-
-    function renderSOSList() {
-      const container = document.getElementById('activeSOSList');
-      if (alertasSOS.length === 0) {
-        container.innerHTML = `<p class="text-slate-400 italic">No hay alertas activas.</p>`;
-        return;
-      }
-
-      container.innerHTML = alertasSOS.map(s => `
-        <div class="p-3 bg-red-50 border border-red-200 rounded-xl">
-          <p class="font-bold text-red-600">${s.tipoEmergencia}</p>
-          <p class="text-slate-800 font-semibold">${s.vehiculo} (${s.placa})</p>
-          <p class="text-slate-500 text-[11px]">${s.mensaje || 'Solicita auxilio'}</p>
-        </div>
-      `).join('');
-    }
-
-    function calculateTripRoute() {
-      const origen = document.getElementById('tripOrigen').value;
-      const destino = document.getElementById('tripDestino').value;
-
-      if (origen === destino) {
-        showToast("Selecciona ciudades distintas.", "error");
-        return;
-      }
-
-      document.getElementById('tripTotalKm').innerText = `320 km`;
-      document.getElementById('tripStopsCount').innerText = '1 Carga sugerida';
-
-      document.getElementById('tripStopsList').innerHTML = `
-        <div class="p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs">
-          <p class="font-bold text-amber-800 mb-1">Parada Sugerida:</p>
-          <p class="text-slate-900 font-semibold">Mavesa Santo Domingo, Ecuador</p>
-        </div>
-      `;
-
-      const gmapsUrl = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(origen + ', Ecuador')}&destination=${encodeURIComponent(destino + ', Ecuador')}&waypoints=${encodeURIComponent('Mavesa Santo Domingo, Ecuador')}`;
-      document.getElementById('btnOpenGoogleMapsTrip').href = gmapsUrl;
-
-      document.getElementById('tripResultContainer').classList.remove('hidden');
+      showToast('¡Punto registrado! Subiendo a la nube...', 'success');
+      
+      fetch(apiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({ action: 'addPoint', data: newP })
+      }).then(() => fetchDataFromBackend());
     }
 
     function fetchDataFromBackend() {
       fetch(apiUrl + '?action=getAll')
         .then(res => res.json())
         .then(data => {
-          if (data.success && data.puntos) {
-            data.puntos.forEach(cloudP => {
-              const idx = puntosCarga.findIndex(p => p.ID_PUNTO === cloudP.ID_PUNTO);
-              if (idx > -1) puntosCarga[idx] = cloudP;
-              else puntosCarga.push(cloudP);
+          if (data.success) {
+            // Incorporar puntos extra de la nube que no estén en la base nativa
+            if (data.puntos && data.puntos.length > 0) {
+              data.puntos.forEach(cloudP => {
+                const idx = puntosCarga.findIndex(p => p.ID_PUNTO === cloudP.ID_PUNTO);
+                if (idx === -1 && cloudP.LATITUD && cloudP.LONGITUD) {
+                  puntosCarga.push(cloudP);
+                }
+              });
+            }
+
+            // Resetear estados a libre temporalmente
+            puntosCarga.forEach(p => {
+              p.ESTADO_ACTUAL = 'OPERATIVO';
+              p.OCUPADO_POR_PLACA = '';
             });
+
+            // Aplicar estados de ocupación/reserva reales
+            if (data.estados && data.estados.length > 0) {
+              data.estados.forEach(est => {
+                const idx = puntosCarga.findIndex(p => p.ID_PUNTO === est.ID_PUNTO);
+                if (idx > -1) {
+                  puntosCarga[idx].ESTADO_ACTUAL = est.ESTADO;
+                  puntosCarga[idx].OCUPADO_POR_PLACA = est.PLACA;
+                }
+              });
+            }
             renderMapMarkers();
+            
+            // Actualizar panel si está abierto
+            const sheet = document.getElementById('chargerBottomSheet');
+            if (currentOpenPuntoId && !sheet.classList.contains('translate-y-full')) {
+              const updatedPunto = puntosCarga.find(p => p.ID_PUNTO === currentOpenPuntoId);
+              if (updatedPunto) openChargerSheet(updatedPunto); 
+            }
           }
         })
-        .catch(() => {});
+        .catch(err => console.log('Sincronizando de forma silente...'));
     }
   </script>
 </body>

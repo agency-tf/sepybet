@@ -52,7 +52,7 @@
             opacity: 0.95;
         }
 
-        /* Etiquetas (Tags) UI */
+        /* Etiquetas UI */
         .wa-tag {
             display: inline-flex;
             align-items: center;
@@ -62,11 +62,8 @@
             font-weight: 600;
             color: white;
             margin-right: 4px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
-        .tag-nuevo { background-color: #3b82f6; } 
-        .tag-prospecto { background-color: #f59e0b; }
-        .tag-vip { background-color: #8b5cf6; } 
-        .tag-cliente { background-color: #10b981; }
 
         .chat-hover:hover { background-color: #f5f6f6; }
         .chat-active { background-color: #f0f2f5; }
@@ -82,55 +79,43 @@
         .toast-enter { transform: translateY(100%); opacity: 0; transition: all 0.3s ease-out; }
         .toast-enter-active { transform: translateY(0); opacity: 1; }
 
-        /* Estilos de grabación de audio */
-        @keyframes pulse-red {
-            0% { opacity: 1; }
-            50% { opacity: 0.3; }
-            100% { opacity: 1; }
-        }
+        @keyframes pulse-red { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
         .recording-indicator { animation: pulse-red 1.5s infinite; }
     </style>
 </head>
 <body class="h-screen w-screen overflow-hidden flex items-center justify-center text-[#111b21] bg-[#d1d7db] xl:p-4">
 
-    <!-- PWA Setup Dinámico -->
     <script>
         const manifest = {
-            name: "CRM WhatsApp Pro",
-            short_name: "CRM WaPro",
-            display: "standalone",
-            background_color: "#f0f2f5",
-            theme_color: "#00a884",
+            name: "CRM WhatsApp Pro", short_name: "CRM WaPro", display: "standalone",
+            background_color: "#f0f2f5", theme_color: "#00a884",
             icons: [{ src: "https://cdn-icons-png.flaticon.com/512/124/124034.png", sizes: "512x512", type: "image/png" }]
         };
-        const stringManifest = JSON.stringify(manifest);
-        const blob = new Blob([stringManifest], {type: 'application/json'});
-        const manifestURL = URL.createObjectURL(blob);
-        document.querySelector('head').insertAdjacentHTML('beforeend', `<link rel="manifest" href="${manifestURL}">`);
+        const blob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
+        document.querySelector('head').insertAdjacentHTML('beforeend', `<link rel="manifest" href="${URL.createObjectURL(blob)}">`);
     </script>
 
-    <!-- Toasts (Notificaciones) -->
     <div id="toast-container" class="fixed top-4 right-4 z-[9999] flex flex-col gap-2 pointer-events-none w-[90%] md:w-auto max-w-sm mx-auto left-0 md:left-auto pt-safe pl-safe pr-safe"></div>
 
     <!-- OVERLAY DEL DRAWER -->
     <div id="drawer-overlay" class="fixed inset-0 bg-black/60 z-[90] hidden opacity-0 transition-opacity duration-300 backdrop-blur-sm" onclick="toggleDrawer()"></div>
 
-    <!-- DRAWER / MENÚ LATERAL OSCURO -->
     <div id="main-drawer" class="fixed inset-y-0 left-0 w-[85vw] max-w-[320px] bg-[#111b21] shadow-2xl transform -translate-x-full transition-transform duration-300 ease-out z-[100] flex flex-col pb-safe">
-        <!-- Drawer Header -->
         <div class="header-safe-height min-h-[150px] bg-[#202c33] p-5 flex flex-col justify-end relative shadow-md">
             <button onclick="toggleDrawer()" class="absolute top-4 right-4 mt-safe text-[#8696a0] hover:text-white p-2 rounded-full transition bg-white/5"><i class="fa-solid fa-xmark text-xl"></i></button>
             <div class="w-14 h-14 bg-[#00a884] rounded-full flex items-center justify-center text-white text-2xl font-bold mb-3 border-2 border-[#111b21]" id="drawer-initial">U</div>
             <div class="text-[#e9edef] font-semibold text-lg leading-tight" id="drawer-user-name">Usuario</div>
             <div class="text-[#8696a0] text-xs mt-1 flex items-center gap-1"><i class="fa-solid fa-shield-halved text-[10px]"></i> Administrador CRM</div>
         </div>
-        <!-- Drawer Menu -->
         <div class="flex-1 overflow-y-auto py-2 space-y-0.5">
             <button onclick="navTo('chats')" class="w-full text-left px-6 py-3.5 text-[#d1d7db] hover:bg-[#202c33] active:bg-[#202c33] transition flex items-center gap-4 text-[15px]">
                 <i class="fa-solid fa-message text-[#8696a0] w-5 text-center text-lg"></i> Chats Activos
             </button>
             <button onclick="openContactsPanel()" class="w-full text-left px-6 py-3.5 text-[#d1d7db] hover:bg-[#202c33] active:bg-[#202c33] transition flex items-center gap-4 text-[15px]">
                 <i class="fa-solid fa-users text-[#8696a0] w-5 text-center text-lg"></i> Todos los Contactos
+            </button>
+            <button onclick="navTo('tags-manager')" class="w-full text-left px-6 py-3.5 text-[#d1d7db] hover:bg-[#202c33] active:bg-[#202c33] transition flex items-center gap-4 text-[15px]">
+                <i class="fa-solid fa-tags text-[#8696a0] w-5 text-center text-lg"></i> Mis Etiquetas <span class="ml-auto bg-[#00a884] text-white text-[10px] px-2 py-0.5 rounded-full font-bold">NUEVO</span>
             </button>
             <button onclick="navTo('quick-replies')" class="w-full text-left px-6 py-3.5 text-[#d1d7db] hover:bg-[#202c33] active:bg-[#202c33] transition flex items-center gap-4 text-[15px]">
                 <i class="fa-solid fa-bolt text-[#00a884] w-5 text-center text-lg"></i> Respuestas Rápidas
@@ -141,14 +126,9 @@
             <button onclick="navTo('bulk')" class="w-full text-left px-6 py-3.5 text-[#d1d7db] hover:bg-[#202c33] active:bg-[#202c33] transition flex items-center gap-4 text-[15px]">
                 <i class="fa-solid fa-bullhorn text-[#8696a0] w-5 text-center text-lg"></i> Envíos Masivos
             </button>
-            <button onclick="navTo('templates')" class="w-full text-left px-6 py-3.5 text-[#d1d7db] hover:bg-[#202c33] active:bg-[#202c33] transition flex items-center gap-4 text-[15px]">
-                <i class="fa-solid fa-layer-group text-[#8696a0] w-5 text-center text-lg"></i> Plantillas Meta
-            </button>
-            
             <div class="border-t border-[#222e35] my-2 mx-4"></div>
-            
             <button onclick="navTo('config')" class="w-full text-left px-6 py-3.5 text-[#d1d7db] hover:bg-[#202c33] active:bg-[#202c33] transition flex items-center gap-4 text-[15px]">
-                <i class="fa-solid fa-gear text-[#8696a0] w-5 text-center text-lg"></i> Configurar API
+                <i class="fa-solid fa-cloud text-[#8696a0] w-5 text-center text-lg"></i> Configurar API (Nube)
             </button>
             <button onclick="logout()" class="w-full text-left px-6 py-3.5 text-[#ef4444] hover:bg-[#202c33] active:bg-[#202c33] transition flex items-center gap-4 text-[15px]">
                 <i class="fa-solid fa-right-from-bracket w-5 text-center text-lg"></i> Cerrar Sesión
@@ -156,7 +136,6 @@
         </div>
     </div>
 
-    <!-- PANTALLA DE LOGIN -->
     <div id="login-screen" class="fixed inset-0 bg-[#f0f2f5] z-[200] flex flex-col items-center justify-center p-4">
         <div class="mb-8 flex flex-col items-center text-center">
             <i class="fa-brands fa-whatsapp text-[#25d366] text-[70px] mb-4 drop-shadow-md"></i>
@@ -168,28 +147,23 @@
             <div class="space-y-4">
                 <div>
                     <label class="block text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Usuario</label>
-                    <input type="text" id="login-user" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:border-[#00a884] focus:ring-1 focus:ring-[#00a884] outline-none transition-all text-[15px]">
+                    <input type="text" id="login-user" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:border-[#00a884] outline-none text-[15px]">
                 </div>
                 <div>
                     <label class="block text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Clave (PIN)</label>
-                    <input type="password" id="login-pass" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:border-[#00a884] focus:ring-1 focus:ring-[#00a884] outline-none transition-all text-[15px]">
+                    <input type="password" id="login-pass" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:border-[#00a884] outline-none text-[15px]">
                 </div>
-                <button onclick="attemptLogin()" class="w-full bg-[#00a884] hover:bg-[#008f6f] text-white font-semibold py-3.5 px-4 rounded-xl transition shadow-md flex justify-center items-center gap-2 mt-2 active:scale-95">
+                <button onclick="attemptLogin()" class="w-full bg-[#00a884] text-white font-semibold py-3.5 rounded-xl transition shadow-md active:scale-95">
                     <span id="login-btn-text">Ingresar al Sistema</span>
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- CONTENEDOR PRINCIPAL -->
     <div id="main-app" class="hidden w-full h-full xl:max-w-[1600px] xl:h-[95vh] xl:shadow-2xl xl:rounded-xl bg-white flex relative overflow-hidden">
         
-        <!-- ========================================== -->
-        <!-- PANEL IZQUIERDO (Lista de Chats) -->
-        <!-- ========================================== -->
+        <!-- PANEL IZQUIERDO -->
         <div id="left-panel" class="w-full md:w-[400px] lg:w-[420px] border-r border-[#d1d7db] flex flex-col bg-white flex-shrink-0 relative z-10 h-full">
-            
-            <!-- Header Izquierdo -->
             <div class="header-safe-height bg-[#f0f2f5] flex items-center justify-between px-3 border-b border-[#d1d7db] flex-shrink-0">
                 <div class="flex items-center gap-1">
                     <button onclick="toggleDrawer()" class="w-10 h-10 rounded-full active:bg-gray-200 flex items-center justify-center transition text-[#54656f] text-xl">
@@ -198,36 +172,28 @@
                     <div class="w-8 h-8 bg-[#dfe5e7] rounded-full flex items-center justify-center text-[#54656f] font-bold ml-1 border border-gray-300" id="header-avatar">U</div>
                 </div>
                 <div class="flex gap-0.5 text-[#54656f]">
-                    <button class="w-10 h-10 rounded-full active:bg-gray-200 flex items-center justify-center transition"><i class="fa-solid fa-circle-notch text-lg"></i></button>
+                    <button class="w-10 h-10 rounded-full active:bg-gray-200 flex items-center justify-center transition" onclick="loadBaseData()"><i class="fa-solid fa-rotate-right text-lg"></i></button>
                     <button onclick="openContactsPanel()" class="w-10 h-10 rounded-full active:bg-gray-200 flex items-center justify-center transition text-[#00a884]"><i class="fa-solid fa-comment-medical text-lg"></i></button>
                 </div>
             </div>
 
-            <!-- Buscador -->
+            <!-- Buscador y Filtros Simplificados -->
             <div class="bg-white border-b border-[#f0f2f5] p-2 flex-shrink-0">
-                <div class="bg-[#f0f2f5] rounded-xl flex items-center px-4 py-1.5 h-[40px]">
+                <div class="bg-[#f0f2f5] rounded-xl flex items-center px-4 py-1.5 h-[40px] mb-2">
                     <i class="fa-solid fa-magnifying-glass text-[#54656f] mr-3 text-sm"></i>
-                    <input type="text" id="search-chat" onkeyup="filterChats()" class="bg-transparent w-full text-[14px] focus:outline-none text-[#111b21] placeholder-[#667781]" placeholder="Buscar chat activo...">
+                    <input type="text" id="search-chat" onkeyup="filterChats()" class="bg-transparent w-full text-[14px] outline-none text-[#111b21]" placeholder="Buscar chat activo...">
                 </div>
-                <!-- Filtros -->
-                <div class="flex gap-2 mt-2.5 overflow-x-auto no-scrollbar pb-1 px-1">
-                    <button onclick="filterByTag('all')" class="px-4 py-1 rounded-full bg-[#f0f2f5] text-[12px] font-medium text-[#54656f] active:bg-gray-200 whitespace-nowrap transition">Todos</button>
-                    <button onclick="filterByTag('nuevo')" class="px-4 py-1 rounded-full bg-blue-50 text-blue-600 text-[12px] font-medium active:bg-blue-100 whitespace-nowrap transition">Nuevos</button>
-                    <button onclick="filterByTag('prospecto')" class="px-4 py-1 rounded-full bg-orange-50 text-orange-600 text-[12px] font-medium active:bg-orange-100 whitespace-nowrap transition">Prospectos</button>
-                    <button onclick="filterByTag('vip')" class="px-4 py-1 rounded-full bg-purple-50 text-purple-600 text-[12px] font-medium active:bg-purple-100 whitespace-nowrap transition">VIP</button>
+                <div class="flex gap-2 px-1">
+                    <button id="btn-filter-all" onclick="setMainFilter('all')" class="flex-1 py-1.5 rounded-full bg-green-50 text-green-700 font-semibold text-[13px] transition border border-green-200">Todos</button>
+                    <button id="btn-filter-unread" onclick="setMainFilter('unread')" class="flex-1 py-1.5 rounded-full bg-[#f0f2f5] text-[#54656f] font-medium text-[13px] transition border border-transparent">No leídos</button>
                 </div>
             </div>
 
-            <!-- Lista de Chats Activos -->
             <div id="chat-list" class="flex-1 overflow-y-auto bg-white pb-safe no-scrollbar">
-                <div class="text-center text-[#667781] mt-10 text-sm flex flex-col items-center">
-                    <i class="fa-solid fa-circle-notch fa-spin text-2xl mb-2 text-[#00a884]"></i> Cargando chats...
-                </div>
+                <div class="text-center text-[#667781] mt-10 text-sm"><i class="fa-solid fa-circle-notch fa-spin text-2xl mb-2 text-[#00a884]"></i><br>Cargando chats...</div>
             </div>
 
-            <!-- ===================== PANELES SECUNDARIOS ===================== -->
-            
-            <!-- Panel: Lista Completa (Nuevo Chat) -->
+            <!-- Panel: Nuevo Chat (Lista Completa) -->
             <div id="panel-all-contacts" class="absolute inset-0 bg-white slide-panel flex flex-col h-full z-20">
                 <div class="header-safe-height bg-[#008069] flex items-center px-2 text-white flex-shrink-0 shadow-sm">
                     <button onclick="closePanels()" class="p-2.5 rounded-full active:bg-black/20 transition mr-2"><i class="fa-solid fa-arrow-left text-lg"></i></button>
@@ -236,13 +202,35 @@
                 <div class="bg-white border-b border-[#f0f2f5] p-2 flex-shrink-0">
                     <div class="bg-[#f0f2f5] rounded-xl flex items-center px-4 py-1.5 h-[40px]">
                         <i class="fa-solid fa-magnifying-glass text-[#54656f] mr-3 text-sm"></i>
-                        <input type="text" id="search-new-contact" onkeyup="renderFullContactsList()" class="bg-transparent w-full text-[14px] focus:outline-none text-[#111b21]" placeholder="Buscar en base de datos...">
+                        <input type="text" id="search-new-contact" onkeyup="renderFullContactsList()" class="bg-transparent w-full text-[14px] outline-none text-[#111b21]" placeholder="Buscar en toda la base de datos...">
                     </div>
                 </div>
                 <div class="flex-1 overflow-y-auto bg-white pb-safe" id="full-contacts-list"></div>
             </div>
 
-            <!-- Panel: Respuestas Rápidas (NUEVO) -->
+            <!-- Panel: Creador de Etiquetas (NUEVO) -->
+            <div id="panel-tags-manager" class="absolute inset-0 bg-[#f0f2f5] slide-panel flex flex-col h-full z-20">
+                <div class="header-safe-height bg-[#008069] flex items-center px-2 text-white flex-shrink-0 shadow-sm">
+                    <button onclick="closePanels()" class="p-2.5 rounded-full active:bg-black/20 transition mr-2"><i class="fa-solid fa-arrow-left text-lg"></i></button>
+                    <span class="font-medium text-lg">Mis Etiquetas</span>
+                </div>
+                <div class="flex-1 overflow-y-auto p-4 pb-safe space-y-4">
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+                        <h3 class="text-[#111b21] font-semibold mb-1 text-[15px]">Crear Etiqueta Nueva</h3>
+                        <p class="text-[12px] text-[#667781] mb-4">Personaliza tu CRM con etiquetas de colores.</p>
+                        
+                        <div class="flex gap-3 mb-4">
+                            <input type="color" id="new-tag-color" value="#00a884" class="w-12 h-12 rounded-xl border-none cursor-pointer p-0 bg-transparent shrink-0">
+                            <input type="text" id="new-tag-name" placeholder="Ej: Cotizado, Pagado..." class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl text-[14px] outline-none focus:border-[#00a884]">
+                        </div>
+                        <button onclick="saveCustomTag()" class="w-full py-3 bg-[#111b21] text-white rounded-xl font-medium active:scale-95 transition text-[14px] shadow-sm">Crear Etiqueta</button>
+                    </div>
+                    <h4 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 px-1 mt-4">Tus Etiquetas Actuales</h4>
+                    <div id="custom-tags-list" class="space-y-2 pb-6"></div>
+                </div>
+            </div>
+
+            <!-- Panel: Respuestas Rápidas -->
             <div id="panel-quick-replies" class="absolute inset-0 bg-[#f0f2f5] slide-panel flex flex-col h-full z-20">
                 <div class="header-safe-height bg-[#008069] flex items-center px-2 text-white flex-shrink-0 shadow-sm">
                     <button onclick="closePanels()" class="p-2.5 rounded-full active:bg-black/20 transition mr-2"><i class="fa-solid fa-arrow-left text-lg"></i></button>
@@ -251,14 +239,11 @@
                 <div class="flex-1 overflow-y-auto p-4 pb-safe space-y-4">
                     <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
                         <h3 class="text-[#111b21] font-semibold mb-1 text-[15px]">Crear Nueva Respuesta</h3>
-                        <p class="text-[12px] text-[#667781] mb-4">Usa el símbolo "/" (ej. /hola) para activarlo rápido en el chat.</p>
-                        
-                        <input type="text" id="qr-shortcut" placeholder="Ej: /bienvenida" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl mb-3 text-[14px] outline-none focus:border-[#00a884] font-mono text-[#00a884]">
-                        <textarea id="qr-message" placeholder="Texto del mensaje largo aquí..." rows="3" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl mb-4 text-[14px] outline-none focus:border-[#00a884] resize-none"></textarea>
-                        
-                        <button onclick="saveQuickReply()" class="w-full py-3 bg-[#00a884] text-white rounded-xl font-medium active:bg-[#008f6f] transition text-[14px] shadow-sm">Guardar Respuesta</button>
+                        <p class="text-[12px] text-[#667781] mb-4">Usa el símbolo "/" (ej. /hola) en el chat.</p>
+                        <input type="text" id="qr-shortcut" placeholder="Ej: /bienvenida" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl mb-3 text-[14px] outline-none font-mono text-[#00a884]">
+                        <textarea id="qr-message" placeholder="Texto del mensaje largo aquí..." rows="3" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl mb-4 text-[14px] outline-none resize-none"></textarea>
+                        <button onclick="saveQuickReply()" class="w-full py-3 bg-[#00a884] text-white rounded-xl font-medium active:scale-95 transition text-[14px] shadow-sm">Guardar Respuesta</button>
                     </div>
-                    <h4 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 px-1">Tus Respuestas Rápidas</h4>
                     <div id="quick-replies-list" class="space-y-3 pb-6"></div>
                 </div>
             </div>
@@ -272,9 +257,9 @@
                 <div class="flex-1 overflow-y-auto p-4 pb-safe space-y-4">
                     <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
                         <h3 class="text-[#111b21] font-semibold mb-1 text-[15px]"><i class="fa-solid fa-upload text-green-600 mr-2"></i>Importar Excel (.xlsx)</h3>
-                        <p class="text-[13px] text-[#667781] mb-4">Sube un Excel. Guardaremos los nombres y números automáticamente.</p>
+                        <p class="text-[13px] text-[#667781] mb-4">Sube ilimitados contactos. Sistema guarda en lotes y evita duplicados.</p>
                         <input type="file" id="excel-upload" accept=".xlsx, .xls, .csv" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-green-50 file:text-green-700 active:file:bg-green-100 cursor-pointer mb-4">
-                        <button onclick="procesarExcelInteligente()" class="w-full py-3 bg-[#00a884] text-white rounded-xl font-medium active:bg-[#008f6f] transition text-[14px] shadow-sm">Procesar Excel</button>
+                        <button onclick="procesarExcelInteligente()" class="w-full py-3 bg-[#00a884] text-white rounded-xl font-medium active:scale-95 transition text-[14px] shadow-sm">Procesar y Subir</button>
                     </div>
                     <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 text-center">
                         <div class="text-[32px] font-bold text-[#111b21] mb-1" id="stat-total-contacts">0</div>
@@ -286,65 +271,17 @@
                 </div>
             </div>
 
-            <!-- Panel: Envíos Masivos (Bulk) -->
-            <div id="panel-bulk" class="absolute inset-0 bg-[#f0f2f5] slide-panel flex flex-col h-full z-20">
-                <div class="header-safe-height bg-[#008069] flex items-center px-2 text-white flex-shrink-0 shadow-sm">
-                    <button onclick="closePanels()" class="p-2.5 rounded-full active:bg-black/20 transition mr-2"><i class="fa-solid fa-arrow-left text-lg"></i></button>
-                    <span class="font-medium text-lg">Envíos Masivos</span>
-                </div>
-                <div class="flex-1 overflow-y-auto p-4 pb-safe">
-                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 space-y-4">
-                        <div class="bg-blue-50 text-blue-800 text-[12px] p-3 rounded-xl border border-blue-100 flex gap-2">
-                            <i class="fa-solid fa-circle-info mt-0.5"></i>
-                            <p>Usa Plantillas Aprobadas por Meta para iniciar conversaciones nuevas.</p>
-                        </div>
-                        <div>
-                            <label class="block text-[13px] font-bold text-gray-600 mb-1.5">Plantilla a enviar</label>
-                            <select id="bulk-template" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl text-[14px] outline-none focus:border-[#00a884]"></select>
-                        </div>
-                        <div>
-                            <label class="block text-[13px] font-bold text-gray-600 mb-1.5">Grupo Objetivo</label>
-                            <select id="bulk-tag" onchange="calcularAudienciaBulk()" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl text-[14px] outline-none focus:border-[#00a884]">
-                                <option value="">Seleccionar grupo...</option>
-                                <option value="all">Todos los contactos</option>
-                                <option value="nuevo">Etiqueta: Nuevos</option>
-                                <option value="prospecto">Etiqueta: Prospectos</option>
-                                <option value="vip">Etiqueta: VIP</option>
-                            </select>
-                        </div>
-                        <div class="flex gap-3">
-                            <div class="flex-1">
-                                <label class="block text-[12px] font-bold text-gray-500 mb-1 text-center">Delay (ms)</label>
-                                <input type="number" id="bulk-delay" value="3500" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-[14px] text-center font-mono">
-                            </div>
-                            <div class="flex-1 bg-green-50 rounded-xl border border-green-100 flex flex-col justify-center items-center p-2">
-                                <span class="text-[10px] font-bold text-green-700 uppercase">A enviar</span>
-                                <span id="bulk-count" class="font-bold text-[18px] text-green-800">0</span>
-                            </div>
-                        </div>
-
-                        <div id="bulk-progress-ui" class="hidden pt-2">
-                            <div class="flex justify-between text-[11px] font-bold text-[#54656f] mb-1.5">
-                                <span>Progreso</span><span id="bulk-progress-text">0%</span>
-                            </div>
-                            <div class="w-full bg-gray-200 rounded-full h-2 overflow-hidden"><div id="bulk-progress-bar" class="bg-[#00a884] h-full transition-all duration-300 w-0"></div></div>
-                        </div>
-
-                        <button id="btn-start-bulk" onclick="startBulkMessaging()" class="w-full py-3.5 mt-2 bg-[#00a884] text-white rounded-xl font-bold active:bg-[#008f6f] transition text-[14px] shadow-sm flex items-center justify-center gap-2 active:scale-95">
-                            <i class="fa-solid fa-paper-plane"></i> Iniciar Campaña
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Panel: Configuración -->
+            <!-- Panel: Configuración API Nube -->
             <div id="panel-config" class="absolute inset-0 bg-[#f0f2f5] slide-panel flex flex-col h-full z-20">
                 <div class="header-safe-height bg-[#008069] flex items-center px-2 text-white flex-shrink-0 shadow-sm">
                     <button onclick="closePanels()" class="p-2.5 rounded-full active:bg-black/20 transition mr-2"><i class="fa-solid fa-arrow-left text-lg"></i></button>
-                    <span class="font-medium text-lg">Ajustes API</span>
+                    <span class="font-medium text-lg">Ajustes API (Nube)</span>
                 </div>
                 <div class="flex-1 overflow-y-auto p-4 pb-safe">
                     <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 space-y-4">
+                        <div class="bg-blue-50 text-blue-800 text-[12px] p-3 rounded-xl mb-2">
+                            <i class="fa-solid fa-cloud mr-1"></i> Estos datos se guardan en la nube para que todo tu equipo comparta la misma conexión de Meta.
+                        </div>
                         <div>
                             <label class="block text-[12px] font-bold text-gray-500 uppercase mb-1.5">Meta API Token</label>
                             <input type="password" id="config-token" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl text-[13px] font-mono outline-none">
@@ -353,77 +290,49 @@
                             <label class="block text-[12px] font-bold text-gray-500 uppercase mb-1.5">Phone Number ID</label>
                             <input type="text" id="config-phone-id" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl text-[14px] font-mono outline-none">
                         </div>
-                        <button onclick="saveMetaConfig()" class="w-full py-3.5 mt-2 bg-[#111b21] text-white rounded-xl font-bold active:bg-black transition text-[14px] shadow-sm active:scale-95">Guardar Cambios</button>
+                        <button onclick="saveMetaConfigCloud()" id="btn-save-cloud" class="w-full py-3.5 mt-2 bg-[#111b21] text-white rounded-xl font-bold active:scale-95 transition text-[14px] shadow-sm">Guardar en la Nube</button>
                     </div>
                 </div>
             </div>
             
-            <!-- Panel: Plantillas (Mini versión para Meta Templates) -->
-            <div id="panel-templates" class="absolute inset-0 bg-[#f0f2f5] slide-panel flex flex-col h-full z-20">
-                <div class="header-safe-height bg-[#008069] flex items-center px-2 text-white flex-shrink-0 shadow-sm">
-                    <button onclick="closePanels()" class="p-2.5 rounded-full active:bg-black/20 transition mr-2"><i class="fa-solid fa-arrow-left text-lg"></i></button>
-                    <span class="font-medium text-lg">Plantillas Meta</span>
-                </div>
-                <div class="flex-1 overflow-y-auto p-4 pb-safe">
-                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 mb-4 text-center text-sm text-gray-600">
-                        Gestiona tus plantillas de envíos masivos.
-                    </div>
-                </div>
+            <div id="panel-bulk" class="absolute inset-0 bg-[#f0f2f5] slide-panel flex flex-col h-full z-20">
+                <div class="header-safe-height bg-[#008069] flex items-center px-2 text-white flex-shrink-0 shadow-sm"><button onclick="closePanels()" class="p-2.5 rounded-full active:bg-black/20 transition mr-2"><i class="fa-solid fa-arrow-left text-lg"></i></button><span class="font-medium text-lg">Envíos Masivos</span></div>
+                <div class="flex-1 p-6 text-center text-gray-500">Módulo en preparación.</div>
             </div>
         </div>
 
-        <!-- ========================================== -->
-        <!-- PANEL DERECHO (Área de Chat - Móvil Native Swipe) -->
-        <!-- ========================================== -->
+        <!-- PANEL DERECHO (Chat) -->
         <div id="chat-area" class="absolute md:relative inset-0 flex-1 flex flex-col bg-whatsapp-doodles w-full h-full z-[45] md:z-10 transform translate-x-full md:translate-x-0 transition-transform duration-300 ease-out shadow-2xl md:shadow-none">
             
-            <!-- Splash Screen (Fondo default) -->
             <div id="no-chat-selected" class="absolute inset-0 flex flex-col items-center justify-center bg-[#f0f2f5] z-20 border-b-[6px] border-[#25d366]">
                 <img src="https://cdn-icons-png.flaticon.com/512/124/124034.png" class="w-32 md:w-48 opacity-[0.06] mb-6 grayscale">
                 <h2 class="text-[24px] md:text-[32px] font-light text-[#41525d] mb-2 text-center">WhatsApp CRM</h2>
-                <p class="text-[#667781] text-[13px] text-center max-w-sm px-6">Envía y recibe mensajes sin mantener tu teléfono conectado.</p>
+                <p class="text-[#667781] text-[13px] text-center max-w-sm px-6">Selecciona un chat activo o presiona el botón <i class="fa-solid fa-comment-medical mx-1"></i> para buscar un contacto nuevo.</p>
             </div>
 
-            <!-- Chat Header -->
             <div id="chat-header" class="header-safe-height bg-[#f0f2f5] flex items-center px-1 md:px-3 border-b border-[#d1d7db] z-10 hidden shadow-sm flex-shrink-0">
-                <button class="md:hidden text-[#54656f] p-2 mx-1 rounded-full active:bg-gray-200 transition" onclick="closeChatMobile()">
-                    <i class="fa-solid fa-arrow-left text-lg"></i>
-                </button>
-                <div class="w-10 h-10 bg-[#dfe5e7] rounded-full flex items-center justify-center overflow-hidden mr-3 border border-gray-200 flex-shrink-0 shadow-sm cursor-pointer" onclick="toggleTagsModal()">
-                    <i class="fa-solid fa-user text-gray-400 text-xl"></i>
-                </div>
+                <button class="md:hidden text-[#54656f] p-2 mx-1 rounded-full active:bg-gray-200 transition" onclick="closeChatMobile()"><i class="fa-solid fa-arrow-left text-lg"></i></button>
+                <div class="w-10 h-10 bg-[#dfe5e7] rounded-full flex items-center justify-center overflow-hidden mr-3 border border-gray-200 flex-shrink-0 shadow-sm cursor-pointer" onclick="toggleTagsModal()"><i class="fa-solid fa-user text-gray-400 text-xl"></i></div>
                 <div class="flex-1 min-w-0 cursor-pointer py-1" onclick="toggleTagsModal()">
                     <h3 id="chat-header-name" class="font-medium text-[#111b21] text-[15px] md:text-[16px] truncate leading-tight">Contacto</h3>
-                    <div id="chat-header-phone" class="text-[11px] md:text-[12px] text-[#667781] truncate mt-0.5">Toca para etiquetas</div>
+                    <div id="chat-header-phone" class="text-[11px] md:text-[12px] text-[#667781] truncate mt-0.5">Toca para asignar etiquetas</div>
                 </div>
                 <div class="flex gap-1 text-[#54656f] pr-2">
                     <button onclick="toggleTagsModal()" class="w-10 h-10 rounded-full active:bg-gray-200 flex items-center justify-center transition text-[#00a884]"><i class="fa-solid fa-tag"></i></button>
                 </div>
             </div>
 
-            <!-- Área de Mensajes -->
-            <div id="messages-container" class="flex-1 overflow-y-auto p-3 md:p-6 space-y-1 z-10 hidden flex-col scroll-smooth pb-4 relative">
-                <!-- Inyectado JS -->
-            </div>
+            <div id="messages-container" class="flex-1 overflow-y-auto p-3 md:p-6 space-y-1 z-10 hidden flex-col scroll-smooth pb-4 relative"></div>
 
-            <!-- Modal Flotante de Respuestas Rápidas (Sobre el chat) -->
             <div id="quick-replies-popover" class="hidden absolute bottom-[70px] left-2 md:left-4 z-[50] bg-white rounded-2xl shadow-2xl border border-gray-200 w-[90%] md:w-[350px] max-h-[40vh] overflow-y-auto p-2">
                 <div class="text-[11px] font-bold text-gray-400 uppercase tracking-wider px-3 pt-2 pb-1">Respuestas Rápidas</div>
-                <div id="qr-popover-list" class="space-y-1">
-                    <!-- Respuestas inyectadas via JS -->
-                </div>
+                <div id="qr-popover-list" class="space-y-1"></div>
             </div>
 
-            <!-- Input Footer (Safe Area bottom) -->
             <div id="chat-input-area" class="bg-[#f0f2f5] px-2 md:px-4 py-2 flex items-end gap-1.5 z-10 hidden flex-shrink-0 pb-safe">
-                
-                <!-- Opciones Multimedia & Respuestas Rápidas -->
                 <div class="flex gap-0.5 pb-1 text-[#54656f] relative">
-                    <button class="w-10 h-10 rounded-full active:bg-gray-200 flex items-center justify-center text-xl transition"><i class="fa-regular fa-face-smile"></i></button>
                     <button class="w-10 h-10 rounded-full active:bg-gray-200 flex items-center justify-center text-xl transition" onclick="document.getElementById('file-upload').click()"><i class="fa-solid fa-paperclip"></i></button>
-                    <!-- NUEVO BOTÓN: Respuestas Rápidas (Rayo) -->
                     <button class="w-10 h-10 rounded-full active:bg-gray-200 flex items-center justify-center text-xl transition text-[#00a884]" onclick="toggleQuickRepliesPopover()"><i class="fa-solid fa-bolt"></i></button>
-                    
                     <input type="file" id="file-upload" class="hidden" accept="image/*, .pdf" onchange="handleFileUpload(event)">
                 </div>
 
@@ -432,48 +341,33 @@
                         <i class="fa-solid fa-microphone text-red-500 recording-indicator"></i>
                         <span class="text-sm font-mono text-red-500 font-medium" id="record-time">0:00</span>
                         <div class="flex-1"></div>
-                        <button onclick="cancelRecording()" class="text-gray-400 text-xs uppercase font-bold tracking-wide active:text-red-500 mr-2">Cancelar</button>
+                        <button onclick="cancelRecording()" class="text-gray-400 text-xs uppercase font-bold active:text-red-500 mr-2">Cancelar</button>
                     </div>
-                    <textarea id="message-input" class="w-full border-none py-2.5 px-4 resize-none outline-none text-[15px] bg-transparent max-h-[100px] overflow-y-auto leading-relaxed no-scrollbar" placeholder="Escribe un mensaje o '/' para respuestas rápidas" rows="1" oninput="handleInputTextarea(this)"></textarea>
+                    <textarea id="message-input" class="w-full border-none py-2.5 px-4 resize-none outline-none text-[15px] bg-transparent max-h-[100px] overflow-y-auto leading-relaxed no-scrollbar" placeholder="Mensaje o '/' para respuesta rápida..." rows="1" oninput="handleInputTextarea(this)"></textarea>
                 </div>
                 
                 <div class="flex pb-1 pl-1">
                     <button id="btn-send-msg" onclick="sendTextMessage()" class="w-10 h-10 bg-[#00a884] text-white rounded-full flex items-center justify-center text-lg transition hidden shadow-md active:scale-95"><i class="fa-solid fa-paper-plane ml-[-2px]"></i></button>
-                    
-                    <!-- Botón de Audio Nativo -->
-                    <button id="btn-voice-msg" class="w-10 h-10 bg-[#00a884] text-white rounded-full flex items-center justify-center text-lg transition shadow-md active:scale-95 relative" onmousedown="startRecording()" onmouseup="stopRecording()" ontouchstart="startRecording(event)" ontouchend="stopRecording(event)">
-                        <i class="fa-solid fa-microphone"></i>
-                    </button>
+                    <button id="btn-voice-msg" class="w-10 h-10 bg-[#00a884] text-white rounded-full flex items-center justify-center text-lg transition shadow-md active:scale-95 relative" onmousedown="startRecording()" onmouseup="stopRecording()" ontouchstart="startRecording(event)" ontouchend="stopRecording(event)"><i class="fa-solid fa-microphone"></i></button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Modal Etiquetas -->
+    <!-- Modal Etiquetas Dinámicas -->
     <div id="tags-modal" class="fixed inset-0 bg-black/40 z-[200] hidden items-center justify-center backdrop-blur-sm p-4 pt-safe pb-safe transition-opacity">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-[320px] transform scale-95 transition-transform overflow-hidden" id="tags-modal-content">
-            <div class="bg-[#111b21] px-4 py-3.5 flex justify-between items-center">
-                <h2 class="text-white text-[15px] font-medium">Etiquetas</h2>
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-[320px] transform scale-95 transition-transform overflow-hidden flex flex-col max-h-[80vh]" id="tags-modal-content">
+            <div class="bg-[#111b21] px-4 py-3.5 flex justify-between items-center shrink-0">
+                <h2 class="text-white text-[15px] font-medium">Asignar Etiquetas</h2>
                 <button onclick="closeTagsModal()" class="text-gray-400 p-1"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <div class="p-4">
+            <div class="p-4 overflow-y-auto flex-1">
                 <p class="text-[11px] text-gray-500 mb-3 font-bold uppercase tracking-wider truncate" id="tags-contact-name">Contacto</p>
-                <div class="space-y-2">
-                    <label class="flex items-center gap-3 p-2.5 hover:bg-gray-50 rounded-xl cursor-pointer">
-                        <input type="checkbox" value="nuevo" class="tag-checkbox w-4 h-4 text-[#00a884] rounded">
-                        <span class="wa-tag tag-nuevo">Nuevo Cliente</span>
-                    </label>
-                    <label class="flex items-center gap-3 p-2.5 hover:bg-gray-50 rounded-xl cursor-pointer">
-                        <input type="checkbox" value="prospecto" class="tag-checkbox w-4 h-4 text-[#00a884] rounded">
-                        <span class="wa-tag tag-prospecto">Prospecto</span>
-                    </label>
-                    <label class="flex items-center gap-3 p-2.5 hover:bg-gray-50 rounded-xl cursor-pointer">
-                        <input type="checkbox" value="vip" class="tag-checkbox w-4 h-4 text-[#00a884] rounded">
-                        <span class="wa-tag tag-vip">VIP</span>
-                    </label>
+                <div class="space-y-2" id="tags-modal-list">
+                    <!-- Checkboxes inyectados JS -->
                 </div>
             </div>
-            <div class="bg-gray-50 p-4 border-t border-gray-100 flex justify-end gap-2">
+            <div class="bg-gray-50 p-4 border-t border-gray-100 flex justify-end gap-2 shrink-0">
                 <button onclick="closeTagsModal()" class="px-4 py-2 rounded-xl text-gray-600 font-medium text-[13px]">Cancelar</button>
                 <button onclick="saveContactTags()" class="px-5 py-2 bg-[#00a884] text-white rounded-xl font-medium text-[13px] shadow-sm">Guardar</button>
             </div>
@@ -486,39 +380,35 @@
         // ==========================================
         const SUPABASE_URL = "https://sczbgqpcjldtoiehdcwj.supabase.co"; 
         const SUPABASE_KEY = "sb_publishable_lNDEzES_h18uac0hpdO5-w_AHDbG9Ea";
+        let supabaseClient = null, realtimeChannel = null;
+        let currentUser = null, activeContactId = null, activeContactData = null;
         
-        let supabaseClient = null;
-        let realtimeChannel = null;
-
-        let currentUser = null;
-        let activeContactId = null;
-        let activeContactData = null;
+        let allContacts = [];
+        let activeChats = []; // Calculado (Contactos con mensajes)
+        let unreadCounts = {}; // { contacto_id: cantidad }
         
-        let allContacts = []; 
-        let activeChats = []; 
-        let currentTagFilter = 'all';
+        let currentMainFilter = 'all'; // 'all' o 'unread'
         
-        let metaToken = localStorage.getItem('crm_meta_token') || '';
-        let metaPhoneId = localStorage.getItem('crm_meta_phone_id') || '';
-
-        // Respuestas Rápidas Guardadas Localmente
-        let quickReplies = JSON.parse(localStorage.getItem('crm_quick_replies')) || [
-            { id: 1, shortcut: '/hola', text: '¡Hola! Gracias por comunicarte. ¿En qué podemos ayudarte hoy?' },
-            { id: 2, shortcut: '/precios', text: 'Nuestros planes comienzan desde $10 al mes. ¿Te envío el catálogo?' }
+        let metaToken = '', metaPhoneId = '';
+        
+        // Etiquetas Personalizables (Guardadas localmente por simplicidad del manager)
+        let customTags = JSON.parse(localStorage.getItem('crm_custom_tags')) || [
+            { id: 'nuevo', name: 'Nuevo Cliente', color: '#3b82f6' },
+            { id: 'prospecto', name: 'Prospecto', color: '#f59e0b' },
+            { id: 'vip', name: 'VIP', color: '#8b5cf6' }
         ];
 
-        // MediaRecorder State
-        let mediaRecorder = null;
-        let audioChunks = [];
-        let recordInterval = null;
-        let recordSeconds = 0;
-        let isRecording = false;
+        let quickReplies = JSON.parse(localStorage.getItem('crm_quick_replies')) || [
+            { id: 1, shortcut: '/hola', text: '¡Hola! Gracias por comunicarte con nosotros.' }
+        ];
+
+        let mediaRecorder = null, audioChunks = [], recordInterval = null, recordSeconds = 0, isRecording = false;
 
         function showToast(message, type = 'info') {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
             let bg = type === 'error' ? 'bg-[#ef4444]' : (type === 'success' ? 'bg-[#10b981]' : 'bg-[#111b21]');
-            toast.className = `flex items-center gap-3 px-4 py-3 rounded-2xl shadow-xl text-white text-[13px] font-medium ${bg} toast-enter mb-2 border border-black/10`;
+            toast.className = `flex items-center gap-3 px-4 py-3 rounded-2xl shadow-xl text-white text-[13px] font-medium ${bg} toast-enter mb-2`;
             toast.innerHTML = `<span>${message}</span>`;
             container.appendChild(toast);
             setTimeout(() => toast.classList.add('toast-enter-active'), 10);
@@ -528,130 +418,185 @@
         window.onload = function() {
             try {
                 supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-                if (localStorage.getItem('crm_logged_user')) {
-                    currentUser = localStorage.getItem('crm_logged_user');
-                    iniciarApp();
-                }
-            } catch (err) { showToast("Error inicializando BD.", "error"); }
+                if (localStorage.getItem('crm_logged_user')) { currentUser = localStorage.getItem('crm_logged_user'); iniciarApp(); }
+            } catch (err) { showToast("Error de inicialización.", "error"); }
         };
 
         async function attemptLogin() {
-            const user = document.getElementById('login-user').value.trim();
-            const pass = document.getElementById('login-pass').value.trim();
-            const errorDiv = document.getElementById('login-error');
-            const btnText = document.getElementById('login-btn-text');
-            
+            const user = document.getElementById('login-user').value.trim(), pass = document.getElementById('login-pass').value.trim();
+            const errorDiv = document.getElementById('login-error'), btnText = document.getElementById('login-btn-text');
             if (!user || !pass) return (errorDiv.textContent = 'Faltan datos', errorDiv.classList.remove('hidden'));
-            btnText.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>';
-            errorDiv.classList.add('hidden');
-
+            btnText.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>'; errorDiv.classList.add('hidden');
             try {
                 const { data, error } = await supabaseClient.from('usuarios').select('*').eq('usuario', user).eq('clave', pass).single();
                 if (error || !data) throw new Error("Credenciales inválidas");
-                currentUser = data.usuario;
-                localStorage.setItem('crm_logged_user', currentUser);
-                iniciarApp();
-            } catch (err) {
-                errorDiv.textContent = err.message; errorDiv.classList.remove('hidden');
-                btnText.textContent = 'Ingresar al Sistema';
-            }
+                currentUser = data.usuario; localStorage.setItem('crm_logged_user', currentUser); iniciarApp();
+            } catch (err) { errorDiv.textContent = err.message; errorDiv.classList.remove('hidden'); btnText.textContent = 'Ingresar al Sistema'; }
         }
 
-        function iniciarApp() {
+        async function iniciarApp() {
             document.getElementById('login-screen').classList.add('hidden');
             document.getElementById('main-app').classList.remove('hidden');
             document.getElementById('drawer-initial').textContent = currentUser.charAt(0).toUpperCase();
             document.getElementById('header-avatar').textContent = currentUser.charAt(0).toUpperCase();
             document.getElementById('drawer-user-name').textContent = currentUser;
-            document.getElementById('config-token').value = metaToken;
-            document.getElementById('config-phone-id').value = metaPhoneId;
             
-            renderQuickRepliesManager(); // Cargar panel de RR
-            renderQuickRepliesPopover(); // Cargar RR en el chat
-
-            setupRealtimeSubscriptions();
+            await loadCloudConfig(); // Cargar API desde la Nube Supabase
+            
+            renderQuickRepliesManager(); renderQuickRepliesPopover();
+            renderCustomTagsManager();
+            setupRealtimeSubscriptions(); 
             loadBaseData();
         }
-
         function logout() { localStorage.removeItem('crm_logged_user'); window.location.reload(); }
 
-        // ==========================================
-        // UI: NAVIGATION & DRAWER
-        // ==========================================
-        function toggleDrawer() {
-            const drawer = document.getElementById('main-drawer');
-            const overlay = document.getElementById('drawer-overlay');
-            if (drawer.classList.contains('-translate-x-full')) {
-                drawer.classList.remove('-translate-x-full');
-                overlay.classList.remove('hidden');
-                setTimeout(() => overlay.classList.remove('opacity-0'), 10);
-            } else {
-                drawer.classList.add('-translate-x-full');
-                overlay.classList.add('opacity-0');
-                setTimeout(() => overlay.classList.add('hidden'), 300);
-            }
+        // --- NUBE API CONFIG ---
+        async function loadCloudConfig() {
+            try {
+                const { data, error } = await supabaseClient.from('configuracion').select('*');
+                if (data) {
+                    data.forEach(item => {
+                        if(item.key === 'meta_token') metaToken = item.value;
+                        if(item.key === 'meta_phone_id') metaPhoneId = item.value;
+                    });
+                    document.getElementById('config-token').value = metaToken;
+                    document.getElementById('config-phone-id').value = metaPhoneId;
+                }
+            } catch(e) { console.log("Tabla de config no existe aún o sin permisos"); }
         }
 
-        function navTo(panelName) {
-            if(!document.getElementById('main-drawer').classList.contains('-translate-x-full')) toggleDrawer();
-            closePanels();
-            if(panelName !== 'chats') document.getElementById(`panel-${panelName}`).classList.add('open');
+        async function saveMetaConfigCloud() {
+            const btn = document.getElementById('btn-save-cloud');
+            const ogText = btn.textContent; btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>';
+            metaToken = document.getElementById('config-token').value.trim(); 
+            metaPhoneId = document.getElementById('config-phone-id').value.trim();
+            
+            try {
+                await supabaseClient.from('configuracion').upsert({ key: 'meta_token', value: metaToken }, { onConflict: 'key' });
+                await supabaseClient.from('configuracion').upsert({ key: 'meta_phone_id', value: metaPhoneId }, { onConflict: 'key' });
+                showToast('API Guardada en la Nube.', 'success'); 
+            } catch (e) {
+                showToast('Error al guardar en nube.', 'error');
+            }
+            btn.textContent = ogText;
         }
+
+        // Navegación UI
+        function toggleDrawer() {
+            const drawer = document.getElementById('main-drawer'), overlay = document.getElementById('drawer-overlay');
+            if (drawer.classList.contains('-translate-x-full')) { drawer.classList.remove('-translate-x-full'); overlay.classList.remove('hidden'); setTimeout(() => overlay.classList.remove('opacity-0'), 10); } 
+            else { drawer.classList.add('-translate-x-full'); overlay.classList.add('opacity-0'); setTimeout(() => overlay.classList.add('hidden'), 300); }
+        }
+        function navTo(panelName) { if(!document.getElementById('main-drawer').classList.contains('-translate-x-full')) toggleDrawer(); closePanels(); if(panelName !== 'chats') document.getElementById(`panel-${panelName}`).classList.add('open'); }
         function closePanels() { document.querySelectorAll('.slide-panel').forEach(p => p.classList.remove('open')); }
 
         // ==========================================
-        // CARGA DE DATOS Y CHATS
+        // PAGINACIÓN ILIMITADA Y CARGA INTELIGENTE
         // ==========================================
-        async function loadBaseData() {
-            const { data: contactos } = await supabaseClient.from('contactos').select('*').order('id', { ascending: false });
-            if (contactos) {
-                allContacts = contactos;
-                document.getElementById('stat-total-contacts').textContent = allContacts.length;
+        async function fetchAllRows(tableName, columns = '*') {
+            let allData = []; let from = 0; const step = 999; let keepFetching = true;
+            while (keepFetching) {
+                const { data, error } = await supabaseClient.from(tableName).select(columns).order('id', { ascending: false }).range(from, from + step);
+                if (error) throw error;
+                if (data && data.length > 0) { allData = allData.concat(data); from += step + 1; }
+                if (!data || data.length <= step) keepFetching = false;
             }
+            return allData;
+        }
+
+        async function loadBaseData() {
+            try {
+                allContacts = await fetchAllRows('contactos', '*');
+                document.getElementById('stat-total-contacts').textContent = allContacts.length;
+
+                // Cargar metadatos de mensajes para filtros (Evitar descargar textos pesados)
+                const mensajes = await fetchAllRows('mensajes', 'contacto_id, estado, direccion');
+                
+                const activeIds = new Set();
+                unreadCounts = {};
+
+                (mensajes || []).forEach(m => {
+                    activeIds.add(m.contacto_id);
+                    // Lógica de No Leídos (Mensaje entrante que no está marcado como leído)
+                    if (m.direccion === 'entrante' && m.estado !== 'leido') {
+                        unreadCounts[m.contacto_id] = (unreadCounts[m.contacto_id] || 0) + 1;
+                    }
+                });
+                
+                activeChats = allContacts.filter(c => activeIds.has(c.id));
+                applyFilters();
+            } catch (err) { showToast("Error al cargar la base de datos.", "error"); }
+        }
+        
+        function setMainFilter(filterType) {
+            currentMainFilter = filterType;
+            // UI Update
+            const btnAll = document.getElementById('btn-filter-all');
+            const btnUnread = document.getElementById('btn-filter-unread');
             
-            const { data: mensajes } = await supabaseClient.from('mensajes').select('contacto_id');
-            const activeIds = new Set((mensajes || []).map(m => m.contacto_id));
-            activeChats = allContacts.filter(c => activeIds.has(c.id));
-            
+            if (filterType === 'all') {
+                btnAll.className = "flex-1 py-1.5 rounded-full bg-green-50 text-green-700 font-semibold text-[13px] transition border border-green-200";
+                btnUnread.className = "flex-1 py-1.5 rounded-full bg-[#f0f2f5] text-[#54656f] font-medium text-[13px] transition border border-transparent";
+            } else {
+                btnUnread.className = "flex-1 py-1.5 rounded-full bg-green-50 text-green-700 font-semibold text-[13px] transition border border-green-200";
+                btnAll.className = "flex-1 py-1.5 rounded-full bg-[#f0f2f5] text-[#54656f] font-medium text-[13px] transition border border-transparent";
+            }
             applyFilters();
         }
 
-        function filterByTag(tag) { currentTagFilter = tag; applyFilters(); }
         function filterChats() { applyFilters(); }
-
+        
         function applyFilters() {
             const term = document.getElementById('search-chat').value.toLowerCase();
-            const filtered = activeChats.filter(c => {
+            let filtered = activeChats.filter(c => {
                 const matchStr = (c.nombre||'').toLowerCase().includes(term) || String(c.telefono).includes(term);
-                const tags = c.etiquetas ? c.etiquetas.split(',') : [];
-                const matchTag = currentTagFilter === 'all' || tags.includes(currentTagFilter);
-                return matchStr && matchTag;
+                return matchStr;
             });
+
+            if (currentMainFilter === 'unread') {
+                filtered = filtered.filter(c => unreadCounts[c.id] > 0);
+            }
+
+            // Ordenar: Los que tienen mensajes no leídos primero
+            filtered.sort((a, b) => {
+                const unreadA = unreadCounts[a.id] || 0;
+                const unreadB = unreadCounts[b.id] || 0;
+                return unreadB - unreadA; // Descendente
+            });
+
             renderChatList(filtered, 'chat-list');
         }
 
+        function getTagData(tagId) { return customTags.find(t => t.id === tagId.trim()) || { name: tagId, color: '#64748b' }; }
+
         function renderChatList(listData, containerId, isNewChatMenu = false) {
             const list = document.getElementById(containerId);
-            if(listData.length === 0) return list.innerHTML = `<div class="text-center text-[#667781] mt-10 text-[13px]">${isNewChatMenu ? 'No hay contactos.' : 'No hay chats activos.'}</div>`;
-
+            if(listData.length === 0) return list.innerHTML = `<div class="text-center text-[#667781] mt-10 text-[13px]">${isNewChatMenu ? 'No hay contactos en la base.' : 'No hay chats que mostrar.'}</div>`;
+            
             list.innerHTML = listData.map(c => {
                 const tags = c.etiquetas ? c.etiquetas.split(',') : [];
-                const tagHtml = tags.filter(t=>t).map(t => `<span class="wa-tag tag-${t.trim()}"> </span>`).join('');
-                const inicial = (c.nombre) ? c.nombre.charAt(0).toUpperCase() : '#';
-                const isActive = activeContactId === c.id;
+                const tagHtml = tags.filter(t=>t).map(t => {
+                    const tagInfo = getTagData(t);
+                    return `<span class="wa-tag" style="background-color: ${tagInfo.color}">${tagInfo.name}</span>`;
+                }).join('');
+                
+                const unreadCount = unreadCounts[c.id] || 0;
+                const isUnread = unreadCount > 0 && !isNewChatMenu;
                 
                 return `
-                <div onclick="selectContact(${c.id})" class="flex items-center gap-3 p-3 pl-4 border-b border-[#f0f2f5] cursor-pointer transition chat-hover ${isActive ? 'chat-active' : ''}">
+                <div onclick="selectContact(${c.id})" class="flex items-center gap-3 p-3 pl-4 border-b border-[#f0f2f5] cursor-pointer transition chat-hover ${activeContactId === c.id ? 'chat-active' : ''}">
                     <div class="w-12 h-12 bg-[#dfe5e7] rounded-full flex items-center justify-center text-[#54656f] font-medium text-lg relative flex-shrink-0">
-                        ${inicial}
-                        ${tags.length > 0 ? '<div class="absolute bottom-0 right-0 w-3.5 h-3.5 bg-[#00a884] rounded-full border-2 border-white"></div>' : ''}
+                        ${(c.nombre && c.nombre !== 'Cliente') ? c.nombre.charAt(0).toUpperCase() : '#'}
+                        ${tags.length > 0 ? `<div class="absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full border-2 border-white" style="background-color: ${getTagData(tags[0]).color}"></div>` : ''}
                     </div>
-                    <div class="flex-1 min-w-0">
+                    <div class="flex-1 min-w-0 pr-1">
                         <div class="flex justify-between items-center mb-0.5">
-                            <h4 class="font-medium text-[15px] text-[#111b21] truncate">${c.nombre || '+'+c.telefono}</h4>
+                            <h4 class="${isUnread ? 'font-bold text-[#111b21]' : 'font-medium text-[#111b21]'} text-[15px] truncate">${c.nombre || '+'+c.telefono}</h4>
+                            ${isUnread ? `<span class="text-[11px] font-bold text-[#25d366]">Nuevo</span>` : ''}
                         </div>
-                        <div class="flex items-center gap-1.5 text-[13px] text-[#667781] truncate">
-                            ${tagHtml} ${isNewChatMenu ? '+'+c.telefono : 'Toca para abrir...'}
+                        <div class="flex items-center justify-between gap-1.5 text-[13px] ${isUnread ? 'text-[#111b21] font-medium' : 'text-[#667781]'} truncate">
+                            <div class="truncate">${tagHtml || (isNewChatMenu ? '+'+c.telefono : 'Toca para abrir...')}</div>
+                            ${isUnread ? `<div class="bg-[#25d366] text-white text-[10px] font-bold px-1.5 min-w-[20px] h-[20px] rounded-full flex items-center justify-center">${unreadCount}</div>` : ''}
                         </div>
                     </div>
                 </div>`
@@ -659,7 +604,6 @@
         }
 
         function openContactsPanel() { navTo('all-contacts'); renderFullContactsList(); }
-
         function renderFullContactsList() {
             const term = document.getElementById('search-new-contact').value.toLowerCase();
             const filtered = allContacts.filter(c => (c.nombre||'').toLowerCase().includes(term) || String(c.telefono).includes(term));
@@ -667,375 +611,324 @@
         }
 
         // ==========================================
-        // RESPUESTAS RÁPIDAS (NUEVO)
-        // ==========================================
-        function saveQuickReply() {
-            let shortcut = document.getElementById('qr-shortcut').value.trim();
-            const text = document.getElementById('qr-message').value.trim();
-            
-            if(!shortcut || !text) return showToast("Llena todos los campos", "error");
-            if(!shortcut.startsWith('/')) shortcut = '/' + shortcut;
-
-            const newId = quickReplies.length > 0 ? Math.max(...quickReplies.map(q => q.id)) + 1 : 1;
-            quickReplies.push({ id: newId, shortcut, text });
-            
-            localStorage.setItem('crm_quick_replies', JSON.stringify(quickReplies));
-            showToast("Respuesta rápida guardada", "success");
-            
-            document.getElementById('qr-shortcut').value = '';
-            document.getElementById('qr-message').value = '';
-            
-            renderQuickRepliesManager();
-            renderQuickRepliesPopover();
-        }
-
-        function deleteQuickReply(id) {
-            quickReplies = quickReplies.filter(q => q.id !== id);
-            localStorage.setItem('crm_quick_replies', JSON.stringify(quickReplies));
-            renderQuickRepliesManager();
-            renderQuickRepliesPopover();
-        }
-
-        function renderQuickRepliesManager() {
-            const list = document.getElementById('quick-replies-list');
-            if(quickReplies.length === 0) return list.innerHTML = '<p class="text-sm text-gray-500">No tienes respuestas guardadas.</p>';
-            
-            list.innerHTML = quickReplies.map(qr => `
-                <div class="bg-white p-4 rounded-xl border border-gray-200 flex justify-between items-start shadow-sm">
-                    <div class="flex-1 pr-3">
-                        <span class="bg-[#e7f3ef] text-[#00a884] font-mono text-[12px] px-2 py-0.5 rounded font-bold">${qr.shortcut}</span>
-                        <p class="text-[13px] text-gray-600 mt-2 line-clamp-2 leading-snug">${qr.text}</p>
-                    </div>
-                    <button onclick="deleteQuickReply(${qr.id})" class="text-red-400 hover:text-red-600 bg-red-50 p-2 rounded-lg transition active:scale-95"><i class="fa-solid fa-trash"></i></button>
-                </div>
-            `).join('');
-        }
-
-        function renderQuickRepliesPopover() {
-            const list = document.getElementById('qr-popover-list');
-            list.innerHTML = quickReplies.map(qr => `
-                <div onclick="insertQuickReply('${qr.text.replace(/'/g, "\\'")}')" class="p-3 hover:bg-gray-50 rounded-xl cursor-pointer transition flex flex-col border-b border-gray-50 last:border-0">
-                    <span class="text-[#00a884] font-bold text-[13px]">${qr.shortcut}</span>
-                    <span class="text-gray-500 text-[12px] truncate">${qr.text}</span>
-                </div>
-            `).join('');
-        }
-
-        function toggleQuickRepliesPopover() {
-            const popover = document.getElementById('quick-replies-popover');
-            popover.classList.toggle('hidden');
-        }
-
-        function insertQuickReply(text) {
-            const input = document.getElementById('message-input');
-            input.value = text;
-            document.getElementById('quick-replies-popover').classList.add('hidden');
-            // Trigger auto-resize & button toggle
-            handleInputTextarea(input);
-            input.focus();
-        }
-
-        function handleInputTextarea(el) {
-            el.style.height = ''; 
-            el.style.height = el.scrollHeight + 'px';
-            
-            // Lógica para detectar el Slash "/" como en WhatsApp
-            if(el.value.trim() === '/') {
-                document.getElementById('quick-replies-popover').classList.remove('hidden');
-            } else {
-                document.getElementById('quick-replies-popover').classList.add('hidden');
-            }
-
-            // Cambiar botones (Send vs Mic)
-            if(el.value.trim().length > 0) {
-                document.getElementById('btn-send-msg').classList.remove('hidden');
-                document.getElementById('btn-voice-msg').classList.add('hidden');
-            } else {
-                document.getElementById('btn-send-msg').classList.add('hidden');
-                document.getElementById('btn-voice-msg').classList.remove('hidden');
-            }
-        }
-
-        // ==========================================
-        // INTERACCIÓN DE CHAT
-        // ==========================================
-        async function selectContact(id) {
-            closePanels(); 
-            activeContactData = allContacts.find(c => c.id === id);
-            activeContactId = activeContactData.id;
-            applyFilters(); 
-            
-            document.getElementById('no-chat-selected').classList.add('hidden');
-            document.getElementById('chat-header').classList.remove('hidden');
-            document.getElementById('messages-container').classList.remove('hidden');
-            document.getElementById('messages-container').classList.add('flex');
-            document.getElementById('chat-input-area').classList.remove('hidden');
-            
-            document.getElementById('chat-area').classList.remove('translate-x-full');
-
-            document.getElementById('chat-header-name').textContent = activeContactData.nombre || 'Desconocido';
-            document.getElementById('chat-header-phone').textContent = `+${activeContactData.telefono}`;
-            
-            loadMessages(activeContactData.id);
-        }
-
-        function closeChatMobile() {
-            document.getElementById('chat-area').classList.add('translate-x-full');
-            activeContactId = null;
-            applyFilters();
-        }
-
-        async function loadMessages(contactId) {
-            const container = document.getElementById('messages-container');
-            container.innerHTML = '<div class="text-center text-[#667781] mt-10 text-[13px]"><i class="fa-solid fa-circle-notch fa-spin"></i> Cargando...</div>';
-            const { data } = await supabaseClient.from('mensajes').select('*').eq('contacto_id', contactId).order('id', { ascending: true });
-            
-            container.innerHTML = `<div class="flex justify-center mb-4 mt-2"><div class="bg-[#ffeecd] text-[#54656f] text-[11px] py-1.5 px-3 rounded-xl shadow-sm text-center max-w-[280px]"><i class="fa-solid fa-lock mr-1"></i> Mensajes cifrados de extremo a extremo.</div></div>`;
-            if(data) data.forEach(msg => renderMessage(msg));
-            scrollToBottom();
-        }
-
-        function renderMessage(msg) {
-            const container = document.getElementById('messages-container');
-            const isOut = msg.direccion === 'saliente';
-            const timeStr = msg.created_at ? new Date(msg.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : 'ahora';
-            let contentHtml = msg.contenido;
-
-            if(msg.tipo === 'audio') contentHtml = `<div class="flex items-center gap-2 min-w-[150px]"><i class="fa-solid fa-microphone text-[#00a884] text-lg"></i><div class="w-full bg-black/10 h-1 rounded-full"><div class="w-1/3 bg-[#00a884] h-full rounded-full"></div></div></div>`;
-            else if(msg.tipo === 'imagen') contentHtml = `<div class="flex items-center gap-2"><i class="fa-solid fa-image text-gray-500"></i> Imagen enviada</div>`;
-            else if(msg.tipo === 'documento') contentHtml = `<div class="flex items-center gap-2"><i class="fa-solid fa-file-pdf text-red-500"></i> Documento</div>`;
-
-            const div = document.createElement('div');
-            div.className = `flex ${isOut ? 'justify-end' : 'justify-start'} mb-0.5 w-full`;
-            div.innerHTML = `
-                <div class="${isOut ? 'bg-[#d9fdd3]' : 'bg-white'} text-[#111b21] px-3 py-1.5 rounded-xl max-w-[85%] shadow-sm relative text-[14px]" style="border-top-${isOut?'right':'left'}-radius: 0;">
-                    <div class="leading-snug pr-12 whitespace-pre-wrap pb-1">${contentHtml}</div>
-                    <div class="absolute bottom-1 right-2 text-[10px] text-[#667781]">${timeStr} <i class="fa-solid fa-check-double text-[10px] ${isOut?'ml-1':''} ${msg.estado==='leido'?'text-[#53bdeb]':''}"></i></div>
-                </div>`;
-            container.appendChild(div);
-        }
-        function scrollToBottom() { const c = document.getElementById('messages-container'); c.scrollTop = c.scrollHeight; }
-
-        // ==========================================
-        // TEXTO & MULTIMEDIA (META API)
-        // ==========================================
-        const msgInput = document.getElementById('message-input');
-        msgInput.addEventListener('keypress', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendTextMessage(); }});
-
-        async function sendTextMessage() {
-            const text = msgInput.value.trim();
-            if(!text || !activeContactId) return;
-            msgInput.value = ''; msgInput.style.height = ''; 
-            document.getElementById('btn-send-msg').classList.add('hidden');
-            document.getElementById('btn-voice-msg').classList.remove('hidden');
-            document.getElementById('quick-replies-popover').classList.add('hidden'); // Ocultar si estaba abierto
-
-            await supabaseClient.from('mensajes').insert([{ contacto_id: activeContactId, direccion: 'saliente', tipo: 'texto', contenido: text, estado: 'enviado' }]);
-            
-            if (metaToken && metaPhoneId && activeContactData) {
-                const cleanNum = String(activeContactData.telefono).replace(/\D/g,'');
-                fetch(`https://graph.facebook.com/v17.0/${metaPhoneId}/messages`, {
-                    method: 'POST',
-                    headers: { 'Authorization': `Bearer ${metaToken}`, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ messaging_product: 'whatsapp', to: cleanNum, type: 'text', text: { body: text } })
-                }).catch(()=>{});
-            } else showToast("Guardado local (Falta API)", "info");
-        }
-
-        // --- NOTAS DE VOZ ---
-        async function startRecording(e) {
-            if(e) e.preventDefault(); 
-            if(isRecording || !activeContactId) return;
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                let options = { mimeType: 'audio/webm;codecs=opus' };
-                if (!MediaRecorder.isTypeSupported(options.mimeType)) options = { mimeType: 'audio/mp4' }; 
-                
-                mediaRecorder = new MediaRecorder(stream, options);
-                audioChunks = [];
-                mediaRecorder.ondataavailable = e => { if(e.data.size > 0) audioChunks.push(e.data); };
-                mediaRecorder.onstop = processAudioAndSend;
-                mediaRecorder.start();
-                
-                isRecording = true;
-                recordSeconds = 0;
-                document.getElementById('recording-ui').classList.remove('hidden');
-                document.getElementById('recording-ui').classList.add('flex');
-                document.getElementById('record-time').textContent = '0:00';
-                recordInterval = setInterval(() => {
-                    recordSeconds++;
-                    const m = Math.floor(recordSeconds/60);
-                    const s = (recordSeconds%60).toString().padStart(2, '0');
-                    document.getElementById('record-time').textContent = `${m}:${s}`;
-                }, 1000);
-            } catch(err) { showToast("Permiso de micrófono denegado.", "error"); }
-        }
-
-        function stopRecording(e) {
-            if(e) e.preventDefault();
-            if(!isRecording || !mediaRecorder) return;
-            clearInterval(recordInterval);
-            mediaRecorder.stop();
-            resetRecordingUI();
-        }
-
-        function cancelRecording() {
-            if(!isRecording) return;
-            clearInterval(recordInterval);
-            mediaRecorder.onstop = null; 
-            mediaRecorder.stop();
-            resetRecordingUI();
-        }
-
-        function resetRecordingUI() {
-            isRecording = false;
-            mediaRecorder.stream.getTracks().forEach(t => t.stop());
-            document.getElementById('recording-ui').classList.add('hidden');
-            document.getElementById('recording-ui').classList.remove('flex');
-        }
-
-        async function processAudioAndSend() {
-            if(recordSeconds < 1) return; 
-            const audioBlob = new Blob(audioChunks, { type: mediaRecorder.mimeType });
-            await supabaseClient.from('mensajes').insert([{ contacto_id: activeContactId, direccion: 'saliente', tipo: 'audio', contenido: 'Nota de voz', estado: 'enviado' }]);
-            uploadToMeta(audioBlob, 'audio');
-        }
-
-        // --- ADJUNTOS (FOTO/PDF) ---
-        function handleFileUpload(e) {
-            const file = e.target.files[0];
-            if(!file || !activeContactId) return;
-            const type = file.type.startsWith('image/') ? 'image' : 'document';
-            supabaseClient.from('mensajes').insert([{ contacto_id: activeContactId, direccion: 'saliente', tipo: type==='image'?'imagen':'documento', contenido: `Archivo: ${file.name}`, estado: 'enviado' }]);
-            uploadToMeta(file, type);
-            e.target.value = '';
-        }
-
-        async function uploadToMeta(file, typeStr) {
-            if(!metaToken || !metaPhoneId || !activeContactData) return;
-            const cleanNum = String(activeContactData.telefono).replace(/\D/g,'');
-            const formData = new FormData();
-            formData.append('messaging_product', 'whatsapp');
-            
-            let finalFile = file;
-            if(typeStr === 'audio') finalFile = new File([file], 'audio.mp4', {type: 'audio/mp4'}); 
-            formData.append('file', finalFile);
-
-            try {
-                const uploadRes = await fetch(`https://graph.facebook.com/v17.0/${metaPhoneId}/media`, {
-                    method: 'POST',
-                    headers: { 'Authorization': `Bearer ${metaToken}` },
-                    body: formData
-                });
-                const uploadData = await uploadRes.json();
-                
-                if(uploadData.id) {
-                    const msgPayload = { messaging_product: 'whatsapp', to: cleanNum, type: typeStr };
-                    msgPayload[typeStr] = { id: uploadData.id };
-                    await fetch(`https://graph.facebook.com/v17.0/${metaPhoneId}/messages`, {
-                        method: 'POST', headers: { 'Authorization': `Bearer ${metaToken}`, 'Content-Type': 'application/json' },
-                        body: JSON.stringify(msgPayload)
-                    });
-                }
-            } catch(e) { console.error("Error multimedia:", e); }
-        }
-
-        // ==========================================
-        // EXCEL IMPORT & EXPORT
+        // EXCEL BATCH UPLOAD (A PRUEBA DE FALLOS)
         // ==========================================
         async function procesarExcelInteligente() {
             const fileInput = document.getElementById('excel-upload');
             if(!fileInput.files[0]) return showToast("Selecciona un Excel", "error");
-            showToast("Procesando...", "info");
-            
+            showToast("Analizando archivo...", "info");
             const reader = new FileReader();
+            
             reader.onload = async (e) => {
                 try {
                     const workbook = XLSX.read(new Uint8Array(e.target.result), {type: 'array'});
                     const sheet = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], { header: 1 });
                     
-                    let nuevos = [];
-                    let setNums = new Set(allContacts.map(c => c.telefono)); 
+                    let nuevos = []; let setNums = new Set(allContacts.map(c => String(c.telefono).trim())); 
 
                     for (let i = 0; i < sheet.length; i++) {
-                        let row = sheet[i];
-                        if (!row || row.length === 0) continue;
+                        let row = sheet[i]; if (!row || row.length === 0) continue;
                         let num = null, nom = "Cliente";
-                        
                         for (let j = 0; j < row.length; j++) {
                             let cel = String(row[j] || "").trim();
                             let numSolo = cel.replace(/\D/g, ''); 
                             if (numSolo.length >= 8 && numSolo.length <= 15 && !num) num = numSolo;
                             else if (cel.length > 2 && isNaN(cel) && nom === "Cliente" && !['telefono','numero','phone'].includes(cel.toLowerCase())) nom = cel;
                         }
-
                         if (num && !setNums.has(num)) {
                             nuevos.push({ nombre: nom, telefono: num, etiquetas: 'nuevo' });
                             setNums.add(num);
                         }
                     }
 
-                    if (nuevos.length > 0) {
-                        showToast(`Guardando ${nuevos.length} contactos...`, "info");
-                        await supabaseClient.from('contactos').insert(nuevos);
-                        showToast(`¡Lista actualizada!`, "success");
-                        loadBaseData();
-                        fileInput.value = "";
-                    } else showToast("No hay contactos nuevos válidos", "error");
-                } catch (err) { showToast("Error al leer Excel", "error"); }
+                    if (nuevos.length === 0) return showToast("Contactos ya existen o no válidos.", "error");
+                    showToast(`Guardando ${nuevos.length} contactos en lotes. Espera...`, "info");
+                    
+                    const chunkSize = 500;
+                    for(let k = 0; k < nuevos.length; k += chunkSize) {
+                        const chunk = nuevos.slice(k, k + chunkSize);
+                        const { error } = await supabaseClient.from('contactos').insert(chunk);
+                        if(error && error.code !== '23505') throw new Error(error.message); // Ignorar duplicados simultáneos
+                    }
+                    showToast(`¡Base de datos actualizada!`, "success");
+                    await loadBaseData(); fileInput.value = "";
+                } catch (err) { showToast("Error: " + err.message, "error"); }
             };
             reader.readAsArrayBuffer(fileInput.files[0]);
         }
 
         function exportarExcel() {
-            if(allContacts.length === 0) return;
+            if(allContacts.length === 0) return showToast("No hay datos", "error");
             const dataToExport = allContacts.map(c => ({ Nombre: c.nombre, Telefono: c.telefono, Etiquetas: c.etiquetas || '' }));
-            const ws = XLSX.utils.json_to_sheet(dataToExport);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Base_Datos");
-            XLSX.writeFile(wb, "Contactos_CRM.xlsx");
+            const ws = XLSX.utils.json_to_sheet(dataToExport); const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Base_Datos_CRM"); XLSX.writeFile(wb, "Contactos_CRM.xlsx");
         }
 
         // ==========================================
-        // UTILIDADES Y TIEMPO REAL
+        // CREADOR DE ETIQUETAS DINÁMICAS (NUEVO)
         // ==========================================
-        function saveMetaConfig() {
-            metaToken = document.getElementById('config-token').value.trim();
-            metaPhoneId = document.getElementById('config-phone-id').value.trim();
-            localStorage.setItem('crm_meta_token', metaToken); localStorage.setItem('crm_meta_phone_id', metaPhoneId);
-            showToast('Guardado.', 'success'); 
-        }
-
-        // Tags Modal
-        function toggleTagsModal() {
-            if(!activeContactData) return;
-            document.getElementById('tags-contact-name').textContent = activeContactData.nombre;
-            document.querySelectorAll('.tag-checkbox').forEach(cb => cb.checked = (activeContactData.etiquetas||'').includes(cb.value));
+        function saveCustomTag() {
+            const name = document.getElementById('new-tag-name').value.trim();
+            const color = document.getElementById('new-tag-color').value;
+            if(!name) return showToast("Escribe un nombre", "error");
             
-            const m = document.getElementById('tags-modal');
-            m.classList.remove('hidden'); m.classList.add('flex');
-            setTimeout(() => document.getElementById('tags-modal-content').classList.replace('scale-95', 'scale-100'), 10);
-        }
-        function closeTagsModal() {
-            document.getElementById('tags-modal-content').classList.replace('scale-100', 'scale-95');
-            setTimeout(() => { document.getElementById('tags-modal').classList.add('hidden'); document.getElementById('tags-modal').classList.remove('flex'); }, 200);
-        }
-        async function saveContactTags() {
-            const tags = Array.from(document.querySelectorAll('.tag-checkbox:checked')).map(cb => cb.value).join(',');
-            await supabaseClient.from('contactos').update({ etiquetas: tags }).eq('id', activeContactId);
-            activeContactData.etiquetas = tags;
-            closeTagsModal(); selectContact(activeContactId);
+            const id = name.toLowerCase().replace(/[^a-z0-9]/g, ''); // Convertir a ID seguro
+            if(customTags.find(t => t.id === id)) return showToast("Esta etiqueta ya existe", "error");
+
+            customTags.push({ id, name, color });
+            localStorage.setItem('crm_custom_tags', JSON.stringify(customTags));
+            showToast("Etiqueta creada", "success");
+            
+            document.getElementById('new-tag-name').value = '';
+            renderCustomTagsManager(); applyFilters(); // Refrescar colores en lista
         }
 
-        function setupRealtimeSubscriptions() {
-            if(realtimeChannel) return;
-            realtimeChannel = supabaseClient.channel('custom-all-channel')
-                .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'mensajes' }, payload => {
-                    if (activeContactId && payload.new.contacto_id === activeContactId) { renderMessage(payload.new); scrollToBottom(); }
-                    loadBaseData(); 
-                })
-                .on('postgres_changes', { event: '*', schema: 'public', table: 'contactos' }, () => loadBaseData())
-                .subscribe();
+        function deleteCustomTag(id) {
+            customTags = customTags.filter(t => t.id !== id);
+            localStorage.setItem('crm_custom_tags', JSON.stringify(customTags));
+            renderCustomTagsManager(); applyFilters();
+        }
+
+        function renderCustomTagsManager() {
+            const list = document.getElementById('custom-tags-list');
+            list.innerHTML = customTags.map(tag => `
+                <div class="bg-white p-3 rounded-xl border border-gray-200 flex justify-between items-center shadow-sm">
+                    <div class="flex items-center gap-3">
+                        <div class="w-4 h-4 rounded-full" style="background-color: ${tag.color}"></div>
+                        <span class="font-medium text-[14px]">${tag.name}</span>
+                    </div>
+                    <button onclick="deleteCustomTag('${tag.id}')" class="text-red-400 bg-red-50 p-2 rounded-lg active:scale-95"><i class="fa-solid fa-trash"></i></button>
+                </div>
+            `).join('');
+        }
+
+        function toggleTagsModal() { 
+            if(!activeContactData) return; 
+            document.getElementById('tags-contact-name').textContent = activeContactData.nombre; 
+            
+            // Renderizar checkboxes dinámicos
+            const list = document.getElementById('tags-modal-list');
+            const contactTags = activeContactData.etiquetas || '';
+            
+            list.innerHTML = customTags.map(tag => `
+                <label class="flex items-center gap-3 p-2.5 hover:bg-gray-50 rounded-xl cursor-pointer border border-transparent hover:border-gray-100">
+                    <input type="checkbox" value="${tag.id}" class="tag-checkbox w-4 h-4 rounded text-[#00a884] focus:ring-0" ${contactTags.includes(tag.id) ? 'checked' : ''}>
+                    <span class="wa-tag shadow-none" style="background-color: ${tag.color}">${tag.name}</span>
+                </label>
+            `).join('');
+
+            const m = document.getElementById('tags-modal'); m.classList.remove('hidden'); m.classList.add('flex'); 
+            setTimeout(() => document.getElementById('tags-modal-content').classList.replace('scale-95', 'scale-100'), 10); 
+        }
+        
+        function closeTagsModal() { document.getElementById('tags-modal-content').classList.replace('scale-100', 'scale-95'); setTimeout(() => { document.getElementById('tags-modal').classList.add('hidden'); document.getElementById('tags-modal').classList.remove('flex'); }, 200); }
+        async function saveContactTags() { 
+            const tags = Array.from(document.querySelectorAll('.tag-checkbox:checked')).map(cb => cb.value).join(','); 
+            await supabaseClient.from('contactos').update({ etiquetas: tags }).eq('id', activeContactId); 
+            activeContactData.etiquetas = tags; 
+            closeTagsModal(); applyFilters(); // Refrescar lista lateral
+        }
+
+        // ==========================================
+        // RESPUESTAS RÁPIDAS
+        // ==========================================
+        function saveQuickReply() {
+            let shortcut = document.getElementById('qr-shortcut').value.trim(), text = document.getElementById('qr-message').value.trim();
+            if(!shortcut || !text) return showToast("Llena todos los campos", "error");
+            if(!shortcut.startsWith('/')) shortcut = '/' + shortcut;
+            const newId = quickReplies.length > 0 ? Math.max(...quickReplies.map(q => q.id)) + 1 : 1;
+            quickReplies.push({ id: newId, shortcut, text });
+            localStorage.setItem('crm_quick_replies', JSON.stringify(quickReplies));
+            showToast("Guardada", "success");
+            document.getElementById('qr-shortcut').value = ''; document.getElementById('qr-message').value = '';
+            renderQuickRepliesManager(); renderQuickRepliesPopover();
+        }
+        function deleteQuickReply(id) { quickReplies = quickReplies.filter(q => q.id !== id); localStorage.setItem('crm_quick_replies', JSON.stringify(quickReplies)); renderQuickRepliesManager(); renderQuickRepliesPopover(); }
+        function renderQuickRepliesManager() {
+            const list = document.getElementById('quick-replies-list');
+            if(quickReplies.length === 0) return list.innerHTML = '<p class="text-sm text-gray-500">Sin respuestas.</p>';
+            list.innerHTML = quickReplies.map(qr => `
+                <div class="bg-white p-4 rounded-xl border border-gray-200 flex justify-between items-start shadow-sm">
+                    <div class="flex-1 pr-3"><span class="bg-[#e7f3ef] text-[#00a884] font-mono text-[12px] px-2 py-0.5 rounded font-bold">${qr.shortcut}</span><p class="text-[13px] text-gray-600 mt-2 line-clamp-2">${qr.text}</p></div>
+                    <button onclick="deleteQuickReply(${qr.id})" class="text-red-400 bg-red-50 p-2 rounded-lg active:scale-95"><i class="fa-solid fa-trash"></i></button>
+                </div>
+            `).join('');
+        }
+        function renderQuickRepliesPopover() {
+            document.getElementById('qr-popover-list').innerHTML = quickReplies.map(qr => `
+                <div onclick="insertQuickReply('${qr.text.replace(/'/g, "\\'")}')" class="p-3 hover:bg-gray-50 rounded-xl cursor-pointer border-b border-gray-50 last:border-0">
+                    <span class="text-[#00a884] font-bold text-[13px] block">${qr.shortcut}</span><span class="text-gray-500 text-[12px] truncate block">${qr.text}</span>
+                </div>
+            `).join('');
+        }
+        function toggleQuickRepliesPopover() { document.getElementById('quick-replies-popover').classList.toggle('hidden'); }
+        function insertQuickReply(text) {
+            const input = document.getElementById('message-input'); input.value = text;
+            document.getElementById('quick-replies-popover').classList.add('hidden');
+            handleInputTextarea(input); input.focus();
+        }
+        function handleInputTextarea(el) {
+            el.style.height = ''; el.style.height = el.scrollHeight + 'px';
+            if(el.value.trim() === '/') document.getElementById('quick-replies-popover').classList.remove('hidden');
+            else document.getElementById('quick-replies-popover').classList.add('hidden');
+            if(el.value.trim().length > 0) { document.getElementById('btn-send-msg').classList.remove('hidden'); document.getElementById('btn-voice-msg').classList.add('hidden'); }
+            else { document.getElementById('btn-send-msg').classList.add('hidden'); document.getElementById('btn-voice-msg').classList.remove('hidden'); }
+        }
+
+        // ==========================================
+        // LÓGICA DE CHAT INDIVIDUAL
+        // ==========================================
+        async function selectContact(id) {
+            closePanels(); 
+            activeContactData = allContacts.find(c => c.id === id); 
+            activeContactId = activeContactData.id; 
+            
+            // Marcar como leídos localmente y refrescar UI lateral
+            if (unreadCounts[id]) {
+                unreadCounts[id] = 0;
+                applyFilters(); 
+                // Actualizar en DB silenciósamente
+                supabaseClient.from('mensajes').update({ estado: 'leido' }).eq('contacto_id', id).eq('direccion', 'entrante').then();
+            } else { applyFilters(); }
+            
+            document.getElementById('no-chat-selected').classList.add('hidden');
+            document.getElementById('chat-header').classList.remove('hidden');
+            document.getElementById('messages-container').classList.remove('hidden'); document.getElementById('messages-container').classList.add('flex');
+            document.getElementById('chat-input-area').classList.remove('hidden');
+            document.getElementById('chat-area').classList.remove('translate-x-full');
+            document.getElementById('chat-header-name').textContent = activeContactData.nombre || 'Desconocido';
+            
+            loadMessages(activeContactData.id);
+        }
+        
+        function closeChatMobile() { document.getElementById('chat-area').classList.add('translate-x-full'); activeContactId = null; applyFilters(); }
+        
+        async function loadMessages(contactId) {
+            const c = document.getElementById('messages-container');
+            c.innerHTML = '<div class="text-center text-[#667781] mt-10 text-[13px]"><i class="fa-solid fa-circle-notch fa-spin"></i> Cargando...</div>';
+            
+            const { data, error } = await supabaseClient.from('mensajes').select('*').eq('contacto_id', contactId).order('id', { ascending: true });
+            if(error) return console.error(error);
+
+            c.innerHTML = `<div class="flex justify-center mb-4 mt-2"><div class="bg-[#ffeecd] text-[#54656f] text-[11px] py-1.5 px-3 rounded-xl text-center shadow-sm max-w-[280px]"><i class="fa-solid fa-lock mr-1"></i> Mensajes protegidos por el CRM.</div></div>`;
+            if(data) data.forEach(msg => renderMessage(msg)); 
+            scrollToBottom();
+        }
+        
+        function renderMessage(msg) {
+            const container = document.getElementById('messages-container');
+            const isOut = msg.direccion === 'saliente', timeStr = msg.created_at ? new Date(msg.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : 'ahora';
+            let html = msg.contenido;
+            if(msg.tipo === 'audio') html = `<div class="flex items-center gap-2 min-w-[150px]"><i class="fa-solid fa-microphone text-[#00a884] text-lg"></i><div class="w-full bg-black/10 h-1 rounded-full"><div class="w-1/3 bg-[#00a884] h-full rounded-full"></div></div></div>`;
+            else if(msg.tipo === 'imagen') html = `<div class="flex items-center gap-2"><i class="fa-solid fa-image text-gray-500"></i> Imagen enviada</div>`;
+            else if(msg.tipo === 'documento') html = `<div class="flex items-center gap-2"><i class="fa-solid fa-file-pdf text-red-500"></i> Documento</div>`;
+            
+            const div = document.createElement('div'); div.className = `flex ${isOut ? 'justify-end' : 'justify-start'} mb-0.5 w-full`;
+            div.innerHTML = `<div class="${isOut ? 'bg-[#d9fdd3]' : 'bg-white'} text-[#111b21] px-3 py-1.5 rounded-xl max-w-[85%] shadow-sm relative text-[14px]" style="border-top-${isOut?'right':'left'}-radius: 0;">
+                    <div class="leading-snug pr-12 whitespace-pre-wrap pb-1">${html}</div>
+                    <div class="absolute bottom-1 right-2 text-[10px] text-[#667781]">${timeStr} <i class="fa-solid fa-check-double text-[10px] ${isOut?'ml-1':''} ${msg.estado==='leido'?'text-[#53bdeb]':''}"></i></div>
+                </div>`;
+            container.appendChild(div);
+        }
+        
+        function scrollToBottom() { const c = document.getElementById('messages-container'); c.scrollTop = c.scrollHeight; }
+
+        // ==========================================
+        // MENSAJERÍA Y MULTIMEDIA NATIVO (META API)
+        // ==========================================
+        async function sendTextMessage() {
+            const input = document.getElementById('message-input'), text = input.value.trim();
+            if(!text || !activeContactId) return;
+            
+            input.value = ''; handleInputTextarea(input);
+            await supabaseClient.from('mensajes').insert([{ contacto_id: activeContactId, direccion: 'saliente', tipo: 'texto', contenido: text, estado: 'enviado' }]);
+            
+            if (metaToken && metaPhoneId && activeContactData) {
+                fetch(`https://graph.facebook.com/v17.0/${metaPhoneId}/messages`, { 
+                    method: 'POST', headers: { 'Authorization': `Bearer ${metaToken}`, 'Content-Type': 'application/json' }, 
+                    body: JSON.stringify({ messaging_product: 'whatsapp', to: String(activeContactData.telefono).replace(/\D/g,''), type: 'text', text: { body: text } }) 
+                }).then(res => res.json()).then(data => {
+                    if(data.error) showToast("Error Meta: " + data.error.message, "error");
+                }).catch(()=>{});
+            } else { showToast("Configura la API de Meta para enviar reales", "error"); }
+        }
+
+        async function startRecording(e) { if(e) e.preventDefault(); if(isRecording || !activeContactId) return; try { const stream = await navigator.mediaDevices.getUserMedia({ audio: true }); let options = { mimeType: 'audio/webm;codecs=opus' }; if (!MediaRecorder.isTypeSupported(options.mimeType)) options = { mimeType: 'audio/mp4' }; mediaRecorder = new MediaRecorder(stream, options); audioChunks = []; mediaRecorder.ondataavailable = e => { if(e.data.size > 0) audioChunks.push(e.data); }; mediaRecorder.onstop = processAudioAndSend; mediaRecorder.start(); isRecording = true; recordSeconds = 0; document.getElementById('recording-ui').classList.remove('hidden'); document.getElementById('recording-ui').classList.add('flex'); document.getElementById('record-time').textContent = '0:00'; recordInterval = setInterval(() => { recordSeconds++; document.getElementById('record-time').textContent = `${Math.floor(recordSeconds/60)}:${(recordSeconds%60).toString().padStart(2, '0')}`; }, 1000); } catch(err) { showToast("Micrófono denegado", "error"); } }
+        function stopRecording(e) { if(e) e.preventDefault(); if(!isRecording) return; clearInterval(recordInterval); mediaRecorder.stop(); resetRecordingUI(); }
+        function cancelRecording() { if(!isRecording) return; clearInterval(recordInterval); mediaRecorder.onstop = null; mediaRecorder.stop(); resetRecordingUI(); }
+        function resetRecordingUI() { isRecording = false; mediaRecorder.stream.getTracks().forEach(t => t.stop()); document.getElementById('recording-ui').classList.add('hidden'); document.getElementById('recording-ui').classList.remove('flex'); }
+        
+        async function processAudioAndSend() { 
+            if(recordSeconds < 1) return; 
+            await supabaseClient.from('mensajes').insert([{ contacto_id: activeContactId, direccion: 'saliente', tipo: 'audio', contenido: 'Nota de voz', estado: 'enviado' }]); 
+            uploadToMeta(new Blob(audioChunks, { type: mediaRecorder.mimeType }), 'audio'); 
+        }
+        
+        function handleFileUpload(e) { 
+            const file = e.target.files[0]; 
+            if(!file || !activeContactId) return; 
+            const type = file.type.startsWith('image/') ? 'image' : 'document'; 
+            supabaseClient.from('mensajes').insert([{ contacto_id: activeContactId, direccion: 'saliente', tipo: type==='image'?'imagen':'documento', contenido: `Archivo: ${file.name}`, estado: 'enviado' }]); 
+            uploadToMeta(file, type); 
+            e.target.value = ''; 
+        }
+        
+        async function uploadToMeta(file, typeStr) {
+            if(!metaToken || !metaPhoneId || !activeContactData) return;
+            const formData = new FormData(); formData.append('messaging_product', 'whatsapp');
+            formData.append('file', typeStr === 'audio' ? new File([file], 'audio.mp4', {type: 'audio/mp4'}) : file);
+            try {
+                const uploadData = await (await fetch(`https://graph.facebook.com/v17.0/${metaPhoneId}/media`, { method: 'POST', headers: { 'Authorization': `Bearer ${metaToken}` }, body: formData })).json();
+                if(uploadData.id) await fetch(`https://graph.facebook.com/v17.0/${metaPhoneId}/messages`, { method: 'POST', headers: { 'Authorization': `Bearer ${metaToken}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ messaging_product: 'whatsapp', to: String(activeContactData.telefono).replace(/\D/g,''), type: typeStr, [typeStr]: { id: uploadData.id } }) });
+            } catch(e) {}
+        }
+
+        // ==========================================
+        // TIEMPO REAL CON DEGRADACIÓN ELEGANTE
+        // ==========================================
+        function setupRealtimeSubscriptions() { 
+            if(realtimeChannel) return; 
+            
+            try {
+                realtimeChannel = supabaseClient.channel('custom-all-channel')
+                    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'mensajes' }, p => { 
+                        // Si el mensaje es para el chat abierto, lo renderiza y marca leído
+                        if (activeContactId && p.new.contacto_id === activeContactId) { 
+                            renderMessage(p.new); scrollToBottom(); 
+                            if(p.new.direccion === 'entrante') {
+                                supabaseClient.from('mensajes').update({ estado: 'leido' }).eq('id', p.new.id).then();
+                            }
+                        } else if (p.new.direccion === 'entrante') {
+                            // Sumar al contador de no leídos
+                            unreadCounts[p.new.contacto_id] = (unreadCounts[p.new.contacto_id] || 0) + 1;
+                        }
+                        
+                        // Añadir a chats activos si es nuevo
+                        if(!activeChats.find(c => c.id === p.new.contacto_id)) {
+                            const c = allContacts.find(ac => ac.id === p.new.contacto_id);
+                            if(c) activeChats.unshift(c);
+                        }
+                        applyFilters(); // Actualiza UI lateral
+                    })
+                    .subscribe((status) => {
+                        if(status === 'CLOSED' || status === 'CHANNEL_ERROR') startFallbackPolling();
+                    }); 
+            } catch (e) { startFallbackPolling(); }
+        }
+
+        // Fallback si WebSockets está bloqueado (Ej. en preview de canvas)
+        let lastMsgId = 0;
+        function startFallbackPolling() {
+            console.log("WebSockets bloqueados, activando Polling...");
+            setInterval(async () => {
+                if(!activeContactId) return;
+                const { data } = await supabaseClient.from('mensajes').select('*').eq('contacto_id', activeContactId).order('id', { ascending: false }).limit(1);
+                if(data && data.length > 0 && data[0].id > lastMsgId && lastMsgId !== 0) {
+                    renderMessage(data[0]); scrollToBottom();
+                    if(data[0].direccion === 'entrante') supabaseClient.from('mensajes').update({ estado: 'leido' }).eq('id', data[0].id).then();
+                }
+                if(data && data.length > 0) lastMsgId = data[0].id;
+            }, 3000); // Revisa cada 3 segundos sin colgar la DB
         }
     </script>
 </body>

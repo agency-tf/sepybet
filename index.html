@@ -2,7 +2,16 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <!-- Viewport fit=cover es crucial para el Notch del iPhone y celulares modernos -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    
+    <!-- Meta Tags para iOS PWA -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="WA CRM Pro">
+    <link rel="apple-touch-icon" href="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg">
+    <meta name="theme-color" content="#111b21">
+
     <title>WhatsApp CRM Pro</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
@@ -13,13 +22,29 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Segoe+UI:wght@300;400;500;600;700&display=swap');
         
+        :root {
+            /* Variables seguras para el notch y barra inferior de celulares */
+            --safe-top: env(safe-area-inset-top, 0px);
+            --safe-bottom: env(safe-area-inset-bottom, 0px);
+            --safe-left: env(safe-area-inset-left, 0px);
+            --safe-right: env(safe-area-inset-right, 0px);
+        }
+
         body { 
             font-family: 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif; 
             background-color: #d1d7db; 
             -webkit-tap-highlight-color: transparent; 
+            overscroll-behavior-y: none; /* Evita el "rebote" en iOS */
         }
-        
-        /* Scrollbars estilo WhatsApp Web */
+
+        /* Usamos dvh para evitar saltos con la barra de URL del navegador */
+        .app-height { height: 100dvh; }
+
+        /* Clases utilitarias para Zonas Seguras */
+        .pt-safe { padding-top: max(var(--safe-top), 12px); }
+        .pb-safe { padding-bottom: max(var(--safe-bottom), 12px); }
+        .h-header-safe { min-height: calc(60px + var(--safe-top)); }
+
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(11, 20, 26, 0.2); border-radius: 10px; }
@@ -28,7 +53,6 @@
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-        /* Fondo oficial de WhatsApp Web (Doodles) */
         .bg-whatsapp-doodles { 
             background-color: #efeae2; 
             background-image: url('https://i.pinimg.com/originals/8c/98/99/8c98994518b575bfd8c949e91d20548b.jpg'); 
@@ -38,7 +62,6 @@
             opacity: 0.95;
         }
 
-        /* Etiquetas (Tags) UI */
         .wa-tag {
             display: inline-flex;
             align-items: center;
@@ -58,7 +81,6 @@
         .chat-hover:hover { background-color: #f5f6f6; }
         .chat-active { background-color: #f0f2f5; }
 
-        /* Animaciones para Paneles y Drawer */
         .slide-panel {
             transition: transform 0.3s cubic-bezier(0.1, 0.9, 0.2, 1);
             transform: translateX(-100%);
@@ -69,23 +91,21 @@
         .toast-enter { transform: translateY(100%); opacity: 0; transition: all 0.3s ease-out; }
         .toast-enter-active { transform: translateY(0); opacity: 1; }
         
-        /* Animación Micrófono */
         @keyframes pulse-red { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
         .recording-pulse { animation: pulse-red 1.5s infinite; color: #ef4444; }
     </style>
 </head>
-<body class="h-screen w-screen overflow-hidden flex items-center justify-center text-[#111b21] bg-gray-100 xl:p-4">
+<body class="app-height w-screen overflow-hidden flex items-center justify-center text-[#111b21] bg-[#111b21] xl:p-4">
 
-    <!-- Toasts (Notificaciones) -->
-    <div id="toast-container" class="fixed top-4 right-4 z-[9999] flex flex-col gap-2 pointer-events-none w-[90%] md:w-auto max-w-sm mx-auto left-0 md:left-auto"></div>
+    <!-- Toasts UI -->
+    <div id="toast-container" class="fixed top-safe right-4 z-[9999] flex flex-col gap-2 pointer-events-none w-[90%] md:w-auto max-w-sm mx-auto left-0 md:left-auto pt-safe"></div>
 
-    <!-- OVERLAY DEL DRAWER (Fondo oscuro) -->
+    <!-- Drawer Overlay -->
     <div id="drawer-overlay" class="fixed inset-0 bg-black/60 z-[90] hidden opacity-0 transition-opacity duration-300 backdrop-blur-sm" onclick="toggleDrawer()"></div>
 
-    <!-- DRAWER / MENÚ LATERAL OSCURO -->
-    <div id="main-drawer" class="fixed inset-y-0 left-0 w-[300px] max-w-[85vw] bg-[#111b21] shadow-2xl transform -translate-x-full transition-transform duration-300 ease-out z-[100] flex flex-col">
-        <div class="h-[160px] bg-[#202c33] p-5 flex flex-col justify-end relative shadow-md border-b border-[#2a3942]">
-            <button onclick="toggleDrawer()" class="absolute top-4 right-4 text-[#8696a0] hover:text-white p-2 rounded-full transition bg-white/5"><i class="fa-solid fa-xmark text-xl"></i></button>
+    <div id="main-drawer" class="fixed inset-y-0 left-0 w-[300px] max-w-[85vw] bg-[#111b21] shadow-2xl transform -translate-x-full transition-transform duration-300 ease-out z-[100] flex flex-col pb-safe">
+        <div class="h-header-safe bg-[#202c33] p-5 flex flex-col justify-end relative shadow-md border-b border-[#2a3942] pt-safe">
+            <button onclick="toggleDrawer()" class="absolute top-safe right-4 text-[#8696a0] hover:text-white p-2 rounded-full transition bg-white/5 mt-4"><i class="fa-solid fa-xmark text-xl"></i></button>
             <div class="w-16 h-16 bg-[#00a884] rounded-full flex items-center justify-center text-white text-3xl font-bold mb-3 shadow-lg border-2 border-[#111b21]" id="drawer-initial">U</div>
             <div class="text-[#e9edef] font-semibold text-lg leading-tight" id="drawer-user-name">Usuario</div>
             <div class="text-[#8696a0] text-sm flex items-center gap-1"><i class="fa-solid fa-shield-halved text-[11px]"></i> Administrador CRM</div>
@@ -95,7 +115,7 @@
                 <i class="fa-solid fa-message text-[#8696a0] w-5 text-center text-lg"></i> Chats Activos
             </button>
             <button onclick="navTo('contacts')" class="w-full text-left px-6 py-3.5 text-[#d1d7db] hover:bg-[#202c33] hover:text-white transition flex items-center gap-4 font-medium text-[15px]">
-                <i class="fa-solid fa-address-book text-[#8696a0] w-5 text-center text-lg"></i> Base de Contactos
+                <i class="fa-solid fa-database text-[#8696a0] w-5 text-center text-lg"></i> Base de Datos
             </button>
             <button onclick="navTo('bulk')" class="w-full text-left px-6 py-3.5 text-[#d1d7db] hover:bg-[#202c33] hover:text-white transition flex items-center gap-4 font-medium text-[15px]">
                 <i class="fa-solid fa-bullhorn text-[#8696a0] w-5 text-center text-lg"></i> Envíos Masivos
@@ -113,65 +133,59 @@
         </div>
     </div>
 
+    <!-- Login -->
     <div id="login-screen" class="fixed inset-0 bg-[#f0f2f5] z-[200] flex flex-col items-center justify-center p-4">
-        <div class="mb-8 flex flex-col items-center text-center">
+        <div class="mb-8 flex flex-col items-center text-center pt-safe">
             <i class="fa-brands fa-whatsapp text-[#25d366] text-[70px] md:text-[80px] mb-4 drop-shadow-md"></i>
             <h1 class="text-2xl md:text-3xl font-light text-[#41525d]">WhatsApp CRM Pro</h1>
-            <p class="text-[#667781] mt-2 text-sm"><i class="fa-solid fa-lock text-xs"></i> Acceso Cifrado</p>
         </div>
         <div class="bg-white p-6 md:p-8 rounded-2xl shadow-xl w-full max-w-md border border-gray-100">
             <div id="login-error" class="hidden mb-6 p-3 bg-red-50 border-l-4 border-red-500 text-red-700 text-sm font-medium rounded"></div>
             <div class="space-y-5">
                 <div>
                     <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Usuario</label>
-                    <input type="text" id="login-user" class="w-full p-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:border-[#00a884] focus:ring-1 focus:ring-[#00a884] outline-none transition-all text-[15px]" placeholder="Ej: sepybet">
+                    <input type="text" id="login-user" class="w-full p-3.5 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:border-[#00a884]" placeholder="Ej: admin">
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Clave (PIN)</label>
-                    <input type="password" id="login-pass" class="w-full p-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:border-[#00a884] focus:ring-1 focus:ring-[#00a884] outline-none transition-all text-[15px]" placeholder="••••">
+                    <input type="password" id="login-pass" class="w-full p-3.5 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:border-[#00a884]" placeholder="••••••">
                 </div>
-                <button onclick="attemptLogin()" class="w-full bg-[#00a884] hover:bg-[#008f6f] text-white font-semibold py-3.5 px-4 rounded-xl transition duration-200 shadow-md flex justify-center items-center gap-2 mt-4 active:scale-[0.98]">
-                    <span id="login-btn-text">Ingresar al Sistema</span>
-                </button>
+                <button onclick="attemptLogin()" class="w-full bg-[#00a884] hover:bg-[#008f6f] text-white font-semibold py-3.5 px-4 rounded-xl transition shadow-md active:scale-95 flex justify-center"><span id="login-btn-text">Ingresar al Sistema</span></button>
             </div>
         </div>
     </div>
 
     <div id="main-app" class="hidden w-full h-full xl:max-w-[1600px] xl:h-[95vh] xl:shadow-2xl xl:rounded-lg bg-white flex relative overflow-hidden">
         
+        <!-- ================= PANEL IZQUIERDO ================= -->
         <div id="left-panel" class="w-full md:w-[400px] lg:w-[420px] border-r border-[#d1d7db] flex flex-col bg-white flex-shrink-0 relative z-10 h-full">
             
-            <div class="bg-[#f0f2f5] h-[60px] md:h-[65px] flex items-center justify-between px-3 md:px-4 border-b border-[#d1d7db] flex-shrink-0">
+            <!-- Header Izquierdo con pt-safe para el Notch -->
+            <div class="bg-[#f0f2f5] h-header-safe pt-safe flex items-center justify-between px-3 md:px-4 border-b border-[#d1d7db] flex-shrink-0 pb-2">
                 <div class="flex items-center gap-1">
-                    <button onclick="toggleDrawer()" class="w-10 h-10 rounded-full hover:bg-gray-200 flex items-center justify-center transition text-[#54656f] text-xl active:bg-gray-300">
-                        <i class="fa-solid fa-bars"></i>
-                    </button>
+                    <button onclick="toggleDrawer()" class="w-10 h-10 rounded-full hover:bg-gray-200 flex items-center justify-center transition text-[#54656f] text-xl active:bg-gray-300"><i class="fa-solid fa-bars"></i></button>
                     <span class="font-medium text-[#111b21] ml-2 text-[15px]">Chats Activos</span>
                 </div>
                 <div class="flex gap-1 text-[#54656f]">
-                    <button onclick="navTo('new-chat')" class="w-10 h-10 rounded-full hover:bg-gray-200 flex items-center justify-center transition text-[#54656f]" title="Nuevo Chat">
-                        <i class="fa-solid fa-plus text-xl"></i>
-                    </button>
+                    <button onclick="navTo('new-chat')" class="w-10 h-10 rounded-full hover:bg-gray-200 flex items-center justify-center transition text-[#54656f]" title="Nuevo Chat"><i class="fa-solid fa-plus text-xl"></i></button>
                 </div>
             </div>
 
             <div class="bg-white border-b border-[#f0f2f5] p-2 flex-shrink-0">
                 <div class="bg-[#f0f2f5] rounded-xl flex items-center px-4 py-2 h-[40px]">
-                    <button class="text-[#54656f] mr-3"><i class="fa-solid fa-magnifying-glass"></i></button>
-                    <input type="text" id="search-chat" onkeyup="filterChats()" class="bg-transparent w-full text-[15px] focus:outline-none text-[#111b21] placeholder-[#667781]" placeholder="Buscar en chats activos...">
+                    <i class="fa-solid fa-magnifying-glass text-[#54656f] mr-3"></i>
+                    <input type="text" id="search-chat" onkeyup="filterActiveChats()" class="bg-transparent w-full text-[15px] focus:outline-none text-[#111b21] placeholder-[#667781]" placeholder="Buscar chat activo...">
                 </div>
             </div>
 
-            <div id="chat-list" class="flex-1 overflow-y-auto bg-white no-scrollbar pb-20 md:pb-0">
-                <div class="text-center text-[#667781] mt-10 text-sm flex flex-col items-center">
-                    <i class="fa-solid fa-circle-notch fa-spin text-2xl mb-2 text-[#00a884]"></i> Cargando conversaciones...
-                </div>
+            <div id="chat-list" class="flex-1 overflow-y-auto bg-white no-scrollbar pb-safe">
+                <div class="text-center text-[#667781] mt-10 text-sm"><i class="fa-solid fa-circle-notch fa-spin text-xl mb-2 text-[#00a884]"></i><br>Cargando...</div>
             </div>
 
+            <!-- ================= PANELES DESLIZABLES ================= -->
             
-            <!-- Panel: NUEVO CHAT (Lista completa de contactos) -->
             <div id="panel-new-chat" class="absolute inset-0 bg-white slide-panel flex flex-col h-full z-20">
-                <div class="bg-[#008069] h-[110px] flex items-end px-4 pb-4 text-white flex-shrink-0 shadow-sm">
+                <div class="bg-[#008069] h-[120px] pt-safe flex items-end px-4 pb-4 text-white flex-shrink-0 shadow-sm">
                     <div class="flex items-center gap-4 font-semibold text-xl">
                         <button onclick="navTo('chats')" class="hover:bg-black/10 p-2 -ml-2 rounded-full transition active:bg-black/20"><i class="fa-solid fa-arrow-left"></i></button>
                         <span>Nuevo Chat</span>
@@ -180,258 +194,219 @@
                 <div class="bg-white border-b border-[#f0f2f5] p-2 flex-shrink-0">
                     <div class="bg-[#f0f2f5] rounded-xl flex items-center px-4 py-2 h-[40px]">
                         <i class="fa-solid fa-magnifying-glass text-[#54656f] mr-3"></i>
-                        <input type="text" id="search-new-chat" onkeyup="filterNewChats()" class="bg-transparent w-full text-[15px] focus:outline-none text-[#111b21] placeholder-[#667781]" placeholder="Buscar contacto por nombre o número...">
+                        <input type="text" id="search-new-chat" onkeyup="filterNewChats()" class="bg-transparent w-full text-[15px] focus:outline-none text-[#111b21]" placeholder="Buscar contacto en la BD...">
                     </div>
                 </div>
-                <div id="new-chat-list" class="flex-1 overflow-y-auto bg-white no-scrollbar pb-20"></div>
+                <div id="new-chat-list" class="flex-1 overflow-y-auto bg-white no-scrollbar pb-safe"></div>
             </div>
 
-            <!-- Panel: BASE DE CONTACTOS (Importar Excel) -->
+            <!-- Panel: BASE DE DATOS -->
             <div id="panel-contacts" class="absolute inset-0 bg-white slide-panel flex flex-col h-full z-20">
-                <div class="bg-[#008069] h-[110px] flex items-end px-4 pb-4 text-white flex-shrink-0 shadow-sm">
+                <div class="bg-[#008069] h-[120px] pt-safe flex items-end px-4 pb-4 text-white flex-shrink-0 shadow-sm">
                     <div class="flex items-center gap-4 font-semibold text-xl">
                         <button onclick="navTo('chats')" class="hover:bg-black/10 p-2 -ml-2 rounded-full transition active:bg-black/20"><i class="fa-solid fa-arrow-left"></i></button>
                         <span>Base de Datos</span>
                     </div>
                 </div>
-                <div class="flex-1 overflow-y-auto bg-[#f0f2f5] p-3 md:p-4 pb-20">
+                <div class="flex-1 overflow-y-auto bg-[#f0f2f5] p-3 md:p-4 pb-safe">
                     <div class="bg-white p-4 md:p-5 rounded-xl shadow-sm mb-4 border border-gray-100">
-                        <h3 class="text-[#111b21] font-semibold mb-2 text-[15px]"><i class="fa-solid fa-file-excel text-green-600 mr-2"></i>Importar Contactos (Excel)</h3>
-                        <p class="text-[13px] text-[#667781] mb-4 leading-relaxed">Sube tu archivo .xlsx o .csv. El sistema identificará automáticamente los números telefónicos y nombres.</p>
+                        <h3 class="text-[#111b21] font-semibold mb-2 text-[15px]"><i class="fa-solid fa-file-excel text-green-600 mr-2"></i>Importar Excel (.xlsx, .csv)</h3>
+                        <p class="text-[13px] text-[#667781] mb-4">El sistema extraerá automáticamente nombres y números válidos.</p>
                         <input type="file" id="excel-upload" accept=".xlsx, .xls, .csv" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 cursor-pointer mb-4">
-                        <button onclick="procesarExcelInteligente()" class="w-full py-3 bg-[#00a884] text-white rounded-xl font-medium hover:bg-[#008f6f] transition text-[15px] shadow-sm active:scale-[0.98]">Procesar y Guardar</button>
+                        <button onclick="procesarExcelInteligente()" class="w-full py-3 bg-[#00a884] text-white rounded-xl font-medium hover:bg-[#008f6f] transition shadow-sm active:scale-95">Procesar y Guardar</button>
                     </div>
-                    <div class="flex justify-between items-center mb-3 px-2 mt-6">
-                        <span class="text-[14px] font-semibold text-[#54656f]">Contactos Totales: <span id="total-contacts-count">0</span></span>
+                    
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between">
+                        <div>
+                            <p class="text-[14px] font-bold text-[#111b21]">Total Contactos: <span id="total-contacts-count">0</span></p>
+                            <p class="text-[12px] text-gray-500">Listos para envíos o chat.</p>
+                        </div>
+                        <button onclick="exportarExcel()" class="bg-[#f0f2f5] hover:bg-gray-200 text-[#00a884] font-bold py-2 px-4 rounded-lg transition text-[13px] shadow-sm active:scale-95"><i class="fa-solid fa-download mr-1"></i> Exportar</button>
                     </div>
                 </div>
             </div>
 
-            <!-- Panel: Envíos Masivos -->
             <div id="panel-bulk" class="absolute inset-0 bg-white slide-panel flex flex-col h-full z-20">
-                <div class="bg-[#008069] h-[110px] flex items-end px-4 pb-4 text-white flex-shrink-0 shadow-sm">
+                <div class="bg-[#008069] h-[120px] pt-safe flex items-end px-4 pb-4 text-white flex-shrink-0 shadow-sm">
                     <div class="flex items-center gap-4 font-semibold text-xl">
-                        <button onclick="navTo('chats')" class="hover:bg-black/10 p-2 -ml-2 rounded-full transition active:bg-black/20"><i class="fa-solid fa-arrow-left"></i></button>
+                        <button onclick="navTo('chats')" class="hover:bg-black/10 p-2 -ml-2 rounded-full transition"><i class="fa-solid fa-arrow-left"></i></button>
                         <span>Envíos Masivos</span>
                     </div>
                 </div>
-                <div class="flex-1 overflow-y-auto bg-[#f0f2f5] p-3 md:p-4 pb-20">
-                    <div class="bg-white p-4 md:p-5 rounded-xl shadow-sm border border-gray-100 space-y-5">
-                        <div class="bg-blue-50 text-blue-800 text-[13px] p-4 rounded-lg border border-blue-100 flex gap-3 items-start">
-                            <i class="fa-solid fa-circle-info mt-0.5"></i>
-                            <p>Recuerda: Meta requiere usar una <b>Plantilla Aprobada</b> si vas a iniciar una conversación.</p>
+                <div class="flex-1 overflow-y-auto bg-[#f0f2f5] p-3 md:p-4 pb-safe">
+                    <div class="bg-white p-4 md:p-5 rounded-xl shadow-sm border border-gray-100 space-y-4">
+                        <div class="bg-blue-50 text-blue-800 text-[13px] p-4 rounded-lg border border-blue-100">
+                            <i class="fa-solid fa-info-circle"></i> Usa plantillas aprobadas por Meta para iniciar conversaciones.
                         </div>
                         <div>
                             <label class="block text-[14px] font-semibold text-[#111b21] mb-2">Plantilla a Enviar</label>
-                            <select id="bulk-template" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl text-[15px] outline-none focus:border-[#00a884]"></select>
+                            <select id="bulk-template" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:border-[#00a884]"></select>
                         </div>
                         <div>
                             <label class="block text-[14px] font-semibold text-[#111b21] mb-2">Audiencia (Etiquetas)</label>
-                            <select id="bulk-tag" onchange="calcularAudienciaBulk()" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl text-[15px] outline-none focus:border-[#00a884]">
-                                <option value="">Seleccionar grupo...</option>
+                            <select id="bulk-tag" onchange="calcularAudienciaBulk()" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:border-[#00a884]">
+                                <option value="">Seleccionar...</option>
                                 <option value="all">Toda mi base de datos</option>
                                 <option value="nuevo">Solo Nuevos</option>
                                 <option value="prospecto">Solo Prospectos</option>
                                 <option value="vip">Solo VIP</option>
-                                <option value="cliente">Solo Clientes Cerrados</option>
                             </select>
                         </div>
                         <div class="flex gap-3">
                             <div class="flex-1">
-                                <label class="block text-[13px] font-semibold text-[#111b21] mb-1 text-center">Delay (ms)</label>
-                                <input type="number" id="bulk-delay" value="3500" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl text-[15px] outline-none focus:border-[#00a884] text-center font-mono">
+                                <label class="block text-[13px] font-semibold text-[#111b21] mb-1">Delay (ms)</label>
+                                <input type="number" id="bulk-delay" value="3500" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:border-[#00a884] text-center font-mono">
                             </div>
-                            <div class="flex-1 flex flex-col justify-end">
-                                <div class="bg-emerald-50 rounded-xl p-3 text-center text-[13px] text-[#008069] font-medium border border-emerald-100">
-                                    A enviar: <br><span id="bulk-count" class="font-bold text-[20px]">0</span>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Progreso -->
-                        <div id="bulk-progress-ui" class="hidden mt-4 bg-gray-50 p-4 rounded-xl border border-gray-200">
-                            <div class="flex justify-between text-[13px] font-bold text-[#54656f] mb-2">
-                                <span>Progreso</span>
-                                <span id="bulk-progress-text">0%</span>
-                            </div>
-                            <div class="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
-                                <div id="bulk-progress-bar" class="bg-[#00a884] h-2.5 rounded-full transition-all duration-300 w-0"></div>
+                            <div class="flex-1 bg-emerald-50 rounded-xl p-3 text-center border border-emerald-100 flex flex-col justify-center">
+                                <span class="text-[12px] text-[#008069] font-bold">A enviar:</span>
+                                <span id="bulk-count" class="font-bold text-[22px] text-[#008069]">0</span>
                             </div>
                         </div>
-                        <button id="btn-start-bulk" onclick="startBulkMessaging()" class="w-full py-3.5 mt-2 bg-[#00a884] text-white rounded-xl font-bold hover:bg-[#008f6f] transition text-[15px] shadow-sm flex items-center justify-center gap-2 active:scale-[0.98]">
-                            <i class="fa-solid fa-paper-plane"></i> Iniciar Campaña
-                        </button>
+                        <div id="bulk-progress-ui" class="hidden mt-2 bg-gray-50 p-4 rounded-xl border border-gray-200">
+                            <div class="flex justify-between text-[13px] font-bold text-[#54656f] mb-2"><span>Progreso</span><span id="bulk-progress-text">0%</span></div>
+                            <div class="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden"><div id="bulk-progress-bar" class="bg-[#00a884] h-2.5 rounded-full transition-all w-0"></div></div>
+                        </div>
+                        <button id="btn-start-bulk" onclick="startBulkMessaging()" class="w-full py-3.5 bg-[#00a884] text-white rounded-xl font-bold hover:bg-[#008f6f] transition shadow-sm active:scale-95"><i class="fa-solid fa-paper-plane mr-2"></i> Iniciar Campaña</button>
                     </div>
                 </div>
             </div>
 
-            <!-- Panel: Plantillas -->
+            <!-- Panel: Plantillas y Configuración API -->
             <div id="panel-templates" class="absolute inset-0 bg-white slide-panel flex flex-col h-full z-20">
-                <div class="bg-[#008069] h-[110px] flex items-end px-4 pb-4 text-white flex-shrink-0 shadow-sm">
-                    <div class="flex items-center gap-4 font-semibold text-xl">
-                        <button onclick="navTo('chats')" class="hover:bg-black/10 p-2 -ml-2 rounded-full transition active:bg-black/20"><i class="fa-solid fa-arrow-left"></i></button>
-                        <span>Plantillas de Meta</span>
-                    </div>
-                </div>
-                <div class="flex-1 overflow-y-auto bg-[#f0f2f5] p-3 md:p-4 pb-20">
-                    <div class="bg-white p-4 md:p-5 rounded-xl shadow-sm border border-gray-100 mb-5">
-                        <h3 class="text-[15px] font-bold text-[#111b21] mb-1">Registrar Plantilla Aprobada</h3>
-                        <p class="text-[12px] text-gray-500 mb-4">Añade aquí el nombre exacto con el que Meta te aprobó la plantilla.</p>
-                        <input type="text" id="tpl-name" placeholder="Ej: promocion_verano_2026" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl mb-3 text-[14px] outline-none focus:border-[#00a884] font-mono">
-                        <textarea id="tpl-body" placeholder="Texto de referencia..." rows="2" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl mb-4 text-[14px] outline-none focus:border-[#00a884] resize-none"></textarea>
-                        <button onclick="saveTemplate()" class="w-full py-3 bg-[#00a884] text-white rounded-xl font-medium hover:bg-[#008f6f] transition text-[15px] active:scale-[0.98]">Guardar Plantilla</button>
+                <div class="bg-[#008069] h-[120px] pt-safe flex items-end px-4 pb-4 text-white flex-shrink-0"><div class="flex items-center gap-4 font-semibold text-xl"><button onclick="navTo('chats')" class="p-2 -ml-2"><i class="fa-solid fa-arrow-left"></i></button><span>Plantillas</span></div></div>
+                <div class="flex-1 bg-[#f0f2f5] p-4 overflow-y-auto pb-safe">
+                    <div class="bg-white p-4 rounded-xl border border-gray-100 mb-4">
+                        <h3 class="font-bold mb-2">Registrar Plantilla Aprobada</h3>
+                        <input type="text" id="tpl-name" placeholder="Nombre en Meta (ej: promo_1)" class="w-full p-3 bg-gray-50 rounded-xl mb-3 outline-none focus:border-[#00a884]">
+                        <textarea id="tpl-body" placeholder="Mensaje referencia" rows="2" class="w-full p-3 bg-gray-50 rounded-xl mb-3 outline-none focus:border-[#00a884] resize-none"></textarea>
+                        <button onclick="saveTemplate()" class="w-full py-3 bg-[#00a884] text-white rounded-xl font-bold active:scale-95">Guardar</button>
                     </div>
                     <div id="templates-list-ui" class="space-y-3"></div>
                 </div>
             </div>
 
-            <!-- Panel: Configuración API -->
             <div id="panel-config" class="absolute inset-0 bg-white slide-panel flex flex-col h-full z-20">
-                <div class="bg-[#008069] h-[110px] flex items-end px-4 pb-4 text-white flex-shrink-0 shadow-sm">
-                    <div class="flex items-center gap-4 font-semibold text-xl">
-                        <button onclick="navTo('chats')" class="hover:bg-black/10 p-2 -ml-2 rounded-full transition active:bg-black/20"><i class="fa-solid fa-arrow-left"></i></button>
-                        <span>Conexión Meta API</span>
-                    </div>
-                </div>
-                <div class="flex-1 overflow-y-auto bg-[#f0f2f5] p-3 md:p-4 pb-20">
-                    <div class="bg-white p-4 md:p-5 rounded-xl shadow-sm border border-gray-100 space-y-5">
-                        <div>
-                            <label class="block text-[14px] font-semibold text-[#111b21] mb-2">Token de Acceso (Bearer)</label>
-                            <input type="password" id="config-token" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl text-[13px] font-mono outline-none focus:border-[#00a884]">
-                        </div>
-                        <div>
-                            <label class="block text-[14px] font-semibold text-[#111b21] mb-2">ID del Número (Phone ID)</label>
-                            <input type="text" id="config-phone-id" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl text-[14px] font-mono outline-none focus:border-[#00a884]">
-                        </div>
-                        <button onclick="saveMetaConfig()" class="w-full py-3.5 bg-[#00a884] text-white rounded-xl font-bold hover:bg-[#008f6f] transition text-[15px] shadow-sm active:scale-[0.98]">Guardar Credenciales</button>
+                <div class="bg-[#008069] h-[120px] pt-safe flex items-end px-4 pb-4 text-white flex-shrink-0"><div class="flex items-center gap-4 font-semibold text-xl"><button onclick="navTo('chats')" class="p-2 -ml-2"><i class="fa-solid fa-arrow-left"></i></button><span>Configuración Meta</span></div></div>
+                <div class="flex-1 bg-[#f0f2f5] p-4 overflow-y-auto pb-safe">
+                    <div class="bg-white p-5 rounded-xl border border-gray-100 space-y-4">
+                        <div><label class="font-bold text-sm mb-1 block">Token de Acceso</label><input type="password" id="config-token" class="w-full p-3 bg-gray-50 rounded-xl font-mono text-sm outline-none"></div>
+                        <div><label class="font-bold text-sm mb-1 block">Phone ID</label><input type="text" id="config-phone-id" class="w-full p-3 bg-gray-50 rounded-xl font-mono text-sm outline-none"></div>
+                        <button onclick="saveMetaConfig()" class="w-full py-3.5 bg-[#00a884] text-white rounded-xl font-bold active:scale-95">Guardar Conexión</button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div id="chat-area" class="absolute md:relative inset-0 flex-1 flex flex-col bg-whatsapp-doodles w-full h-full z-[45] md:z-10 transform translate-x-full md:translate-x-0 transition-transform duration-300 ease-out shadow-[-10px_0_15px_-3px_rgba(0,0,0,0.1)] md:shadow-none">
+        <!-- ================= PANEL DERECHO (CHAT) ================= -->
+        <div id="chat-area" class="absolute md:relative inset-0 flex-1 flex flex-col bg-whatsapp-doodles w-full h-full z-[45] md:z-10 transform translate-x-full md:translate-x-0 transition-transform duration-300 shadow-[-10px_0_15px_-3px_rgba(0,0,0,0.1)] md:shadow-none">
             
             <div id="no-chat-selected" class="absolute inset-0 flex flex-col items-center justify-center bg-[#f0f2f5] z-20 border-b-[6px] border-[#25d366]">
                 <img src="https://cdn-icons-png.flaticon.com/512/124/124034.png" class="w-48 md:w-64 opacity-[0.07] mb-8 grayscale">
                 <h2 class="text-[28px] md:text-[32px] font-light text-[#41525d] mb-4 text-center px-4">WhatsApp Web CRM</h2>
-                <p class="text-[#667781] text-[14px] text-center max-w-md leading-relaxed px-6">Selecciona un chat activo de la lista izquierda o crea uno nuevo usando el botón <b>+</b>.</p>
-                <div class="absolute bottom-10 text-[13px] text-[#8696a0] flex items-center gap-1"><i class="fa-solid fa-lock text-[10px]"></i> Cifrado de extremo a extremo</div>
+                <p class="text-[#667781] text-[14px] text-center px-6">Integración directa con Meta API.<br>Cifrado de extremo a extremo.</p>
             </div>
 
-            <!-- Chat Header -->
-            <div id="chat-header" class="bg-[#f0f2f5] h-[60px] md:h-[65px] flex items-center px-2 md:px-4 border-b border-[#d1d7db] z-10 hidden shadow-sm flex-shrink-0">
-                <button class="md:hidden text-[#54656f] hover:text-[#111b21] mx-1 w-10 h-10 flex items-center justify-center rounded-full active:bg-gray-200 transition text-lg" onclick="closeChatMobile()">
-                    <i class="fa-solid fa-arrow-left"></i>
-                </button>
-                <div class="w-10 h-10 md:w-11 md:h-11 bg-[#dfe5e7] rounded-full flex items-center justify-center overflow-hidden mr-3 md:mr-4 border border-gray-200 flex-shrink-0 shadow-sm cursor-pointer" onclick="toggleTagsModal()">
-                    <i class="fa-solid fa-user text-gray-400 text-xl"></i>
-                </div>
-                <div class="flex-1 min-w-0 cursor-pointer py-1" onclick="toggleTagsModal()">
-                    <h3 id="chat-header-name" class="font-medium text-[#111b21] text-[16px] md:text-[17px] leading-tight truncate">Contacto</h3>
-                    <div id="chat-header-phone" class="text-[12px] md:text-[13px] text-[#667781] leading-tight truncate mt-0.5">Toca para gestionar etiquetas</div>
+            <!-- Chat Header con pt-safe -->
+            <div id="chat-header" class="bg-[#f0f2f5] h-header-safe pt-safe flex items-center px-2 md:px-4 border-b border-[#d1d7db] z-10 hidden shadow-sm flex-shrink-0 pb-2">
+                <button class="md:hidden text-[#54656f] hover:text-[#111b21] mx-1 w-10 h-10 flex items-center justify-center rounded-full active:bg-gray-200 transition text-lg" onclick="closeChatMobile()"><i class="fa-solid fa-arrow-left"></i></button>
+                <div class="w-10 h-10 md:w-11 md:h-11 bg-[#dfe5e7] rounded-full flex items-center justify-center overflow-hidden mr-3 border border-gray-200 cursor-pointer flex-shrink-0" onclick="toggleTagsModal()"><i class="fa-solid fa-user text-gray-400 text-xl"></i></div>
+                <div class="flex-1 min-w-0 cursor-pointer" onclick="toggleTagsModal()">
+                    <h3 id="chat-header-name" class="font-medium text-[#111b21] text-[16px] md:text-[17px] truncate">Contacto</h3>
+                    <div id="chat-header-phone" class="text-[12px] md:text-[13px] text-[#667781] truncate mt-0.5">Toca para etiquetas</div>
                 </div>
             </div>
 
-            <!-- Contenedor Mensajes -->
+            <!-- Messages Area -->
             <div id="messages-container" class="flex-1 overflow-y-auto p-4 md:p-[4%] space-y-1.5 z-10 hidden flex-col scroll-smooth"></div>
 
-            <!-- Contenedor Input (Con Multimedia) -->
-            <div id="chat-input-area" class="bg-[#f0f2f5] px-2 md:px-4 py-2 md:py-3 flex items-end gap-1.5 md:gap-2 z-10 hidden flex-shrink-0 safe-area-pb relative">
+            <!-- Chat Input Footer con pb-safe para teclados de iPhone -->
+            <div id="chat-input-area" class="bg-[#f0f2f5] px-2 md:px-4 py-2 md:py-3 pb-safe flex items-end gap-1.5 md:gap-2 z-10 hidden flex-shrink-0 relative">
                 
-                <!-- Interfaz Grabación Voz -->
-                <div id="recording-ui" class="absolute inset-0 bg-[#f0f2f5] z-20 flex items-center justify-between px-4 hidden">
-                    <div class="flex items-center gap-3 recording-pulse font-medium text-lg">
-                        <i class="fa-solid fa-microphone"></i>
-                        <span id="recording-time" class="font-mono">00:00</span>
-                    </div>
-                    <button onclick="stopRecording(false)" class="text-[#54656f] hover:text-red-500 font-medium text-[15px] p-2">Cancelar</button>
+                <!-- Recording Overlay -->
+                <div id="recording-ui" class="absolute inset-0 bg-[#f0f2f5] z-20 flex items-center justify-between px-4 pb-safe hidden">
+                    <div class="flex items-center gap-3 recording-pulse font-medium text-lg mt-2"><i class="fa-solid fa-microphone"></i><span id="recording-time" class="font-mono">00:00</span></div>
+                    <button onclick="stopRecording(false)" class="text-[#54656f] hover:text-red-500 font-medium text-[15px] p-2 mt-2">Cancelar</button>
                 </div>
 
-                <input type="file" id="chat-attachment" class="hidden" accept="image/*, application/pdf, .doc, .docx" onchange="handleAttachment(event)">
+                <input type="file" id="chat-attachment" class="hidden" accept="image/*, application/pdf" onchange="handleAttachment(event)">
 
-                <div class="flex gap-0.5 md:gap-1 pb-1 md:pb-1.5 text-[#54656f]">
-                    <button class="w-10 h-10 md:w-11 md:h-11 rounded-full active:bg-gray-200 flex items-center justify-center text-xl transition"><i class="fa-regular fa-face-smile"></i></button>
-                    <button onclick="document.getElementById('chat-attachment').click()" class="w-10 h-10 md:w-11 md:h-11 rounded-full active:bg-gray-200 flex items-center justify-center text-xl transition hover:bg-gray-200 text-[#54656f]"><i class="fa-solid fa-paperclip"></i></button>
+                <div class="flex gap-0.5 md:gap-1 pb-1 md:pb-1.5 text-[#54656f] mt-2">
+                    <button onclick="document.getElementById('chat-attachment').click()" class="w-10 h-10 md:w-11 md:h-11 rounded-full hover:bg-gray-200 flex items-center justify-center text-xl transition"><i class="fa-solid fa-paperclip"></i></button>
                 </div>
 
-                <div class="flex-1 bg-white rounded-xl overflow-hidden flex items-center shadow-sm border border-gray-100 my-1 md:my-0">
-                    <textarea id="message-input" class="w-full border-none py-3 px-4 resize-none outline-none text-[15px] md:text-[16px] bg-transparent max-h-[120px] overflow-y-auto leading-relaxed" placeholder="Mensaje" rows="1" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'"></textarea>
+                <div class="flex-1 bg-white rounded-xl overflow-hidden flex items-center shadow-sm border border-gray-100 my-1 md:my-0 mt-2">
+                    <textarea id="message-input" class="w-full border-none py-3 px-4 resize-none outline-none text-[15px] md:text-[16px] bg-transparent max-h-[120px] overflow-y-auto leading-relaxed" placeholder="Escribe un mensaje" rows="1" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'"></textarea>
                 </div>
                 
-                <div class="flex pb-1 md:pb-1.5 pl-1 z-30">
-                    <button id="btn-send-msg" onclick="sendTextMessage()" class="w-11 h-11 bg-[#00a884] text-white rounded-full flex items-center justify-center text-lg transition hidden shadow-md active:scale-95">
-                        <i class="fa-solid fa-paper-plane ml-[-2px]"></i>
-                    </button>
-                    <!-- Boton de Voz Real -->
-                    <button id="btn-voice-msg" onclick="toggleRecording()" class="w-11 h-11 bg-[#00a884] text-white rounded-full flex items-center justify-center text-xl transition shadow-md active:scale-95">
-                        <i class="fa-solid fa-microphone"></i>
-                    </button>
+                <div class="flex pb-1 md:pb-1.5 pl-1 z-30 mt-2">
+                    <button id="btn-send-msg" onclick="sendTextMessage()" class="w-11 h-11 bg-[#00a884] text-white rounded-full flex items-center justify-center text-lg transition hidden shadow-md active:scale-95"><i class="fa-solid fa-paper-plane ml-[-2px]"></i></button>
+                    <!-- Grabación de Audio -->
+                    <button id="btn-voice-msg" onclick="toggleRecording()" class="w-11 h-11 bg-[#00a884] text-white rounded-full flex items-center justify-center text-xl transition shadow-md active:scale-95"><i class="fa-solid fa-microphone"></i></button>
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="tags-modal" class="fixed inset-0 bg-black/50 z-[200] hidden items-center justify-center backdrop-blur-sm p-4 transition-opacity">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-[320px] border border-gray-100 transform scale-95 transition-transform duration-200 overflow-hidden" id="tags-modal-content">
-            <div class="bg-[#111b21] px-5 py-4 flex justify-between items-center">
-                <h2 class="text-white text-[16px] font-medium">Etiquetas del Cliente</h2>
-                <button onclick="closeTagsModal()" class="text-gray-400 hover:text-white p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
-            </div>
-            <div class="p-5">
-                <p class="text-[12px] text-gray-500 mb-4 font-bold uppercase tracking-wider truncate" id="tags-contact-name">Contacto</p>
-                <div class="space-y-3">
-                    <label class="flex items-center gap-4 p-2 hover:bg-gray-50 rounded-lg cursor-pointer transition">
-                        <input type="checkbox" value="nuevo" class="tag-checkbox w-5 h-5 text-[#00a884] rounded focus:ring-0 accent-[#00a884]">
-                        <span class="wa-tag tag-nuevo px-3 py-1 text-[12px]">Nuevo</span>
-                    </label>
-                    <label class="flex items-center gap-4 p-2 hover:bg-gray-50 rounded-lg cursor-pointer transition">
-                        <input type="checkbox" value="prospecto" class="tag-checkbox w-5 h-5 text-[#00a884] rounded focus:ring-0 accent-[#00a884]">
-                        <span class="wa-tag tag-prospecto px-3 py-1 text-[12px]">Prospecto</span>
-                    </label>
-                    <label class="flex items-center gap-4 p-2 hover:bg-gray-50 rounded-lg cursor-pointer transition">
-                        <input type="checkbox" value="vip" class="tag-checkbox w-5 h-5 text-[#00a884] rounded focus:ring-0 accent-[#00a884]">
-                        <span class="wa-tag tag-vip px-3 py-1 text-[12px]">VIP</span>
-                    </label>
-                </div>
-            </div>
-            <div class="bg-gray-50 px-5 py-4 border-t border-gray-100 flex justify-end gap-3">
-                <button onclick="closeTagsModal()" class="px-5 py-2.5 rounded-xl text-gray-600 hover:bg-gray-200 font-medium text-[14px]">Cancelar</button>
-                <button onclick="saveContactTags()" class="px-5 py-2.5 bg-[#00a884] text-white rounded-xl font-medium hover:bg-[#008f6f] text-[14px]">Guardar</button>
-            </div>
-        </div>
-    </div>
+    <!-- Modal Etiquetas -->
+    <div id="tags-modal" class="fixed inset-0 bg-black/50 z-[200] hidden items-center justify-center backdrop-blur-sm p-4"><div class="bg-white rounded-2xl w-full max-w-[300px] overflow-hidden" id="tags-modal-content"><div class="bg-[#111b21] p-4 flex justify-between"><h2 class="text-white font-medium">Etiquetas</h2><button onclick="closeTagsModal()" class="text-white"><i class="fa-solid fa-xmark"></i></button></div><div class="p-4 space-y-3"><label class="flex items-center gap-3"><input type="checkbox" value="nuevo" class="tag-checkbox w-5 h-5 accent-[#00a884]"><span class="wa-tag tag-nuevo text-xs">Nuevo</span></label><label class="flex items-center gap-3"><input type="checkbox" value="prospecto" class="tag-checkbox w-5 h-5 accent-[#00a884]"><span class="wa-tag tag-prospecto text-xs">Prospecto</span></label><label class="flex items-center gap-3"><input type="checkbox" value="vip" class="tag-checkbox w-5 h-5 accent-[#00a884]"><span class="wa-tag tag-vip text-xs">VIP</span></label></div><div class="bg-gray-50 p-3 flex justify-end gap-2"><button onclick="closeTagsModal()" class="px-4 py-2 text-sm">Cancelar</button><button onclick="saveContactTags()" class="px-4 py-2 bg-[#00a884] text-white rounded-lg text-sm">Guardar</button></div></div></div>
 
     <script>
-        // CONFIGURACIÓN SUPABASE 
+        // Generar Manifest Dinámico para permitir instalación en móviles
+        const manifestJSON = {
+            "name": "WhatsApp CRM Pro",
+            "short_name": "WA CRM",
+            "start_url": ".",
+            "display": "standalone",
+            "background_color": "#111b21",
+            "theme_color": "#00a884",
+            "icons": [{
+                "src": "https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg",
+                "sizes": "192x192",
+                "type": "image/svg+xml"
+            }]
+        };
+        const manifestBlob = new Blob([JSON.stringify(manifestJSON)], {type: 'application/json'});
+        const manifestURL = URL.createObjectURL(manifestBlob);
+        const link = document.createElement('link');
+        link.rel = 'manifest';
+        link.href = manifestURL;
+        document.head.appendChild(link);
+
+        // Dummy Service Worker para activar el aviso de instalación en Android
+        const swCode = `self.addEventListener('fetch', function() {});`;
+        const swBlob = new Blob([swCode], {type: 'application/javascript'});
+        const swUrl = URL.createObjectURL(swBlob);
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register(swUrl).catch(console.error);
+        }
+
         const SUPABASE_URL = "https://sczbgqpcjldtoiehdcwj.supabase.co"; 
         const SUPABASE_KEY = "sb_publishable_lNDEzES_h18uac0hpdO5-w_AHDbG9Ea";
         let supabaseClient = null;
         let realtimeChannel = null;
 
-        // Variables Globales de Datos
         let currentUser = null;
         let activeContactId = null;
         let activeContactData = null;
         
-        let allContacts = []; // Base de datos completa
-        let activeChatsList = []; // Solo chats iniciados
+        let allContacts = []; // Base de datos total
+        let activeChatsList = []; // Solo los que tienen mensajes
         
-        // Variables Multimedia (Voz)
+        let metaToken = localStorage.getItem('crm_meta_token') || '';
+        let metaPhoneId = localStorage.getItem('crm_meta_phone_id') || '';
+
+        // Variables de Audio
         let mediaRecorder;
         let audioChunks = [];
         let isRecording = false;
         let recordTimerInterval;
         let recordSeconds = 0;
 
-        // Metadatos
-        let metaToken = localStorage.getItem('crm_meta_token') || '';
-        let metaPhoneId = localStorage.getItem('crm_meta_phone_id') || '';
-
-        // Toast de sistema
         function showToast(message, type = 'info') {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
             let bg = type === 'error' ? 'bg-[#ef4444]' : (type === 'success' ? 'bg-[#10b981]' : 'bg-[#202c33]');
-            toast.className = `flex items-center gap-3 px-4 py-3 rounded-xl shadow-xl text-white text-[14px] font-medium ${bg} toast-enter mb-2 z-[9999]`;
+            toast.className = `flex items-center gap-3 px-4 py-3 rounded-xl shadow-xl text-white text-[14px] font-medium ${bg} toast-enter mb-2`;
             toast.innerHTML = `<span>${message}</span>`;
             container.appendChild(toast);
             setTimeout(() => toast.classList.add('toast-enter-active'), 10);
@@ -439,39 +414,20 @@
         }
 
         window.onload = function() {
-            try {
-                supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-                if (localStorage.getItem('crm_logged_user')) {
-                    currentUser = localStorage.getItem('crm_logged_user');
-                    iniciarApp();
-                }
-            } catch (err) {
-                showToast("Error conectando a BD. " + err.message, "error");
-            }
+            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+            if (localStorage.getItem('crm_logged_user')) { currentUser = localStorage.getItem('crm_logged_user'); iniciarApp(); }
         };
 
         async function attemptLogin() {
             const user = document.getElementById('login-user').value.trim();
             const pass = document.getElementById('login-pass').value.trim();
-            const errDiv = document.getElementById('login-error');
-            const btn = document.getElementById('login-btn-text');
-            
-            if (!user || !pass) return (errDiv.textContent = 'Llena los campos', errDiv.classList.remove('hidden'));
-            
-            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>';
-            errDiv.classList.add('hidden');
-            
+            if (!user || !pass) return showToast('Llena los campos', 'error');
+            document.getElementById('login-btn-text').innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>';
             try {
                 const { data, error } = await supabaseClient.from('usuarios').select('*').eq('usuario', user).eq('clave', pass).single();
-                if (error || !data) throw new Error("Datos incorrectos");
-                currentUser = data.usuario;
-                localStorage.setItem('crm_logged_user', currentUser);
-                iniciarApp();
-            } catch (err) {
-                errDiv.textContent = err.message;
-                errDiv.classList.remove('hidden');
-                btn.textContent = 'Ingresar al Sistema';
-            }
+                if (error || !data) throw new Error("Credenciales incorrectas");
+                currentUser = data.usuario; localStorage.setItem('crm_logged_user', currentUser); iniciarApp();
+            } catch (err) { showToast(err.message, 'error'); document.getElementById('login-btn-text').textContent = 'Ingresar al Sistema'; }
         }
 
         function iniciarApp() {
@@ -479,27 +435,19 @@
             document.getElementById('main-app').classList.remove('hidden');
             document.getElementById('drawer-initial').textContent = currentUser.charAt(0).toUpperCase();
             document.getElementById('drawer-user-name').textContent = currentUser;
-            document.getElementById('config-token').value = metaToken;
-            document.getElementById('config-phone-id').value = metaPhoneId;
-            setupRealtime();
-            loadDataAndChats();
+            document.getElementById('config-token').value = metaToken; document.getElementById('config-phone-id').value = metaPhoneId;
+            setupRealtime(); loadDataAndChats();
         }
         function logout() { localStorage.removeItem('crm_logged_user'); window.location.reload(); }
 
-        // Navegación UI
         function toggleDrawer() {
             const d = document.getElementById('main-drawer'), o = document.getElementById('drawer-overlay');
-            if(d.classList.contains('-translate-x-full')) {
-                d.classList.remove('-translate-x-full'); o.classList.remove('hidden'); setTimeout(() => o.classList.remove('opacity-0'), 10);
-            } else {
-                d.classList.add('-translate-x-full'); o.classList.add('opacity-0'); setTimeout(() => o.classList.add('hidden'), 300);
-            }
+            if(d.classList.contains('-translate-x-full')) { d.classList.remove('-translate-x-full'); o.classList.remove('hidden'); setTimeout(() => o.classList.remove('opacity-0'), 10); } 
+            else { d.classList.add('-translate-x-full'); o.classList.add('opacity-0'); setTimeout(() => o.classList.add('hidden'), 300); }
         }
-
         function navTo(panel) {
             if(!['new-chat'].includes(panel)) toggleDrawer();
-            closeChatMobile();
-            document.querySelectorAll('.slide-panel').forEach(p => p.classList.remove('open'));
+            closeChatMobile(); document.querySelectorAll('.slide-panel').forEach(p => p.classList.remove('open'));
             if(panel !== 'chats') {
                 const pEl = document.getElementById(`panel-${panel}`);
                 if(pEl) pEl.classList.add('open');
@@ -509,60 +457,51 @@
                 if(panel === 'bulk') loadTemplatesDropdown();
             }
         }
-
-        function closeChatMobile() {
-            document.getElementById('chat-area').classList.add('translate-x-full');
-            activeContactId = null;
-            renderChatList(); 
-        }
+        function closeChatMobile() { document.getElementById('chat-area').classList.add('translate-x-full'); activeContactId = null; renderActiveChats(); }
 
         async function loadDataAndChats() {
-            // 1. Cargar Base Completa
-            const { data: cData, error: cErr } = await supabaseClient.from('contactos').select('*');
+            // 1. Traer Todos los Contactos
+            const { data: cData } = await supabaseClient.from('contactos').select('*').order('id', {ascending: false});
             if (cData) allContacts = cData;
 
-            // 2. Cargar Últimos Mensajes para crear lista de Chats
+            // 2. Traer últimos mensajes para determinar chats "activos"
             const { data: mData } = await supabaseClient.from('mensajes').select('contacto_id, contenido, created_at, tipo').order('created_at', { ascending: false }).limit(2000);
             
             let mapChats = new Map();
-            if(mData) {
-                mData.forEach(m => { if(!mapChats.has(m.contacto_id)) mapChats.set(m.contacto_id, m); });
-            }
+            if(mData) mData.forEach(m => { if(!mapChats.has(m.contacto_id)) mapChats.set(m.contacto_id, m); });
 
             activeChatsList = [];
             mapChats.forEach((lastMsg, cId) => {
                 const c = allContacts.find(x => x.id === cId);
                 if(c) activeChatsList.push({ ...c, lastMsg });
             });
-
-            renderChatList();
+            renderActiveChats();
+            if(document.getElementById('panel-new-chat').classList.contains('open')) renderNewChatList();
         }
 
-        function renderChatList(list = activeChatsList) {
+        function renderActiveChats() {
             const term = document.getElementById('search-chat').value.toLowerCase();
-            const filtered = list.filter(c => (c.nombre||'').toLowerCase().includes(term) || String(c.telefono||c.numero||'').includes(term));
-            
-            const cont = document.getElementById('chat-list');
-            if(filtered.length === 0) return cont.innerHTML = '<div class="text-center text-[#667781] mt-10 text-[14px]">No hay chats activos. Toca el botón + para iniciar.</div>';
+            const filtered = activeChatsList.filter(c => (c.nombre||'').toLowerCase().includes(term) || String(c.telefono||'').includes(term));
+            const list = document.getElementById('chat-list');
+            if(filtered.length === 0) return list.innerHTML = '<div class="text-center text-[#667781] mt-10 text-[14px]">No tienes conversaciones activas.<br>Usa el botón + para buscar un contacto.</div>';
 
-            cont.innerHTML = filtered.map(c => {
-                const tags = (c.etiquetas||'').split(',').filter(t=>t).map(t=>`<span class="w-3 h-3 bg-[#00a884] rounded-full inline-block border border-white"></span>`).join('');
+            list.innerHTML = filtered.map(c => {
                 const inicial = (c.nombre && c.nombre !== 'Cliente Nuevo') ? c.nombre.charAt(0).toUpperCase() : '#';
-                const time = c.lastMsg ? new Date(c.lastMsg.created_at).toLocaleTimeString([],{hour:'2-digit', minute:'2-digit'}) : '';
-                
-                let snippet = c.lastMsg ? c.lastMsg.contenido : 'Inicia la conversación';
-                if(c.lastMsg && c.lastMsg.tipo === 'audio') snippet = '🎤 Mensaje de voz';
-                if(c.lastMsg && c.lastMsg.tipo === 'imagen') snippet = '📷 Imagen';
-                if(c.lastMsg && c.lastMsg.tipo === 'documento') snippet = '📄 Documento';
+                const time = new Date(c.lastMsg.created_at).toLocaleTimeString([],{hour:'2-digit', minute:'2-digit'});
+                let snippet = c.lastMsg.contenido;
+                if(c.lastMsg.tipo === 'audio') snippet = '🎤 Mensaje de voz';
+                if(c.lastMsg.tipo === 'imagen') snippet = '📷 Imagen';
+                if(c.lastMsg.tipo === 'documento') snippet = '📄 Documento adjunto';
 
                 return `
                 <div onclick="selectContact(${c.id})" class="flex items-center gap-3 p-3 border-b border-[#f0f2f5] cursor-pointer hover:bg-[#f5f6f6] ${activeContactId===c.id?'bg-[#f0f2f5]':''}">
                     <div class="w-12 h-12 bg-[#dfe5e7] rounded-full flex items-center justify-center text-[#54656f] font-bold text-xl relative">
-                        ${inicial} <div class="absolute bottom-0 right-0 flex gap-0.5">${tags}</div>
+                        ${inicial}
+                        ${c.etiquetas ? '<div class="absolute bottom-0 right-0 w-3 h-3 bg-[#00a884] rounded-full border border-white"></div>' : ''}
                     </div>
                     <div class="flex-1 min-w-0">
                         <div class="flex justify-between items-center mb-1">
-                            <h4 class="font-normal text-[16px] text-[#111b21] truncate">${c.nombre || c.telefono || c.numero}</h4>
+                            <h4 class="font-normal text-[16px] text-[#111b21] truncate">${c.nombre || c.telefono}</h4>
                             <span class="text-[11px] text-[#667781]">${time}</span>
                         </div>
                         <p class="text-[13px] text-[#667781] truncate">${snippet}</p>
@@ -570,39 +509,31 @@
                 </div>`;
             }).join('');
         }
+        function filterActiveChats() { renderActiveChats(); }
 
-        function filterChats() { renderChatList(); }
-
-        // Render Panel de Contactos Completos (Nuevo Chat)
         function renderNewChatList() {
             const term = document.getElementById('search-new-chat').value.toLowerCase();
-            const filtered = allContacts.filter(c => (c.nombre||'').toLowerCase().includes(term) || String(c.telefono||c.numero||'').includes(term));
+            const filtered = allContacts.filter(c => (c.nombre||'').toLowerCase().includes(term) || String(c.telefono||'').includes(term));
             document.getElementById('new-chat-list').innerHTML = filtered.map(c => `
-                <div onclick="startNewChat(${c.id})" class="flex items-center gap-3 p-3 border-b border-gray-100 hover:bg-gray-50 cursor-pointer transition">
-                    <div class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center text-gray-500 font-bold">${c.nombre?c.nombre[0].toUpperCase():'#'}</div>
-                    <div><p class="text-[15px] font-medium text-[#111b21]">${c.nombre || 'Desconocido'}</p><p class="text-[12px] text-gray-500">+${c.telefono||c.numero}</p></div>
-                </div>
-            `).join('');
+                <div onclick="startNewChat(${c.id})" class="flex items-center gap-3 p-3.5 border-b border-gray-100 hover:bg-gray-50 cursor-pointer">
+                    <div class="w-10 h-10 bg-[#dfe5e7] rounded-full flex items-center justify-center text-[#54656f] font-bold">${c.nombre?c.nombre[0].toUpperCase():'#'}</div>
+                    <div><p class="text-[15px] font-medium text-[#111b21]">${c.nombre || 'Desconocido'}</p><p class="text-[12px] text-gray-500">+${c.telefono}</p></div>
+                </div>`).join('');
         }
         function filterNewChats() { renderNewChatList(); }
 
         function startNewChat(id) {
-            navTo('chats'); // Cierra paneles
-            // Añadir a lista de activos si no está
+            navTo('chats');
             if(!activeChatsList.find(c => c.id === id)) {
                 const c = allContacts.find(x => x.id === id);
-                if(c) {
-                    activeChatsList.unshift({...c, lastMsg: null});
-                    renderChatList();
-                }
+                if(c) { activeChatsList.unshift({...c, lastMsg: {created_at: new Date(), contenido: 'Inicia la conversación'}}); renderActiveChats(); }
             }
             selectContact(id);
         }
 
         async function selectContact(id) {
             activeContactData = allContacts.find(c => c.id === id);
-            activeContactId = activeContactData.id;
-            renderChatList(); 
+            activeContactId = id; renderActiveChats(); 
             
             document.getElementById('no-chat-selected').classList.add('hidden');
             document.getElementById('chat-header').classList.remove('hidden');
@@ -612,8 +543,7 @@
             document.getElementById('chat-area').classList.remove('translate-x-full');
 
             document.getElementById('chat-header-name').textContent = activeContactData.nombre || 'Desconocido';
-            document.getElementById('chat-header-phone').textContent = `+${activeContactData.telefono||activeContactData.numero} • Tocar para etiquetas`;
-            
+            document.getElementById('chat-header-phone').textContent = `+${activeContactData.telefono}`;
             loadMessages(id);
         }
 
@@ -622,7 +552,7 @@
             cont.innerHTML = '<div class="text-center text-[#667781] mt-10"><i class="fa-solid fa-circle-notch fa-spin"></i> Cargando...</div>';
             const { data } = await supabaseClient.from('mensajes').select('*').eq('contacto_id', contactId).order('id', { ascending: true });
             
-            cont.innerHTML = `<div class="flex justify-center mb-6 mt-4"><div class="bg-[#ffeecd] text-[#54656f] text-[12.5px] py-2 px-3 rounded-xl shadow-sm text-center max-w-sm border border-[#f0deba] leading-relaxed"><i class="fa-solid fa-lock text-[11px] mr-1"></i> Cifrado extremo a extremo.</div></div>`;
+            cont.innerHTML = `<div class="flex justify-center mb-6 mt-4"><div class="bg-[#ffeecd] text-[#54656f] text-[12.5px] py-2 px-3 rounded-xl shadow-sm text-center max-w-sm border border-[#f0deba]">Cifrado extremo a extremo.</div></div>`;
             if(data) data.forEach(msg => renderMessage(msg));
             cont.scrollTop = cont.scrollHeight;
         }
@@ -632,27 +562,17 @@
             const isOut = msg.direccion === 'saliente';
             const time = msg.created_at ? new Date(msg.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : 'ahora';
             let icon = isOut ? '<i class="fa-solid fa-check text-[#8696a0] ml-1 text-[11px]"></i>' : '';
-            if(isOut && msg.estado==='entregado') icon = '<i class="fa-solid fa-check-double text-[#8696a0] ml-1 text-[11px]"></i>';
-            if(isOut && msg.estado==='leido') icon = '<i class="fa-solid fa-check-double text-[#53bdeb] ml-1 text-[11px]"></i>';
 
             let html = `<p class="leading-snug pr-14 whitespace-pre-wrap">${msg.contenido||''}</p>`;
-            
-            if(msg.tipo === 'audio') {
-                html = `<div class="pr-12"><audio controls src="${msg.contenido}" class="h-10 w-[200px] outline-none bg-transparent"></audio></div>`;
-            } else if(msg.tipo === 'imagen') {
-                html = `<div class="pr-8 pb-2"><img src="${msg.contenido}" class="max-w-[200px] rounded-lg object-cover" /></div>`;
-            } else if(msg.tipo === 'documento') {
-                html = `<div class="pr-12 flex items-center gap-3 p-1"><i class="fa-solid fa-file-pdf text-2xl text-red-500"></i><span class="text-sm">Documento adjunto</span></div>`;
-            }
+            if(msg.tipo === 'audio') html = `<div class="pr-12"><audio controls src="${msg.contenido}" class="h-10 w-[200px]"></audio></div>`;
+            else if(msg.tipo === 'imagen') html = `<div class="pr-8 pb-2"><img src="${msg.contenido}" class="max-w-[200px] rounded-lg object-cover" /></div>`;
+            else if(msg.tipo === 'documento') html = `<div class="pr-12 flex items-center gap-2"><i class="fa-solid fa-file-pdf text-red-500 text-xl"></i><span class="text-sm underline">Documento adjunto</span></div>`;
 
             const div = document.createElement('div');
             div.className = `flex ${isOut ? 'justify-end' : 'justify-start'} mb-[2px] w-full`;
-            div.innerHTML = `
-                <div class="${isOut ? 'bg-[#d9fdd3]' : 'bg-white'} text-[#111b21] p-1.5 pl-2.5 pb-2 rounded-xl max-w-[85%] shadow-sm relative text-[15px]" style="border-top-${isOut?'right':'left'}-radius:0;">
-                    ${html}
-                    <div class="absolute bottom-1 right-1.5 text-[10px] text-[#667781] flex items-center pl-2">${time} ${icon}</div>
-                </div>`;
+            div.innerHTML = `<div class="${isOut ? 'bg-[#d9fdd3]' : 'bg-white'} text-[#111b21] p-1.5 pl-2.5 pb-2 rounded-xl max-w-[85%] shadow-sm relative text-[15px]" style="border-top-${isOut?'right':'left'}-radius:0;">${html}<div class="absolute bottom-1 right-1.5 text-[10px] text-[#667781] pl-2">${time} ${icon}</div></div>`;
             cont.appendChild(div);
+            cont.scrollTop = cont.scrollHeight;
         }
 
         document.getElementById('message-input').addEventListener('input', function() {
@@ -672,14 +592,21 @@
             enviarAMetaAPI('text', txt);
         }
 
+        // GRABACIÓN DE AUDIO (Compatible iPhone/Meta API)
         async function toggleRecording() {
             if(!isRecording) {
                 try {
                     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                    mediaRecorder = new MediaRecorder(stream);
-                    mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+                    // Soporte para Safari/iPhone y Chrome
+                    let mimeType = 'audio/webm'; 
+                    if (MediaRecorder.isTypeSupported('audio/mp4')) mimeType = 'audio/mp4';
+                    else if (MediaRecorder.isTypeSupported('audio/ogg;codecs=opus')) mimeType = 'audio/ogg;codecs=opus';
+
+                    mediaRecorder = new MediaRecorder(stream, { mimeType });
+                    audioChunks = [];
+                    mediaRecorder.ondataavailable = e => { if(e.data.size > 0) audioChunks.push(e.data); };
                     mediaRecorder.onstop = saveVoiceNote;
-                    audioChunks = []; mediaRecorder.start(); isRecording = true;
+                    mediaRecorder.start(); isRecording = true;
                     
                     document.getElementById('recording-ui').classList.remove('hidden');
                     document.getElementById('message-input').parentElement.classList.add('hidden');
@@ -687,53 +614,52 @@
                     
                     recordSeconds = 0;
                     recordTimerInterval = setInterval(() => {
-                        recordSeconds++;
-                        document.getElementById('recording-time').textContent = `${String(Math.floor(recordSeconds/60)).padStart(2,'0')}:${String(recordSeconds%60).padStart(2,'0')}`;
+                        recordSeconds++; document.getElementById('recording-time').textContent = `${String(Math.floor(recordSeconds/60)).padStart(2,'0')}:${String(recordSeconds%60).padStart(2,'0')}`;
                     }, 1000);
                 } catch(e) { showToast('Da permisos de micrófono a tu navegador.', 'error'); }
-            } else {
-                stopRecording(true); // Terminar y enviar
-            }
+            } else { stopRecording(true); }
         }
 
         function stopRecording(send = false) {
             if(mediaRecorder && isRecording) {
-                if(!send) mediaRecorder.onstop = null; 
+                if(!send) mediaRecorder.onstop = null;
                 mediaRecorder.stop(); mediaRecorder.stream.getTracks().forEach(t => t.stop());
             }
             isRecording = false; clearInterval(recordTimerInterval);
             document.getElementById('recording-ui').classList.add('hidden');
             document.getElementById('message-input').parentElement.classList.remove('hidden');
             document.getElementById('btn-voice-msg').innerHTML = '<i class="fa-solid fa-microphone"></i>';
+            document.getElementById('recording-time').textContent = "00:00";
         }
 
         async function saveVoiceNote() {
             if(audioChunks.length === 0 || !activeContactId) return;
-            const blob = new Blob(audioChunks, { type: 'audio/mp4' });
+            const blobType = mediaRecorder.mimeType || 'audio/mp4';
+            const blob = new Blob(audioChunks, { type: blobType });
             const reader = new FileReader(); reader.readAsDataURL(blob);
             reader.onloadend = async () => {
                 await supabaseClient.from('mensajes').insert([{ contacto_id: activeContactId, direccion: 'saliente', tipo: 'audio', contenido: reader.result, estado: 'enviado' }]);
-                uploadToMeta(blob, 'audio');
+                uploadToMeta(blob, 'audio', blobType);
             }
         }
 
+        // ADJUNTOS (CLIP)
         async function handleAttachment(e) {
             const file = e.target.files[0];
             if(!file || !activeContactId) return;
-            showToast("Procesando archivo...", "info");
+            showToast("Subiendo archivo...", "info");
             const tipo = file.type.startsWith('image/') ? 'imagen' : 'documento';
             const reader = new FileReader(); reader.readAsDataURL(file);
             reader.onloadend = async () => {
                 await supabaseClient.from('mensajes').insert([{ contacto_id: activeContactId, direccion: 'saliente', tipo: tipo, contenido: reader.result, estado: 'enviado' }]);
-                uploadToMeta(file, tipo);
+                uploadToMeta(file, tipo, file.type);
             }
             e.target.value = '';
         }
 
-        // Conexion directa con Meta API Oficial
         async function enviarAMetaAPI(tipo, contenidoTexto = null, mediaId = null) {
             if(!metaToken || !metaPhoneId || !activeContactData) return;
-            const num = String(activeContactData.telefono||activeContactData.numero).replace(/\D/g,'');
+            const num = String(activeContactData.telefono).replace(/\D/g,'');
             let bodyParams = { messaging_product: 'whatsapp', to: num, type: tipo };
             
             if(tipo === 'text') bodyParams.text = { body: contenidoTexto };
@@ -747,104 +673,151 @@
             }).catch(e => console.log(e));
         }
 
-        async function uploadToMeta(fileBlob, crmTipo) {
-            if(!metaToken || !metaPhoneId) return showToast("Guardado local (Sin API de Meta)", "info");
-            const fData = new FormData(); fData.append('file', fileBlob); fData.append('messaging_product', 'whatsapp');
+        async function uploadToMeta(fileBlob, crmTipo, mimeType) {
+            if(!metaToken || !metaPhoneId) return showToast("Guardado local. (Meta API no configurada)", "info");
+            const fData = new FormData();
+            
+            let fileName = crmTipo === 'audio' ? 'audio.ogg' : fileBlob.name;
+            if(crmTipo === 'audio' && mimeType.includes('mp4')) fileName = 'audio.mp4';
+            
+            fData.append('file', fileBlob, fileName); 
+            fData.append('messaging_product', 'whatsapp');
+            const metaType = crmTipo === 'imagen' ? 'image' : (crmTipo==='audio'?'audio':'document');
+            fData.append('type', metaType);
+
             try {
-                const res = await fetch(`https://graph.facebook.com/v17.0/${metaPhoneId}/media`, {
-                    method: 'POST', headers: { 'Authorization': `Bearer ${metaToken}` }, body: fData
-                });
+                const res = await fetch(`https://graph.facebook.com/v17.0/${metaPhoneId}/media`, { method: 'POST', headers: { 'Authorization': `Bearer ${metaToken}` }, body: fData });
                 const d = await res.json();
-                if(d.id) {
-                    const metaType = crmTipo === 'imagen' ? 'image' : (crmTipo==='audio'?'audio':'document');
-                    enviarAMetaAPI(metaType, null, d.id);
-                }
-            } catch(e) { console.error("Fallo Meta Media", e); }
+                if(d.id) enviarAMetaAPI(metaType, null, d.id);
+                else throw new Error(d.error?.message || "Fallo API Media");
+            } catch(e) { console.error("Error subiendo a Meta", e); showToast("Fallo al enviar archivo a Meta", "error"); }
         }
 
         async function procesarExcelInteligente() {
-            const fInput = document.getElementById('excel-upload');
-            if(!fInput.files[0]) return showToast("Selecciona un archivo.", "error");
-            showToast("Analizando archivo...", "info");
-            
+            const fileInput = document.getElementById('excel-upload');
+            if(!fileInput.files[0]) return showToast("Selecciona un archivo.", "error");
+            showToast("Analizando Excel...", "info");
             const reader = new FileReader();
             reader.onload = async (e) => {
                 try {
                     const wb = XLSX.read(new Uint8Array(e.target.result), {type: 'array'});
                     const sheet = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { header: 1 });
+                    let aGuardar = []; let numProcesados = new Set();
                     
-                    let aGuardar = []; let SetNums = new Set();
                     for(let i=0; i<sheet.length; i++) {
                         let row = sheet[i]; if(!row || !row.length) continue;
                         let pNum = null, pNom = "Cliente Nuevo";
-                        
                         for(let j=0; j<row.length; j++) {
                             let cell = String(row[j]||"").trim();
-                            let purosNums = cell.replace(/[^0-9]/g, '');
-                            if(purosNums.length >= 8 && purosNums.length <= 15 && !pNum) pNum = purosNums;
-                            else if(cell.length > 2 && isNaN(cell) && pNom === "Cliente Nuevo") pNom = cell;
+                            let numSolo = cell.replace(/[^0-9]/g, '');
+                            if(numSolo.length >= 8 && numSolo.length <= 15 && !pNum) pNum = numSolo;
+                            else if(cell.length > 2 && isNaN(cell) && pNom === "Cliente Nuevo" && !['telefono','celular','numero'].includes(cell.toLowerCase())) pNom = cell;
                         }
-                        if(pNum && !SetNums.has(pNum)) {
+                        if(pNum && !numProcesados.has(pNum)) {
                             aGuardar.push({ nombre: pNom, telefono: pNum, etiquetas: 'nuevo' }); 
-                            SetNums.add(pNum);
+                            numProcesados.add(pNum);
                         }
                     }
-                    
                     if(aGuardar.length === 0) throw new Error("No encontré números válidos.");
-                    showToast(`Subiendo ${aGuardar.length} contactos a la BD...`, "info");
+                    showToast(`Subiendo ${aGuardar.length} contactos...`, "info");
                     
-                    // Aseguramos que se envíe usando la columna correcta "telefono"
                     const { error } = await supabaseClient.from('contactos').insert(aGuardar);
-                    if(error) {
-                        if(error.code === '23505') throw new Error("Contactos duplicados ignorados.");
-                        if(error.message.includes('column')) throw new Error("Aviso BD: Faltan columnas (telefono, etiquetas). Ve a Supabase a crearlas.");
-                        throw error;
-                    }
+                    if(error && error.code !== '23505') throw error;
                     
-                    showToast("¡Importación Exitosa!", "success");
-                    fInput.value = ""; navTo('chats'); loadDataAndChats();
+                    showToast("¡Importación Exitosa!", "success"); fileInput.value = ""; 
+                    navTo('chats'); loadDataAndChats();
                 } catch(e) { showToast(e.message, "error"); }
             };
-            reader.readAsArrayBuffer(fInput.files[0]);
+            reader.readAsArrayBuffer(fileInput.files[0]);
+        }
+
+        function exportarExcel() {
+            if(allContacts.length === 0) return showToast("No hay contactos.", "error");
+            const dataToExport = allContacts.map(c => ({ Nombre: c.nombre, Telefono: c.telefono, Etiquetas: c.etiquetas || '' }));
+            const ws = XLSX.utils.json_to_sheet(dataToExport);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Base");
+            XLSX.writeFile(wb, "Base_Exportada.xlsx");
+            showToast("Archivo exportado.", "success");
+        }
+
+        async function saveTemplate() {
+            const n = document.getElementById('tpl-name').value.trim();
+            if(!n) return showToast("Nombre requerido", "error");
+            await supabaseClient.from('plantillas').insert([{ nombre_plantilla: n, cuerpo: document.getElementById('tpl-body').value }]);
+            showToast("Plantilla registrada", "success"); document.getElementById('tpl-name').value = ''; loadTemplates();
+        }
+        async function loadTemplates() {
+            const { data } = await supabaseClient.from('plantillas').select('*');
+            if (data) document.getElementById('templates-list-ui').innerHTML = data.map(t => `<div class="bg-white p-3 rounded-xl border border-gray-100 flex justify-between"><div class="font-mono text-sm">${t.nombre_plantilla}</div><button onclick="deleteTpl(${t.id})" class="text-red-400 hover:text-red-600"><i class="fa-solid fa-trash"></i></button></div>`).join('');
+        }
+        async function deleteTpl(id) { await supabaseClient.from('plantillas').delete().eq('id', id); loadTemplates(); }
+        async function loadTemplatesDropdown() {
+            const { data } = await supabaseClient.from('plantillas').select('nombre_plantilla');
+            if (data) document.getElementById('bulk-template').innerHTML = '<option value="">Selecciona plantilla...</option>' + data.map(t => `<option value="${t.nombre_plantilla}">${t.nombre_plantilla}</option>`).join('');
+        }
+        
+        let bulkQueue = [];
+        function calcularAudienciaBulk() {
+            const tag = document.getElementById('bulk-tag').value;
+            bulkQueue = tag === 'all' ? allContacts : (tag ? allContacts.filter(c => (c.etiquetas||'').includes(tag)) : []);
+            document.getElementById('bulk-count').textContent = bulkQueue.length;
+        }
+
+        async function startBulkMessaging() {
+            const tplName = document.getElementById('bulk-template').value;
+            const delay = parseInt(document.getElementById('bulk-delay').value) || 3500;
+            if(!tplName || bulkQueue.length === 0) return showToast("Revisa la plantilla y la audiencia.", "error");
+            if(!metaToken || !metaPhoneId) return showToast("Configura Meta API primero.", "error");
+
+            document.getElementById('btn-start-bulk').disabled = true;
+            document.getElementById('bulk-progress-ui').classList.remove('hidden');
+            let enviados = 0;
+            
+            for(let i=0; i<bulkQueue.length; i++) {
+                const num = String(bulkQueue[i].telefono).replace(/\D/g, '');
+                try {
+                    const res = await fetch(`https://graph.facebook.com/v17.0/${metaPhoneId}/messages`, {
+                        method: 'POST', headers: { 'Authorization': `Bearer ${metaToken}`, 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ messaging_product: 'whatsapp', to: num, type: 'template', template: { name: tplName, language: { code: 'es' } } })
+                    });
+                    if(res.ok) {
+                        enviados++;
+                        await supabaseClient.from('mensajes').insert([{ contacto_id: bulkQueue[i].id, direccion: 'saliente', tipo: 'plantilla', contenido: `[Bulk] Plantilla: ${tplName}`, estado: 'enviado' }]);
+                    }
+                } catch(e) {}
+                const pct = Math.round(((i + 1) / bulkQueue.length) * 100);
+                document.getElementById('bulk-progress-bar').style.width = `${pct}%`; document.getElementById('bulk-progress-text').textContent = `${pct}%`;
+                if(i < bulkQueue.length - 1) await new Promise(r => setTimeout(r, delay));
+            }
+            showToast(`Campaña lista. Entregados: ${enviados}`, "success");
+            document.getElementById('btn-start-bulk').disabled = false;
+        }
+
+        function saveMetaConfig() {
+            metaToken = document.getElementById('config-token').value.trim(); metaPhoneId = document.getElementById('config-phone-id').value.trim();
+            localStorage.setItem('crm_meta_token', metaToken); localStorage.setItem('crm_meta_phone_id', metaPhoneId);
+            showToast('API Activada.', 'success'); 
         }
 
         function setupRealtime() {
             if(realtimeChannel) return;
-            realtimeChannel = supabaseClient.channel('custom-all')
+            realtimeChannel = supabaseClient.channel('custom-all-channel')
                 .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'mensajes' }, payload => {
-                    if (activeContactId && payload.new.contacto_id === activeContactId) { renderMessage(payload.new); document.getElementById('messages-container').scrollTop = 9999; }
-                    loadDataAndChats(); // Actualiza lista exterior al recibir mensaje nuevo
+                    const newMsg = payload.new;
+                    if (activeContactId && newMsg.contacto_id === activeContactId) { renderMessage(newMsg); }
+                    loadDataAndChats(); 
                 })
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'contactos' }, () => { loadDataAndChats(); })
                 .subscribe();
         }
 
-        function saveMetaConfig() {
-            metaToken = document.getElementById('config-token').value.trim();
-            metaPhoneId = document.getElementById('config-phone-id').value.trim();
-            localStorage.setItem('crm_meta_token', metaToken); localStorage.setItem('crm_meta_phone_id', metaPhoneId);
-            showToast('Claves API Activadas', 'success');
-        }
-
-        // Etiquetas
-        function toggleTagsModal() {
-            document.querySelectorAll('.tag-checkbox').forEach(cb => cb.checked = (activeContactData.etiquetas||'').includes(cb.value));
-            const m = document.getElementById('tags-modal'); m.classList.remove('hidden'); m.classList.add('flex');
-            setTimeout(() => document.getElementById('tags-modal-content').classList.replace('scale-95', 'scale-100'), 10);
-        }
-        function closeTagsModal() {
-            document.getElementById('tags-modal-content').classList.replace('scale-100', 'scale-95');
-            setTimeout(() => { document.getElementById('tags-modal').classList.add('hidden'); document.getElementById('tags-modal').classList.remove('flex'); }, 200);
-        }
+        function toggleTagsModal() { document.querySelectorAll('.tag-checkbox').forEach(cb => cb.checked = (activeContactData.etiquetas||'').includes(cb.value)); document.getElementById('tags-modal').classList.remove('hidden'); document.getElementById('tags-modal').classList.add('flex'); }
+        function closeTagsModal() { document.getElementById('tags-modal').classList.add('hidden'); document.getElementById('tags-modal').classList.remove('flex'); }
         async function saveContactTags() {
             const tags = Array.from(document.querySelectorAll('.tag-checkbox:checked')).map(cb => cb.value).join(',');
             await supabaseClient.from('contactos').update({ etiquetas: tags }).eq('id', activeContactId);
-            activeContactData.etiquetas = tags; showToast("Etiquetas guardadas", "success"); closeTagsModal(); selectContact(activeContactId);
-        }
-
-        // Envíos Masivos
-        async function startBulkMessaging() {
-            showToast("Iniciando campaña... mira la barra de progreso", "info");
-            // Aquí iría tu lógica de envío masivo (similar a la anterior)
+            activeContactData.etiquetas = tags; showToast("Etiquetas guardadas", "success"); closeTagsModal();
         }
     </script>
 </body>

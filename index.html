@@ -28,7 +28,6 @@ input[type="date"],input[type="month"],input[type="datetime-local"]{-webkit-appe
 
 <div id="screen-app" class="hidden min-h-screen flex flex-col">
 <nav class="bg-[#0f172a] border-b border-slate-800 sticky top-0 z-30 shadow-sm text-white"><div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"><div class="flex justify-between h-16"><div class="flex items-center gap-3"><button onclick="toggleMenu()" class="text-white hover:text-indigo-400 focus:outline-none p-2 rounded-lg text-2xl mr-2"><i class="fas fa-bars"></i></button><div id="nav-icon" class="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center text-lg shadow-md"><i class="fas fa-shield-alt"></i></div><div><h1 class="text-base font-black text-white leading-tight">Sepybet</h1><p id="user-display" class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Cargando...</p></div></div><div class="flex items-center gap-2 sm:gap-3">
-    <!-- Indicador de Tiempo Real -->
     <div id="realtime-indicator" class="hidden sm:flex items-center gap-1 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-1 rounded-lg text-[10px] font-black"><span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> ONLINE</div>
     <button id="btn-superadmin" onclick="openSuperAdminSwitcher()" class="hidden px-3 py-1.5 rounded-lg bg-slate-700 text-white hover:bg-slate-600 text-xs font-bold transition-colors shadow-md"><i class="fas fa-users-cog mr-1"></i> Auditoría</button>
     <button onclick="logout()" class="w-10 h-10 rounded-xl bg-slate-800 text-slate-300 hover:bg-rose-600 hover:text-white flex items-center justify-center transition-colors cursor-pointer" title="Cerrar Sesión"><i class="fas fa-sign-out-alt"></i></button></div></div></div></nav>
@@ -53,6 +52,7 @@ input[type="date"],input[type="month"],input[type="datetime-local"]{-webkit-appe
 <button onclick="switchTab('tab-influencer-dash')" id="btn-tab-influencer-dash" class="hidden w-full text-left px-4 py-3 rounded-xl text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-colors flex items-center gap-3"><i class="fas fa-chart-bar w-5 text-center text-purple-400"></i> Mi Panel VIP</button>
 <button onclick="switchTab('tab-influencer-details')" id="btn-tab-influencer-details" class="hidden w-full text-left px-4 py-3 rounded-xl text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-colors flex items-center gap-3"><i class="fas fa-list-ul w-5 text-center text-purple-400"></i> Detalle por Jugador</button>
 <button onclick="switchTab('tab-inactivos')" id="btn-tab-inactivos" class="hidden w-full text-left px-4 py-3 rounded-xl text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-colors flex items-center gap-3"><i class="fas fa-user-clock w-5 text-center text-amber-400"></i> Alerta Inactivos</button>
+<!-- NUEVO MENÚ PARA SUPERADMIN -->
 <hr class="my-2 border-slate-800 hidden" id="divider-3">
 <button onclick="switchTab('tab-sync-db')" id="btn-tab-sync-db" class="hidden w-full text-left px-4 py-3 rounded-xl text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-colors flex items-center gap-3"><i class="fas fa-database w-5 text-center text-blue-400"></i> Sync Base de Datos</button>
 </div><div class="p-4 border-t border-slate-800 space-y-2"><button id="btn-install-pwa" onclick="installPWA()" class="hidden w-full text-left px-4 py-3 rounded-xl text-sm font-bold text-emerald-400 hover:bg-slate-800 hover:text-emerald-300 transition-colors flex items-center gap-3"><i class="fas fa-download w-5 text-center"></i> Instalar App</button><button onclick="openPasswordModal()" class="w-full text-left px-4 py-3 rounded-xl text-sm font-bold text-slate-300 hover:bg-slate-800 hover:text-white transition-colors flex items-center gap-3"><i class="fas fa-key w-5 text-center"></i> Cambiar Clave</button><button onclick="logout()" class="w-full text-left px-4 py-3 rounded-xl text-sm font-bold text-rose-500 hover:bg-rose-500 hover:text-white transition-colors flex items-center gap-3"><i class="fas fa-sign-out-alt w-5 text-center"></i> Cerrar Sesión</button></div></div>
@@ -80,6 +80,7 @@ input[type="date"],input[type="month"],input[type="datetime-local"]{-webkit-appe
     <div class="grid grid-cols-1 mt-6"><div class="bg-white border border-emerald-100 rounded-2xl shadow-sm overflow-hidden flex flex-col"><div class="px-6 py-4 bg-emerald-50/50"><h3 class="text-sm font-black text-emerald-900"><i class="fas fa-trophy mr-1 text-amber-500"></i>Top 5 Ganadores Históricos</h3></div><div class="overflow-x-auto"><table class="w-full text-left border-collapse"><tbody id="gus-table-top-ganadores" class="divide-y divide-slate-100"></tbody></table></div></div></div><div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-indigo-100 pb-2 mt-8 pt-4 gap-4"><h2 class="text-xl font-black text-indigo-900"><i class="fas fa-users-cog mr-2 text-indigo-500"></i>Rendimiento de Influyentes</h2><div class="flex items-center gap-2"><label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Mes:</label><input type="month" id="gus-inf-month-filter" onchange="updateAllViews()" class="bg-indigo-50 border border-indigo-200 rounded-xl px-3 py-1.5 text-sm font-bold text-indigo-800 outline-none"></div></div><div class="overflow-x-auto mt-4"><table class="w-full text-left border-collapse resp-table"><thead class="bg-indigo-50 border-b border-indigo-100 text-[10px] font-black text-indigo-800 uppercase hidden md:table-header-group"><tr><th class="p-3 pl-4">Influyente</th><th class="p-3">Total Referidos</th><th class="p-3">Depósitos</th><th class="p-3">Retiros</th><th class="p-3">Neto</th><th class="p-3 text-right">Comisión Plat.</th><th class="p-3 pr-4 text-right">Comisión Pagar</th></tr></thead><tbody id="gus-table-influencers" class="divide-y divide-slate-100 text-sm"></tbody></table></div>
 </div>
 <div id="panel-dash-movimientos" class="hidden"><div class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden flex flex-col mt-8"><div class="px-6 py-5 border-b border-slate-100 flex justify-between items-center bg-slate-50/50"><h2 class="text-lg font-black text-slate-800">Últimos Movimientos (Mes)</h2></div><div class="overflow-x-auto"><table class="w-full text-left border-collapse resp-table"><thead class="bg-slate-50 border-b border-slate-100 text-[10px] font-black text-slate-400 uppercase tracking-widest hidden md:table-header-group"><tr><th class="p-4 pl-6">Fecha y Hora</th><th class="p-4">Monto</th><th class="p-4">Concepto</th><th class="p-4">Cuenta</th><th class="p-4">Estado</th><th class="p-4">Ref/Comp</th><th class="p-4 pr-6 text-center">Acción</th></tr></thead><tbody id="dash-table-body"></tbody></table></div><div id="pagination-dash" class="hidden px-6 py-4 border-t border-slate-100 bg-slate-50/50 justify-between items-center"><span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Total: <span id="total-reg-dash">0</span></span><div class="flex items-center gap-3"><button onclick="changePage('dash', -1)" id="btn-prev-dash" class="w-8 h-8 rounded-lg bg-white border border-slate-200 text-slate-600 flex items-center justify-center hover:bg-slate-100 disabled:opacity-50"><i class="fas fa-chevron-left text-xs"></i></button><span class="text-xs font-bold text-slate-600">Pág. <span id="page-num-dash">1</span> / <span id="page-tot-dash">1</span></span><button onclick="changePage('dash', 1)" id="btn-next-dash" class="w-8 h-8 rounded-lg bg-white border border-slate-200 text-slate-600 flex items-center justify-center hover:bg-slate-100 disabled:opacity-50"><i class="fas fa-chevron-right text-xs"></i></button></div></div></div></div></div>
+
 <div id="tab-register" class="hidden fade-in tab-content"><div class="max-w-2xl mx-auto bg-white border border-slate-200 rounded-3xl shadow-xl overflow-hidden"><div class="px-6 py-8 sm:p-10 border-b border-slate-100 bg-gradient-to-br from-slate-50 to-white relative overflow-hidden"><h2 class="text-2xl font-black text-slate-800 relative z-10">Nuevo Registro Manual</h2></div><form id="register-form" class="p-6 sm:p-10 space-y-8">
 <div><label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-3 ml-1">Tipo de Movimiento *</label><div class="flex gap-4"><label class="flex-1 relative cursor-pointer group"><input type="radio" name="reg-type" value="ingreso" class="peer sr-only" checked onchange="toggleAmountStyle()"><div class="absolute inset-0 rounded-xl border-2 border-slate-200 peer-checked:border-emerald-500 peer-checked:bg-emerald-50 transition-all"></div><div class="relative p-4 text-center"><i class="fas fa-arrow-down text-slate-400 peer-checked:text-emerald-600 text-lg mb-1"></i><div class="text-sm font-bold text-slate-600 peer-checked:text-emerald-800">Ingreso (+)</div></div></label><label class="flex-1 relative cursor-pointer group"><input type="radio" name="reg-type" value="debito" class="peer sr-only" onchange="toggleAmountStyle()"><div class="absolute inset-0 rounded-xl border-2 border-slate-200 peer-checked:border-rose-500 peer-checked:bg-rose-50 transition-all"></div><div class="relative p-4 text-center"><i class="fas fa-arrow-up text-slate-400 peer-checked:text-rose-600 text-lg mb-1"></i><div class="text-sm font-bold text-slate-600 peer-checked:text-rose-800">Débito (-)</div></div></label></div>
 <div id="sueldo-container" class="hidden mt-4 bg-purple-50 border border-purple-200 p-3.5 rounded-xl flex items-center justify-between gap-3"><div><span class="text-xs font-bold text-purple-900 block"><i class="fas fa-hand-holding-usd text-purple-600 mr-1"></i> Pago de Sueldo (Mes Anterior)</span><span class="text-[10px] text-purple-700 block mt-0.5">Queda en el historial pero NO se resta del balance neto del mes actual.</span></div><label class="relative inline-flex items-center cursor-pointer"><input type="checkbox" id="reg-sueldo" class="sr-only toggle-checkbox"><div class="toggle-label w-11 h-6 bg-slate-300 rounded-full transition-colors relative after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border after:rounded-full after:h-5 after:w-5 after:transition-all"></div></label></div></div>
@@ -114,7 +115,26 @@ input[type="date"],input[type="month"],input[type="datetime-local"]{-webkit-appe
 
 <div id="tab-maria-dash" class="hidden fade-in theme-maria tab-content"><div class="max-w-6xl mx-auto space-y-6"><div class="bg-white p-4 rounded-2xl shadow-sm border border-rose-100 flex items-center justify-between"><h2 class="text-sm font-black text-rose-900"><i class="fas fa-calendar-alt text-rose-500 mr-2"></i> Mes a Consultar:</h2><input type="month" id="bonos-month-filter" onchange="updateAllViews()" class="bg-rose-50 border border-rose-200 rounded-xl px-4 py-2 text-sm font-bold text-rose-800 outline-none"></div><div class="grid grid-cols-2 lg:grid-cols-4 gap-4"><div class="bg-rose-50 p-5 rounded-2xl border border-rose-100"><p class="text-[10px] font-black text-slate-500 uppercase">Bonos Emitidos</p><h3 class="text-3xl font-black text-slate-800" id="dash-bonos-qty">0</h3></div><div class="bg-rose-50 p-5 rounded-2xl border border-rose-100"><p class="text-[10px] font-black text-slate-500 uppercase">Inversión Total</p><h3 class="text-3xl font-black text-rose-600" id="dash-bonos-val">$0.00</h3></div><div class="bg-emerald-50 p-5 rounded-2xl border border-emerald-100"><p class="text-[10px] font-black text-slate-500 uppercase">Premios Ganados</p><h3 class="text-3xl font-black text-slate-800" id="dash-bonos-won-qty">0</h3></div><div class="bg-emerald-50 p-5 rounded-2xl border border-emerald-100"><p class="text-[10px] font-black text-slate-500 uppercase">Total Pagado</p><h3 class="text-3xl font-black text-emerald-600" id="dash-bonos-won-val">$0.00</h3></div></div><div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6"><div class="bg-white border border-emerald-100 rounded-2xl overflow-hidden"><div class="px-6 py-4 bg-emerald-50/50"><h3 class="text-sm font-black text-emerald-900">Top Ganadores (Mes)</h3></div><table class="w-full text-left"><tbody id="dash-table-top-ganadores"></tbody></table></div><div class="bg-white border border-rose-100 rounded-2xl overflow-hidden"><div class="px-6 py-4 bg-rose-50/50"><h3 class="text-sm font-black text-rose-900">Top Inversión (Mes)</h3></div><table class="w-full text-left"><tbody id="dash-table-top-recibidos"></tbody></table></div></div></div></div>
 
-<div id="tab-maria-add" class="hidden fade-in theme-maria tab-content"><div class="max-w-2xl mx-auto"><div class="bg-white border border-rose-100 rounded-3xl shadow-xl overflow-hidden"><div class="px-6 py-8 sm:p-10 border-b border-rose-50 bg-gradient-to-br from-rose-50 to-white"><h2 class="text-2xl font-black text-slate-800">Emitir Nuevo Bono</h2></div><form id="form-bonos" class="p-6 sm:p-10 space-y-6"><div><label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-3 ml-1">Plataforma Origen *</label><div class="flex gap-4"><label class="flex-1 relative cursor-pointer group"><input type="radio" name="bono-company" value="Sepybet" class="peer sr-only" checked><div class="absolute inset-0 rounded-xl border-2 border-slate-200 peer-checked:border-indigo-500 peer-checked:bg-indigo-50 transition-all"></div><div class="relative p-3 text-center"><i class="fas fa-shield-alt text-slate-400 peer-checked:text-indigo-600 mb-1"></i><div class="text-xs font-bold text-slate-600 peer-checked:text-indigo-800">Sepybet</div></div></label><label class="flex-1 relative cursor-pointer group"><input type="radio" name="bono-company" value="Chichesepy" class="peer sr-only"><div class="absolute inset-0 rounded-xl border-2 border-slate-200 peer-checked:border-orange-500 peer-checked:bg-orange-50 transition-all"></div><div class="relative p-3 text-center"><i class="fas fa-store text-slate-400 peer-checked:text-orange-600 mb-1"></i><div class="text-xs font-bold text-slate-600 peer-checked:text-orange-800">Chichesepy</div></div></label></div></div><div class="grid grid-cols-1 sm:grid-cols-2 gap-6"><input type="date" id="bono-date" required class="block w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-rose-500"><input type="text" id="bono-amount" inputmode="decimal" required placeholder="Monto Bono ($)" class="block w-full px-4 py-3 border-2 border-slate-200 rounded-xl text-lg font-black focus:border-rose-500"></div><input type="text" id="bono-dest" oninput="applyBonoFilters()" list="bonos-destinatarios" required placeholder="Jugador destinatario..." class="block w-full px-4 py-3.5 border-2 border-slate-200 rounded-xl font-bold focus:border-rose-500"><datalist id="bonos-destinatarios"></datalist><input type="text" id="bono-concept" placeholder="Concepto (Regalo, Recarga...)" class="block w-full px-4 py-3.5 border-2 border-slate-200 rounded-xl font-medium focus:border-rose-500"><button type="submit" class="w-full py-4 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl shadow-lg">Guardar Bono</button></form></div></div></div>
+<div id="tab-maria-add" class="hidden fade-in theme-maria tab-content"><div class="max-w-2xl mx-auto space-y-8">
+    <div class="bg-white border border-rose-100 rounded-3xl shadow-xl overflow-hidden"><div class="px-6 py-8 sm:p-10 border-b border-rose-50 bg-gradient-to-br from-rose-50 to-white"><h2 class="text-2xl font-black text-slate-800">Emitir Nuevo Bono</h2></div><form id="form-bonos" class="p-6 sm:p-10 space-y-6"><div><label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-3 ml-1">Plataforma Origen *</label><div class="flex gap-4"><label class="flex-1 relative cursor-pointer group"><input type="radio" name="bono-company" value="Sepybet" class="peer sr-only" checked><div class="absolute inset-0 rounded-xl border-2 border-slate-200 peer-checked:border-indigo-500 peer-checked:bg-indigo-50 transition-all"></div><div class="relative p-3 text-center"><i class="fas fa-shield-alt text-slate-400 peer-checked:text-indigo-600 mb-1"></i><div class="text-xs font-bold text-slate-600 peer-checked:text-indigo-800">Sepybet</div></div></label><label class="flex-1 relative cursor-pointer group"><input type="radio" name="bono-company" value="Chichesepy" class="peer sr-only"><div class="absolute inset-0 rounded-xl border-2 border-slate-200 peer-checked:border-orange-500 peer-checked:bg-orange-50 transition-all"></div><div class="relative p-3 text-center"><i class="fas fa-store text-slate-400 peer-checked:text-orange-600 mb-1"></i><div class="text-xs font-bold text-slate-600 peer-checked:text-orange-800">Chichesepy</div></div></label></div></div><div class="grid grid-cols-1 sm:grid-cols-2 gap-6"><input type="date" id="bono-date" required class="block w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-rose-500"><input type="text" id="bono-amount" inputmode="decimal" required placeholder="Monto Bono ($)" class="block w-full px-4 py-3 border-2 border-slate-200 rounded-xl text-lg font-black focus:border-rose-500"></div><input type="text" id="bono-dest" oninput="applyBonoFilters()" list="bonos-destinatarios" required placeholder="Jugador destinatario..." class="block w-full px-4 py-3.5 border-2 border-slate-200 rounded-xl font-bold focus:border-rose-500"><datalist id="bonos-destinatarios"></datalist><input type="text" id="bono-concept" placeholder="Concepto (Regalo, Recarga...)" class="block w-full px-4 py-3.5 border-2 border-slate-200 rounded-xl font-medium focus:border-rose-500"><button type="submit" class="w-full py-4 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl shadow-lg">Guardar Bono</button></form></div>
+    
+    <!-- NUEVA TARJETA: CARGA MASIVA DE REPORTES DE APUESTAS (BONOS) -->
+    <div id="bonos-masivo-card" class="upload-section bg-white border border-rose-200 rounded-3xl shadow-xl overflow-hidden mt-6">
+        <div class="px-6 py-6 border-b border-rose-50 bg-gradient-to-br from-rose-50 to-white relative">
+            <h2 class="text-xl font-black text-slate-800"><i class="fas fa-file-excel text-rose-500 mr-2"></i>Carga/Actualización Masiva (Reporte Apuestas)</h2>
+            <p class="text-xs text-slate-500 mt-1">Sube el reporte de apuestas. Detectará "Es Bono = Sí", subirá nuevos y actualizará ganancias si el resultado cambió.</p>
+        </div>
+        <div class="p-6 sm:p-8 space-y-6">
+            <div><input type="file" id="upload-bonos-apuestas-file" accept=".xlsx, .xls, .csv" class="block w-full text-sm text-slate-500 file:mr-4 file:py-3 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-rose-50 file:text-rose-700 hover:file:bg-rose-100 cursor-pointer border-2 border-slate-200 rounded-xl" onchange="handleBonosApuestasUpload(event)"></div>
+            <div id="bonos-apuestas-preview-container" class="hidden flex-col gap-4 mt-6">
+                <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 overflow-x-auto max-h-60">
+                    <table class="w-full text-left text-xs"><thead class="text-[10px] font-black text-slate-500 uppercase border-b border-slate-200"><tr><th class="pb-2">Fecha</th><th class="pb-2">Jugador</th><th class="pb-2 text-right">Inversión</th><th class="pb-2 text-center">Estado</th><th class="pb-2 text-right">Ganancia</th><th class="pb-2 text-center">Acción</th></tr></thead><tbody id="bonos-apuestas-preview-body" class="divide-y divide-slate-100"></tbody></table>
+                </div>
+                <button type="button" id="btn-upload-bonos-apuestas" onclick="submitBonosApuestasData()" class="w-full py-4 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl shadow-lg transition-colors"><i class="fas fa-sync mr-2"></i> Procesar y Actualizar Bonos</button>
+            </div>
+        </div>
+    </div>
+</div></div>
 
 <div id="tab-maria-list" class="hidden fade-in theme-maria tab-content"><div class="max-w-6xl mx-auto space-y-6"><div class="bg-white border border-rose-100 p-3 rounded-2xl shadow-sm mb-4"><div class="flex flex-col lg:flex-row items-end gap-3 w-full"><div class="w-full lg:w-auto flex-1"><label class="block text-[10px] font-black text-slate-400 uppercase mb-1">Desde</label><input type="date" id="filter-bono-date-from" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-bold outline-none"></div><div class="w-full lg:w-auto flex-1"><label class="block text-[10px] font-black text-slate-400 uppercase mb-1">Hasta</label><input type="date" id="filter-bono-date-to" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-bold outline-none"></div><div class="w-full lg:w-auto flex-1"><label class="block text-[10px] font-black text-slate-400 uppercase mb-1">Agencia</label><select id="filter-bono-agency" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-bold outline-none"><option value="all">Todas</option><option value="Sepybet">Sepybet</option><option value="Chichesepy">Chichesepy</option></select></div><div class="w-full lg:w-auto flex-1"><label class="block text-[10px] font-black text-slate-400 uppercase mb-1">Estado</label><select id="filter-bono-status" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-bold outline-none"><option value="all">Todos</option><option value="Ganado">Ganados</option><option value="Entregado">Entregados</option></select></div><div class="w-full lg:w-auto flex-1"><label class="block text-[10px] font-black text-slate-400 uppercase mb-1">Jugador</label><input type="text" id="filter-bono-dest" oninput="applyBonoFilters()" placeholder="ID Jugador..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-bold outline-none"></div><div class="flex gap-2 w-full lg:w-auto mt-2 lg:mt-0"><button onclick="applyBonoFilters()" class="flex-1 lg:flex-none px-6 py-2.5 bg-[#e11d48] text-white rounded-xl text-sm font-bold shadow-md">Filtrar</button><button onclick="clearBonoFilters()" class="flex-1 lg:flex-none px-6 py-2.5 bg-slate-100 text-slate-600 rounded-xl text-sm font-bold">Limpiar</button></div></div></div><div class="bg-white border border-rose-100 rounded-2xl shadow-sm overflow-hidden flex flex-col"><div class="px-6 py-5 border-b border-rose-50 flex justify-between items-center bg-rose-50/30"><h3 class="text-lg font-black text-rose-900">Historial de Bonos</h3></div><div class="overflow-x-auto"><table class="w-full text-left border-collapse resp-table"><thead class="bg-white border-b border-slate-100 text-[10px] font-black text-slate-400 uppercase hidden md:table-header-group"><tr><th class="p-4 pl-6">Fecha</th><th class="p-4">Jugador</th><th class="p-4">Monto Inicial</th><th class="p-4">Detalle</th><th class="p-4">Estado / Liq.</th><th class="p-4 pr-6 text-center">Acción</th></tr></thead><tbody id="table-bonos-list"></tbody></table></div><div id="pagination-bonos" class="hidden px-6 py-4 border-t border-slate-100 bg-slate-50/50 justify-between items-center"><span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Total: <span id="total-reg-bonos">0</span></span><div class="flex items-center gap-3"><button onclick="changePage('bonos', -1)" id="btn-prev-bonos" class="w-8 h-8 rounded-lg bg-white border border-slate-200 text-slate-600 flex items-center justify-center hover:bg-slate-100 disabled:opacity-50"><i class="fas fa-chevron-left text-xs"></i></button><span class="text-xs font-bold text-slate-600">Pág. <span id="page-num-bonos">1</span> / <span id="page-tot-bonos">1</span></span><button onclick="changePage('bonos', 1)" id="btn-next-bonos" class="w-8 h-8 rounded-lg bg-white border border-slate-200 text-slate-600 flex items-center justify-center hover:bg-slate-100 disabled:opacity-50"><i class="fas fa-chevron-right text-xs"></i></button></div></div></div></div></div>
 
@@ -136,8 +156,6 @@ input[type="date"],input[type="month"],input[type="datetime-local"]{-webkit-appe
         <p class="text-xs text-slate-500 mt-1">Sube el reporte de bonos. Se registrarán como saldo verificado automáticamente.</p>
     </div>
     <div class="p-6 sm:p-8 space-y-6">
-        <div id="admin-select-user-bonoreal" class="hidden"><label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-3 ml-1">Asignar a Cuenta *</label><div class="flex gap-4"><label class="flex-1 relative cursor-pointer group"><input type="radio" name="bonoreal-assign" value="jesus" class="peer sr-only" checked><div class="absolute inset-0 rounded-xl border-2 border-slate-200 peer-checked:border-indigo-500 peer-checked:bg-indigo-50 transition-all"></div><div class="relative p-4 text-center"><i class="fas fa-user text-slate-400 peer-checked:text-indigo-600 text-xl mb-2"></i><div class="text-sm font-bold text-slate-600 peer-checked:text-indigo-800">Jesús</div></div></label><label class="flex-1 relative cursor-pointer group"><input type="radio" name="bonoreal-assign" value="tito" class="peer sr-only"><div class="absolute inset-0 rounded-xl border-2 border-slate-200 peer-checked:border-indigo-500 peer-checked:bg-indigo-50 transition-all"></div><div class="relative p-4 text-center"><i class="fas fa-user-tie text-slate-400 peer-checked:text-indigo-600 text-xl mb-2"></i><div class="text-sm font-bold text-slate-600 peer-checked:text-indigo-800">Tito</div></div></label></div></div>
-        
         <div>
             <input type="file" id="upload-bonoreal-file" accept=".xlsx, .xls, .csv" class="block w-full text-sm text-slate-500 file:mr-4 file:py-3 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-teal-50 file:text-teal-700 hover:file:bg-teal-100 cursor-pointer border-2 border-slate-200 rounded-xl" onchange="handleBonoRealUpload(event)">
         </div>
@@ -250,11 +268,12 @@ let bonoFilters={dateFrom:'',dateTo:'',dest:'',amount:'',agency:'all',status:'al
 let refFilters={dateFrom:'',dateTo:'',name:'',cedula:'',agency:'all'};
 let giroFilters={dateFrom:'',dateTo:'',dest:'',agency:'all',status:'all'};
 let melFilters={dateFrom:'',dateTo:'',inf:'',jug:''};
+let bonoRealFilters={dateFrom:'',dateTo:'',jugador:''};
 let pendingVerifyId=null,pendingAuthId=null,pendingBonoWinId=null,pendingGiroWinId=null;
 let inactivityTimer, autoSyncTimer, chartWeekInstance=null, chartMonthsInstance=null;
-let currentPlayersList=[],uploadData=[],bankUploadData=[],bonosRealesUploadData=[]; 
+let currentPlayersList=[],uploadData=[],bankUploadData=[],bonosRealesUploadData=[],bonosApuestasUploadData=[]; 
 
-// === MOTOR EXPORTADOR DINÁMICO (A EXCEL) ===
+// === MOTOR EXPORTADOR DINÁMICO ===
 window.exportToExcel = function(tableId, filename) {
     try {
         const table = document.getElementById(tableId);
@@ -264,7 +283,6 @@ window.exportToExcel = function(tableId, filename) {
         showToast('Reporte descargado correctamente', 'success');
     } catch (e) {
         showToast('Error al generar archivo', 'error');
-        console.error(e);
     }
 };
 
@@ -272,10 +290,8 @@ function injectExportButtons() {
     document.querySelectorAll('.overflow-x-auto').forEach(container => {
         const table = container.querySelector('table.resp-table');
         if(!table || table.id === 'inf-main-export-table' || table.id === 'audit-table-body') return; 
-        
         if(!table.id) table.id = 'tabla_export_' + Math.random().toString(36).substr(2,6);
         if(container.previousElementSibling && container.previousElementSibling.classList.contains('btn-auto-export')) return;
-
         const btn = document.createElement('button');
         btn.className = "btn-auto-export mb-3 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-md flex items-center gap-2 transition-all";
         btn.innerHTML = '<i class="fas fa-file-excel text-sm"></i> Exportar esta tabla a Excel';
@@ -330,7 +346,7 @@ const fmtDate=dStr=>{
 };
 
 const PAGE_SIZE=15;
-let pages={dash:1,audit:1,gussepy:1,bonos:1,giros:1,ref:1,mel:1,inactivos:1,infdash:1,infdetail:1,breales:1};
+let pages={dash:1,audit:1,gussepy:1,bonos:1,giros:1,ref:1,mel:1,inactivos:1,infdash:1,infdetail:1,bonosReal:1};
 function resetPagesAndUpdate(){Object.keys(pages).forEach(k=>pages[k]=1);updateAllViews();}
 function changePage(type,delta){pages[type]+=delta;updateAllViews();}
 function paginate(dataArray,type){
@@ -361,11 +377,9 @@ window.onload=()=>{
         forms.forEach(form=>{const el=document.getElementById(form.id);if(el)el.addEventListener('submit',form.handler);});
         ['mousemove','keydown','click','touchstart','scroll'].forEach(evt=>document.addEventListener(evt,resetInactivityTimer));
         
-        // === Sincronización Automática Silenciosa ===
         autoSyncTimer = setInterval(() => { if(currentUser) fetchData(true); }, 30000);
         
     } catch (e) {
-        console.error("Error cargando app:", e);
         showScreen('login');
     }
 };
@@ -419,7 +433,6 @@ if(formPw){
     });
 }
 
-// === LÓGICA DE LOGIN ===
 async function handleLogin(e){
     e.preventDefault();const u=cleanStr(document.getElementById('login-user').value);const p=document.getElementById('login-pass').value.trim();
     const btn=e.target.querySelector('button');const orig=btn.innerHTML;btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Autenticando...';btn.disabled=true;
@@ -438,7 +451,6 @@ async function handleLogin(e){
                 currentUser=u;loginUI(userObj);showToast('Acceso concedido','success');
             }
         } else {
-            // Respaldo Local (Por si la BD falla)
             if(USERS[u] && p === 'admin') {
                 const userObj={...USERS[u],id:u};currentUser=u;loginUI(userObj);showToast('Acceso local de respaldo','success');
             } else {
@@ -449,7 +461,7 @@ async function handleLogin(e){
         if(USERS[u] && p === 'admin') {
             const userObj={...USERS[u],id:u};currentUser=u;loginUI(userObj);showToast('Acceso local de respaldo (Sin Red)','warning');
         } else {
-            showToast('Error de conexión o bloqueado por permisos. Revisa la base de datos.', 'error');
+            showToast('Error de conexión o bloqueado por permisos.', 'error');
         }
     }
     btn.innerHTML=orig;btn.disabled=false;
@@ -466,17 +478,15 @@ function loginUI(user){
     resetInactivityTimer();
     const allTabs=['btn-tab-dashboard','btn-tab-register','btn-tab-gussepy','btn-tab-auditoria','btn-tab-maria-dash','btn-tab-maria-add','btn-tab-maria-list','btn-tab-giros-add','btn-tab-giros-list','btn-tab-maria-ref-add','btn-tab-maria-ref-list','btn-tab-melanie-add','btn-tab-melanie-list','btn-tab-influencer-dash','btn-tab-influencer-details','btn-tab-inactivos','btn-tab-sync-db','divider-1','divider-2','divider-3','btn-tab-bonos-reales'];
     allTabs.forEach(id=>{const el=document.getElementById(id);if(el)el.classList.add('hidden');});
-    ['panel-admin','panel-personal','panel-gussepy-bonos','panel-add-gussepy','panel-dash-movimientos','filter-user-container','admin-select-user','admin-select-user-bank','bonos-reales-upload-card','admin-select-user-bonoreal'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.add('hidden');});
+    ['panel-admin','panel-personal','panel-gussepy-bonos','panel-add-gussepy','panel-dash-movimientos','filter-user-container','admin-select-user','admin-select-user-bank','bonos-reales-upload-card','admin-select-user-bonoreal','bonos-masivo-card'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.add('hidden');});
 
-    // === RESTRICCIÓN DE EXCEL Y BOTONES DE APROBACIÓN MASIVA ===
     const uploadSections = document.querySelectorAll('.upload-section');
-    if (user.type === 'cajero_afiliados' || isSuperAdmin) {
+    if (user.type === 'cajero_afiliados' || user.type === 'bonos' || isSuperAdmin) {
         uploadSections.forEach(el => el.classList.remove('hidden'));
     } else {
         uploadSections.forEach(el => el.classList.add('hidden'));
     }
     
-    // Ocultar botones de aprobación masiva si es Tito o Jesús
     if(cleanStr(currentUser) === 'tito' || cleanStr(currentUser) === 'jesus') {
         document.querySelectorAll('button[onclick="approveSelected()"]').forEach(btn => btn.classList.add('hidden'));
     } else {
@@ -496,6 +506,7 @@ function loginUI(user){
         switchTab('tab-dashboard');
     }else if(user.type==='bonos'){
         ['btn-tab-maria-dash','btn-tab-maria-add','btn-tab-maria-list','btn-tab-giros-add','btn-tab-giros-list','divider-2','btn-tab-maria-ref-add','btn-tab-maria-ref-list'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('hidden');});
+        ['bonos-masivo-card'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('hidden');});
         switchTab('tab-maria-dash');
     }else if(user.type==='cajero_afiliados'){
         ['btn-tab-register', 'btn-tab-melanie-add', 'btn-tab-melanie-list', 'btn-tab-bonos-reales'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('hidden');});
@@ -533,7 +544,6 @@ function switchTab(tabId){
     toggleMenu(false);
 }
 
-// === ESCUDO ANTI-CRASH PARA EXTRACCIÓN DE DATOS ===
 const safeData = (res) => (res && res.data && Array.isArray(res.data)) ? res.data : [];
 
 async function fetchData(isBackground=false){
@@ -558,7 +568,7 @@ async function fetchData(isBackground=false){
         if (resUsers && resUsers.data && Array.isArray(resUsers.data)) {
             resUsers.data.forEach(u => {
                 let com = parseFloat(u.comision); if(com>0 && com<=1) com = com*100;
-                USERS[u.id] = { name: u.name||u.id, type: u.type, icon: u.icon||'fa-user', color: u.color||'bg-slate-600', comision: com||20 };
+                USERS[cleanStr(u.id)] = { name: u.name||u.id, type: u.type, icon: u.icon||'fa-user', color: u.color||'bg-slate-600', comision: com||20 };
             });
         }
 
@@ -577,7 +587,6 @@ async function fetchData(isBackground=false){
         updateMelanieDropdowns();
 
     } catch(err) {
-        console.warn("Falla de datos. Usando versión local en caché si la hay.", err);
         if(!isBackground) showToast("Error de permisos de red en Supabase.", "warning");
         resetPagesAndUpdate(); 
     } finally {
@@ -586,11 +595,10 @@ async function fetchData(isBackground=false){
     }
 }
 
-// Helper Inteligente para leer Excel en Español
 const getProp = (obj, possibleKeys) => {
-    const lowerKeys = possibleKeys.map(k => k.toLowerCase());
+    const lowerKeys = possibleKeys.map(k => cleanStr(k));
     for (let k in obj) {
-        if (lowerKeys.includes(k.toLowerCase().trim())) return obj[k];
+        if (lowerKeys.includes(cleanStr(k))) return obj[k];
     }
     return undefined;
 };
@@ -624,7 +632,7 @@ async function handleMasterSync() {
                 if (sName === 'USUARIOS') {
                     tableName = 'users';
                     formattedRows = rows.map(r => ({
-                        id: getProp(r, ['usuario', 'id']) ? String(getProp(r, ['usuario', 'id'])).trim().toLowerCase() : '',
+                        id: getProp(r, ['usuario', 'id']) ? cleanStr(getProp(r, ['usuario', 'id'])) : '',
                         pass: getProp(r, ['clave', 'pass']) ? String(getProp(r, ['clave', 'pass'])) : 'admin2026',
                         name: getProp(r, ['nombre', 'name']) || '',
                         type: getProp(r, ['rol', 'type']) || 'user',
@@ -641,7 +649,7 @@ async function handleMasterSync() {
                         amount: getVal(getProp(r, ['monto', 'amount'])),
                         concept: getProp(r, ['concepto', 'concept', 'tipo']) || '',
                         assigned_to: cleanStr(getProp(r, ['cuenta', 'asignado a', 'asignado', 'jugador', 'usuario ', 'usuario'])) || '',
-                        created_by: cleanStr(getProp(r, ['creado por', 'creado', 'usuario'])) || currentUser,
+                        created_by: cleanStr(getProp(r, ['creado por', 'creado', 'usuario'])) || cleanStr(currentUser),
                         status: getProp(r, ['estado', 'status']) || 'Verificado',
                         comment: getProp(r, ['comentario', 'comment']) || '',
                         receipt: String(getProp(r, ['ref', 'comprobante', 'receipt', 'referencia', 'comprobante_vinculado']) || ''),
@@ -657,7 +665,7 @@ async function handleMasterSync() {
                         concept: getProp(r, ['concepto', 'concept']) || '',
                         status: getProp(r, ['estado', 'status']) || 'Pendiente',
                         detail: getProp(r, ['detalle', 'detail']) || '',
-                        created_by: cleanStr(getProp(r, ['creado por'])) || currentUser
+                        created_by: cleanStr(getProp(r, ['creado por'])) || cleanStr(currentUser)
                     }));
                 }
                 else if (sName.includes('RENDIMIENTO')) {
@@ -671,7 +679,7 @@ async function handleMasterSync() {
                         retiros: getVal(getProp(r, ['retiros'])),
                         neto: getVal(getProp(r, ['neto'])),
                         comision: getVal(getProp(r, ['comision', 'comisión', 'comision 20%'])),
-                        created_by: cleanStr(getProp(r, ['creado por'])) || currentUser
+                        created_by: cleanStr(getProp(r, ['creado por'])) || cleanStr(currentUser)
                     })).filter(r => r.referrer && r.referred);
                 }
                 else if (sName.includes('BONOS')) {
@@ -685,7 +693,7 @@ async function handleMasterSync() {
                         status: getProp(r, ['estado', 'status', 'estado bono']) || 'Entregado',
                         amount_won: getVal(getProp(r, ['ganancia', 'real', 'monto ganado'])),
                         company: getProp(r, ['plataforma', 'agencia', 'company']) || 'Sepybet',
-                        created_by: cleanStr(getProp(r, ['creado por'])) || currentUser
+                        created_by: cleanStr(getProp(r, ['creado por'])) || cleanStr(currentUser)
                     })).filter(r => r.assigned_to);
                 }
                 else if (sName.includes('GIROS')) {
@@ -699,7 +707,7 @@ async function handleMasterSync() {
                         qty: parseInt(getProp(r, ['giros', 'cantidad', 'qty', 'cant. giros'])) || 0,
                         status: getProp(r, ['estado', 'status']) || 'Entregado',
                         amount_won: getVal(getProp(r, ['ganancia', 'real', 'monto ganado', 'ganancia real'])),
-                        created_by: cleanStr(getProp(r, ['creado por'])) || currentUser
+                        created_by: cleanStr(getProp(r, ['creado por'])) || cleanStr(currentUser)
                     })).filter(r => r.dest);
                 }
                 else if (sName.includes('REFERIDOS')) {
@@ -713,21 +721,19 @@ async function handleMasterSync() {
                         cedula: String(getProp(r, ['cédula', 'cedula']) || ''),
                         is_influencer: !!getProp(r, ['vip', 'influencer', 'es_vip']),
                         company: getProp(r, ['plataforma', 'agencia', 'company']) || 'Sepybet',
-                        created_by: cleanStr(getProp(r, ['creado por'])) || currentUser
+                        created_by: cleanStr(getProp(r, ['creado por'])) || cleanStr(currentUser)
                     })).filter(r => r.referrer && r.referred);
                 }
 
                 if (tableName && formattedRows.length > 0) {
                     const { error } = await db.from(tableName).upsert(formattedRows);
                     if (!error) successCount++;
-                    else console.error(`Error sincronizando ${tableName}:`, error);
                 }
             }
             showToast(`Sincronización maestra completada (${successCount} tablas)`, 'success');
             fetchData(true); 
         } catch(err) {
             showToast('Error procesando el Excel. Asegura tener los encabezados correctos.', 'error');
-            console.error(err);
         }
         btn.innerHTML = orig;
         btn.disabled = false;
@@ -742,7 +748,7 @@ function updateBonoDatalist(){
         const p=[...new Set([...bonos.map(b=>b.assignedTo),...giros.map(g=>g.dest),...referrals.map(r=>r.referrer),...referrals.map(r=>r.referred)])].filter(Boolean);
         const opts=p.map(n=>`<option value="${n}">`).join('');
         if(dlBono)dlBono.innerHTML=opts;if(dlRef)dlRef.innerHTML=opts;if(dlGiro&&dlBono)dlGiro.setAttribute('list','bonos-destinatarios');
-    }catch(e){console.error(e);}
+    }catch(e){}
 }
 
 function updateMelanieDropdowns(){
@@ -776,7 +782,7 @@ function updateMelanieDropdowns(){
             }).join('');
             if(currentVal) selRef.value = currentVal;
         }
-    }catch(e){console.error(e);}
+    }catch(e){}
 }
 
 function updateReferredDropdown(){
@@ -821,58 +827,195 @@ function selectPlayer(name){const input=document.getElementById('rend-referred')
 function clearPlayerSelection(){const input=document.getElementById('rend-referred');if(input){input.value='';input.focus();}filterPlayerDropdown();openPlayerDropdown();}
 document.addEventListener('click',function(e){const input=document.getElementById('rend-referred');const dropdown=document.getElementById('custom-player-dropdown');const btnClear=document.getElementById('btn-clear-player');if(input&&dropdown){if(!input.contains(e.target)&&!dropdown.contains(e.target)&&(!btnClear||!btnClear.contains(e.target)))closePlayerDropdown();}});
 
+// === SUBIDA MASIVA DE BONOS DE APUESTAS (EMILIA) ===
+function handleBonosApuestasUpload(e) {
+    const file = e.target.files[0]; if(!file) return;
+    const reader = new FileReader();
+    reader.onload = function(evt) {
+        try {
+            const workbook = XLSX.read(evt.target.result, {type:'binary'});
+            const sheet = workbook.Sheets[workbook.SheetNames[0]];
+            const rows = XLSX.utils.sheet_to_json(sheet, {header:1});
+            
+            let hIdx=-1, cIdx={};
+            for(let i=0; i<Math.min(30, rows.length); i++){
+                const r = Array.from(rows[i]||[]).map(x=>x?String(x).toLowerCase().trim():"");
+                if(r.includes('id apuesta') || r.includes('es bono') || r.includes('ganancia posible')) {
+                    hIdx = i;
+                    cIdx.id = r.findIndex(x=>x === 'id apuesta' || x === 'id_tx' || x === 'id');
+                    // Ignora ID de jugador y busca explícitamente "Jugador" o "Usuario"
+                    cIdx.jug = r.findIndex(x=>x === 'jugador' || x === 'usuario' || (x.includes('jugador') && !x.includes('id')));
+                    cIdx.monto = r.findIndex(x=>x === 'monto' || x.includes('inversión'));
+                    cIdx.ganancia = r.findIndex(x=>x === 'ganancia' || x === 'monto ganado'); 
+                    cIdx.esBono = r.findIndex(x=>x === 'es bono' || x === 'bono');
+                    cIdx.estado = r.findIndex(x=>x === 'resultado' || x === 'estado');
+                    cIdx.fecha = r.findIndex(x=>x.includes('fecha creación') || x.includes('fecha'));
+                    cIdx.agente = r.findIndex(x=>x === 'agente' || x === 'agencia' || x === 'fuente');
+                    break;
+                }
+            }
+            
+            if(hIdx === -1) { showToast("No se detectó la cabecera correcta del reporte.", "error"); return; }
+            
+            bonosApuestasUploadData = [];
+            for(let i=hIdx+1; i<rows.length; i++){
+                const row = rows[i]||[];
+                if(!row.length) continue;
+                let esBono = String(row[cIdx.esBono]||'').toLowerCase().trim();
+                
+                if(esBono === 'sí' || esBono === 'si' || esBono === 'yes') {
+                    let rawMonto = getVal(row[cIdx.monto]);
+                    let rawGanancia = getVal(row[cIdx.ganancia]);
+                    let rawEstado = String(row[cIdx.estado]||'').trim();
+                    
+                    let stDisplay = 'Entregado';
+                    let resLow = rawEstado.toLowerCase();
+                    if (resLow === 'won' || resLow === 'ganado' || rawGanancia > 0) stDisplay = 'Ganado';
+                    else if (resLow === 'lost' || resLow === 'perdida' || resLow === 'perdido') stDisplay = 'Perdido';
+                    else stDisplay = 'Entregado';
+
+                    bonosApuestasUploadData.push({
+                        id_apuesta: String(row[cIdx.id]||Date.now()+'_'+i),
+                        jugador: String(row[cIdx.jug]||'Desconocido').trim(),
+                        monto: rawMonto,
+                        ganancia: rawGanancia,
+                        estado: stDisplay,
+                        fecha: excelToISO(row[cIdx.fecha]),
+                        agente: String(row[cIdx.agente]||'Sepybet').trim()
+                    });
+                }
+            }
+            renderBonosApuestasPreview();
+            
+            if(bonosApuestasUploadData.length > 0) {
+                showToast(`Detectados ${bonosApuestasUploadData.length} bonos.`, 'success');
+            } else {
+                showToast("No hay registros donde 'Es Bono' sea 'Sí'.", "warning");
+            }
+        } catch(err) {
+            showToast("Error leyendo reporte", "error"); 
+        }
+    };
+    reader.readAsBinaryString(file);
+}
+
+function renderBonosApuestasPreview() {
+    const tbody=document.getElementById('bonos-apuestas-preview-body');
+    const cont=document.getElementById('bonos-apuestas-preview-container');
+    if(!bonosApuestasUploadData.length){cont.classList.add('hidden');cont.classList.remove('flex');return;}
+    tbody.innerHTML=bonosApuestasUploadData.map((r,i)=>`<tr>
+        <td class="py-2 text-[10px] font-bold">${r.fecha}</td>
+        <td class="py-2 text-[10px] uppercase font-bold text-indigo-600">${r.jugador}</td>
+        <td class="py-2 text-[10px] text-right font-black">${fmt(r.monto)}</td>
+        <td class="py-2 text-[10px] text-center">${r.estado}</td>
+        <td class="py-2 text-[10px] text-right text-emerald-600 font-black">${fmt(r.ganancia)}</td>
+        <td class="py-2 text-center"><button onclick="bonosApuestasUploadData.splice(${i},1); renderBonosApuestasPreview()" class="text-rose-500"><i class="fas fa-times"></i></button></td>
+    </tr>`).join('');
+    cont.classList.add('flex');cont.classList.remove('hidden');
+}
+
+async function submitBonosApuestasData() {
+    if(!bonosApuestasUploadData.length)return;
+    const btn=document.getElementById('btn-upload-bonos-apuestas');btn.disabled=true;
+    
+    let upsertData = bonosApuestasUploadData.map(r => {
+        return {
+            id: 'BN_AP_' + r.id_apuesta,
+            date: r.fecha,
+            amount: r.monto,
+            assigned_to: r.jugador,
+            concept: 'Bono Apuesta (ID: '+r.id_apuesta+')',
+            created_by: cleanStr(currentUser),
+            status: r.estado,
+            amount_won: r.ganancia,
+            company: r.agente
+        };
+    });
+    
+    btn.innerHTML=`<i class="fas fa-spinner fa-spin mr-2"></i> Actualizando...`;
+    try {
+        const { error } = await db.from('bonos').upsert(upsertData); 
+        if(!error) {
+            const jsBonos = upsertData.map(r => ({
+                id: r.id, date: r.date, amount: r.amount, assignedTo: r.assigned_to, concept: r.concept, 
+                createdBy: r.created_by, status: r.status, amountWon: r.amount_won, company: r.company
+            }));
+            
+            jsBonos.forEach(nb => {
+                const existingIdx = bonos.findIndex(b => b.id === nb.id);
+                if(existingIdx >= 0) bonos[existingIdx] = nb;
+                else bonos.push(nb);
+            });
+            bonos.sort(sortDataDesc);
+            
+            showToast("Bonos procesados y actualizados correctamente.", "success");
+            updateAllViews();
+        } else {
+            showToast("Error subiendo datos.", "error");
+        }
+    } catch(e) { showToast("Error de red.", "error"); }
+    
+    document.getElementById('bonos-apuestas-preview-container').classList.add('hidden');
+    document.getElementById('bonos-apuestas-preview-container').classList.remove('flex');
+    document.getElementById('upload-bonos-apuestas-file').value='';
+    bonosApuestasUploadData=[];
+    btn.innerHTML='<i class="fas fa-sync mr-2"></i> Procesar y Actualizar Bonos';
+    btn.disabled=false;
+}
+
+// === UPLOADS Y CRUD BASICO ===
+
 function handleBonoRealUpload(e) {
     const file=e.target.files[0];if(!file)return;const reader=new FileReader();
     reader.onload=function(evt){
         try{
             const workbook=XLSX.read(evt.target.result,{type:'binary'});const sheet=workbook.Sheets[workbook.SheetNames[0]];const rows=XLSX.utils.sheet_to_json(sheet,{header:1});
-            bonosRealesUploadData=[];let hIdx=-1,cIdx={f:-1,jug:-1,m:-1};
+            bonosRealesUploadData=[];let hIdx=-1,cIdx={f:-1,jug:-1,m:-1,c:-1};
             for(let i=0;i<Math.min(30,rows.length);i++){
                 const r=Array.from(rows[i]||[]).map(x=>x?String(x).toLowerCase().trim():"");
                 const f=r.findIndex(x=>x.includes('fech')||x.includes('date'));
                 const jug=r.findIndex(x=>x.includes('jugador')||x.includes('usuario')||x.includes('cliente')||x.includes('name'));
                 const m=r.findIndex(x=>x.includes('monto')||x.includes('valor')||x.includes('amount'));
-                if(f!==-1&&jug!==-1&&m!==-1){hIdx=i;cIdx={f,jug,m};break;}
+                const c=r.findIndex(x=>x.includes('comentario')||x.includes('nota')||x.includes('detalle')||x.includes('descripcion')||x.includes('concepto'));
+                if(c!==-1 && (f!==-1 || jug!==-1 || m!==-1)){hIdx=i;cIdx={f,jug,m,c};break;}
             }
-            if(hIdx===-1){showToast("No se detectaron las columnas de Fecha, Jugador y Monto en el Excel.","error");return;}
+            if(hIdx===-1){showToast("No se detectó la columna de Comentarios/Detalles en el Excel.","error");return;}
             let procesados=0;
             for(let i=hIdx+1;i<rows.length;i++){
                 const row=rows[i]||[];
-                let fVal=row[cIdx.f],jugVal=row[cIdx.jug],montoVal=row[cIdx.m];
-                if(fVal===undefined||jugVal===undefined||montoVal===undefined)continue;
-                
-                let localDate=excelToISO(fVal);
-                let jugador=String(jugVal).trim();
-                let monto=Math.abs(getVal(montoVal));
-                
-                if(monto > 0) {
-                    bonosRealesUploadData.push({date:localDate, jugador:jugador, monto:monto});
+                const commentVal=row[cIdx.c]!==undefined?String(row[cIdx.c]).trim():'';
+                if(commentVal.toLowerCase().includes('bono')){
+                    let fVal=cIdx.f!==-1?row[cIdx.f]:undefined;
+                    let jugVal=cIdx.jug!==-1?row[cIdx.jug]:'Desconocido';
+                    let mVal=cIdx.m!==-1?getVal(row[cIdx.m]):0;
+                    let localDate=fVal?excelToISO(fVal):new Date().toISOString().split('T')[0];
+                    bonosRealesUploadData.push({date:localDate, jugador:String(jugVal).trim(), monto:Math.abs(mVal), comentario:commentVal});
                     procesados++;
                 }
             }
             renderBonosRealesPreview();
             if(procesados>0) showToast(`Se detectaron ${procesados} bonos de saldo real.`,'success');
-            else showToast('No se encontraron registros de bonos reales válidos.','warning');
-        }catch(err){showToast("Error leyendo archivo de Bonos","error");console.error(err);}
+            else showToast('No se encontraron transacciones con la palabra "bono".','warning');
+        }catch(err){showToast("Error leyendo archivo","error");}
     };reader.readAsBinaryString(file);
 }
 
 function renderBonosRealesPreview() {
-    const tbody=document.getElementById('bonos-reales-preview-body');const cont=document.getElementById('bonos-reales-preview-container');
+    const tbody=document.getElementById('bonoreal-preview-body');const cont=document.getElementById('bonoreal-preview-container');
     if(!bonosRealesUploadData.length){cont.classList.add('hidden');cont.classList.remove('flex');return;}
-    tbody.innerHTML=bonosRealesUploadData.map((r,i)=>`<tr><td class="py-2 text-[10px] font-bold">${r.date}</td><td class="py-2 text-[10px] font-bold text-indigo-600 uppercase">${r.jugador}</td><td class="py-2 text-[10px] font-black text-emerald-600">${fmt(r.monto)}</td><td class="py-2 text-center"><button onclick="bonosRealesUploadData.splice(${i},1); renderBonosRealesPreview()" class="text-rose-500"><i class="fas fa-times"></i></button></td></tr>`).join('');
+    tbody.innerHTML=bonosRealesUploadData.map((r,i)=>`<tr><td class="py-2 text-[10px] font-bold">${r.date}</td><td class="py-2 text-[10px] font-bold text-indigo-600 uppercase">${r.jugador}</td><td class="py-2 text-[10px] font-black text-emerald-600">${fmt(r.monto)}</td><td class="py-2 text-[10px] italic text-slate-500">${r.comentario}</td><td class="py-2 text-center"><button onclick="bonosRealesUploadData.splice(${i},1); renderBonosRealesPreview()" class="text-rose-500"><i class="fas fa-times"></i></button></td></tr>`).join('');
     cont.classList.add('flex');cont.classList.remove('hidden');
 }
 
-async function submitBonosRealesData() {
-    if(!bonosRealesUploadData.length)return;const btn=document.getElementById('btn-upload-bonos-reales');btn.disabled=true;
+async function submitBonoRealData() {
+    if(!bonosRealesUploadData.length)return;const btn=document.getElementById('btn-upload-bonoreal');btn.disabled=true;
     let assigned=currentUser;const adminBlock=document.getElementById('admin-select-user-bonoreal');
     if(adminBlock&&!adminBlock.classList.contains('hidden')){const assignRadio=document.querySelector('input[name="bonoreal-assign"]:checked');if(assignRadio)assigned=assignRadio.value;}
     
     let newTxs=[];
     for(let i=0;i<bonosRealesUploadData.length;i++){
         const r=bonosRealesUploadData[i];
-        newTxs.push({id:'TX_BREAL_'+Date.now()+'_'+i, date:r.date, amount:r.monto, concept:"Bono Real", assigned_to:cleanStr(assigned), created_by:cleanStr(currentUser), status:'Verificado', receipt:r.jugador, comment:'Cargado por excel', is_sueldo:false});
+        newTxs.push({id:'TX_BREAL_'+Date.now()+'_'+i, date:r.date, amount:r.monto, concept:"Bono Saldo Real", assigned_to:cleanStr(assigned), created_by:cleanStr(currentUser), status:'Verificado', receipt:r.jugador, comment:r.comentario, is_sueldo:false});
     }
     
     btn.innerHTML=`<i class="fas fa-spinner fa-spin mr-2"></i> Subiendo registros...`;
@@ -889,7 +1032,7 @@ async function submitBonosRealesData() {
         }
     } catch (e) { showToast('Fallo la red.','error'); }
     
-    document.getElementById('bonos-reales-preview-container').classList.add('hidden');document.getElementById('bonos-reales-preview-container').classList.remove('flex');document.getElementById('upload-bonos-reales-file').value='';bonosRealesUploadData=[];btn.innerHTML='<i class="fas fa-check-double mr-2"></i> Subir y Verificar Bonos';btn.disabled=false;
+    document.getElementById('bonoreal-preview-container').classList.add('hidden');document.getElementById('bonoreal-preview-container').classList.remove('flex');document.getElementById('upload-bonoreal-file').value='';bonosRealesUploadData=[];btn.innerHTML='<i class="fas fa-save mr-2"></i> Guardar Bonos Leídos';btn.disabled=false;
 }
 
 function handleBankUpload(e){
@@ -920,7 +1063,7 @@ function handleBankUpload(e){
                 }
             }
             bankUploadData.forEach(tx=>{if(!tx.receipt)tx.receipt="Sin Ref";});renderBankPreview();showToast(`Detectados ${bankUploadData.length} registros`,'success');
-        }catch(err){showToast("Error leyendo archivo","error");console.error(err);}
+        }catch(err){showToast("Error leyendo archivo","error");}
     };reader.readAsBinaryString(file);
 }
 
@@ -994,13 +1137,13 @@ function handleMelanieUpload(e){
                 
                 const rateKey=cleanStr(influencerAsignado);
                 let rateUser=USERS[rateKey]||Object.values(USERS).find(u=>cleanStr(u.name)===rateKey);
-                let rate=rateUser&&rateUser.comision?(parseFloat(rateUser.comision)/100):0.20;
+                let rate=rateUser&&rateUser.comision?(rateUser.comision/100):0.20;
                 let com=neto*rate;
                 
                 uploadData.push({date:localDate,influencer:influencerAsignado,jugador:jugadorOriginal,depositos:dep,retiros:ret,neto:neto,comision:com});procesadosCount++;
             }
             renderMelaniePreview();showToast(`Detectados ${procesadosCount} registros. (${noEncontradosCount} sin red)`,'success');
-        }catch(err){showToast("Error leyendo archivo de Backoffice","error");console.error(err);}
+        }catch(err){showToast("Error leyendo archivo de Backoffice","error");}
     };reader.readAsBinaryString(file);
 }
 
@@ -1106,7 +1249,7 @@ async function handleBono(e){
     e.preventDefault();const btn=e.target.querySelector('button');const orig=btn.innerHTML;
     const amt=getVal(document.getElementById('bono-amount').value);if(isNaN(amt)||amt<=0){showToast('Monto inválido','error');return;}
     const companyRadio=document.querySelector('input[name="bono-company"]:checked');const company=companyRadio?companyRadio.value:'Sepybet';
-    const newBono={id:'BN'+Date.now(), date:document.getElementById('bono-date').value, amount:amt, assigned_to:document.getElementById('bono-dest').value.trim(), concept:document.getElementById('bono-concept').value.trim()||'Emisión', created_by:cleanStr(currentUser), status:'Entregado', amount_won:0, company:company};
+    const newBono={id:'BN'+Date.now(), date:document.getElementById('bono-date').value, amount:amt, assigned_to:cleanStr(document.getElementById('bono-dest').value), concept:document.getElementById('bono-concept').value.trim()||'Emisión', created_by:cleanStr(currentUser), status:'Entregado', amount_won:0, company:company};
     
     btn.innerHTML='Enviando...';btn.disabled=true;
     try {
@@ -1124,7 +1267,7 @@ async function handleGiro(e){
     e.preventDefault();const btn=e.target.querySelector('button');const orig=btn.innerHTML;
     const qty=parseInt(document.getElementById('giro-qty').value);if(isNaN(qty)||qty<=0){showToast('Cantidad inválida','error');return;}
     const companyRadio=document.querySelector('input[name="giro-company"]:checked');const company=companyRadio?companyRadio.value:'Sepybet';
-    const newGiro={id:'GR'+Date.now(), date:document.getElementById('giro-date').value, company:company, dest:document.getElementById('giro-dest').value.trim(), game:document.getElementById('giro-game').value, qty:qty, status:'Entregado', amount_won:0, created_by:cleanStr(currentUser)};
+    const newGiro={id:'GR'+Date.now(), date:document.getElementById('giro-date').value, company:company, dest:cleanStr(document.getElementById('giro-dest').value), game:document.getElementById('giro-game').value, qty:qty, status:'Entregado', amount_won:0, created_by:cleanStr(currentUser)};
     
     btn.innerHTML='Enviando...';btn.disabled=true;
     try {
@@ -1143,7 +1286,7 @@ async function handleReferral(e){
     const cedula=document.getElementById('ref-cedula').value.trim();if(referrals.some(r=>r.cedula===cedula)){showToast("Cédula registrada.","error");return;}
     const amt=getVal(document.getElementById('ref-amount').value);if(isNaN(amt)||amt<=0){showToast('Monto inválido','error');return;}
     const isInfluencer=document.getElementById('ref-is-influencer').checked;const companyRadio=document.querySelector('input[name="ref-company"]:checked');const company=companyRadio?companyRadio.value:'Sepybet';
-    const referrer=document.getElementById('ref-referrer').value.trim();const referred=document.getElementById('ref-referred').value.trim();const dateVal=document.getElementById('ref-date').value;const rId='REF'+Date.now();
+    const referrer=cleanStr(document.getElementById('ref-referrer').value);const referred=cleanStr(document.getElementById('ref-referred').value);const dateVal=document.getElementById('ref-date').value;const rId='REF'+Date.now();
     
     const newRef={id:rId, date:dateVal, amount:amt, referrer:referrer, referred:referred, cedula:cedula, created_by:cleanStr(currentUser), is_influencer:isInfluencer, company:company};
     const newBonoFromRef={id:rId+'_B', date:dateVal, amount:amt, assigned_to:referrer, concept:"Referido: "+referred, created_by:cleanStr(currentUser), status:'Entregado', amount_won:0, company:company};
@@ -1174,7 +1317,7 @@ async function handleReferral(e){
 
 async function handleRendimiento(e){
     e.preventDefault();const btn=e.target.querySelector('button');const orig=btn.innerHTML;
-    const referrer=document.getElementById('rend-referrer').value;const referred=document.getElementById('rend-referred').value;
+    const referrer=cleanStr(document.getElementById('rend-referrer').value);const referred=cleanStr(document.getElementById('rend-referred').value);
     if(!referrer||!referred){showToast("Seleccione usuarios.","error");return;}
     const depositos=getVal(document.getElementById('rend-dep').value);const retiros=getVal(document.getElementById('rend-ret').value);const neto=depositos-retiros;
     
@@ -1464,7 +1607,6 @@ function renderRecordsTable(tbodyId,emptyId,dataArray,userType){
         if(emptyState){emptyState.classList.add('hidden');emptyState.classList.remove('flex');}
         let rowsHTML='';
         
-        // Verificamos si el usuario actual tiene el permiso para aprobar
         const canApprove = cleanStr(currentUser) !== 'tito' && cleanStr(currentUser) !== 'jesus';
 
         for(let i=0;i<dataArray.length;i++){
@@ -1520,15 +1662,6 @@ function renderRecordsTable(tbodyId,emptyId,dataArray,userType){
         tbody.innerHTML=rowsHTML;
     }
 }
-
-const normalizeInf=(rawName)=>cleanStr(rawName);
-const isMyReferral=(refName)=>{
-    const ud=JSON.parse(localStorage.getItem('sb_user_data'));if(!ud)return false;const userType=ud.type;
-    if(userType==='admin'||isSuperAdmin||userType==='master'||userType==='cajero_afiliados'||userType==='bonos')return true;
-    if(userType!=='influencer')return false;if(!refName)return false;
-    let cleanRef=normalizeInf(refName);let myId=normalizeInf(currentUser);let myName=normalizeInf(USERS[myId]?.name||'');
-    return cleanRef===myId||(myName!==''&&cleanRef===myName);
-};
 
 function updateAllViews(){
     const ud=JSON.parse(localStorage.getItem('sb_user_data'));if(!ud)return;const userType=ud.type;
@@ -1678,8 +1811,8 @@ function updateAllViews(){
         const elGusBwval=document.getElementById('gus-dash-val-ganados');if(elGusBwval)elGusBwval.innerText=fmt(valGanadosDash+girosGanadosDash);
 
         const players={};
-        fBonos.forEach(b=>{if(!players[b.assignedTo])players[b.assignedTo]={name:b.assignedTo,totalWon:0,received:0,totalReceived:0};players[b.assignedTo].received++;players[b.assignedTo].totalReceived+=getVal(b.amount);if(b.status==='Ganado')players[b.assignedTo].totalWon+=getVal(b.amountWon);});
-        fGiros.forEach(g=>{if(!players[g.dest])players[g.dest]={name:g.dest,totalWon:0,received:0,totalReceived:0};if(g.status==='Ganado')players[g.dest].totalWon+=getVal(g.amountWon);});
+        fBonos.forEach(b=>{if(!players[cleanStr(b.assignedTo)])players[cleanStr(b.assignedTo)]={name:b.assignedTo,totalWon:0,received:0,totalReceived:0};players[cleanStr(b.assignedTo)].received++;players[cleanStr(b.assignedTo)].totalReceived+=getVal(b.amount);if(b.status==='Ganado')players[cleanStr(b.assignedTo)].totalWon+=getVal(b.amountWon);});
+        fGiros.forEach(g=>{if(!players[cleanStr(g.dest)])players[cleanStr(g.dest)]={name:g.dest,totalWon:0,received:0,totalReceived:0};if(g.status==='Ganado')players[cleanStr(g.dest)].totalWon+=getVal(g.amountWon);});
 
         const topGanadores=Object.values(players).filter(p=>p.totalWon>0).sort((a,b)=>b.totalWon-a.totalWon).slice(0,5);
         let htmlGanadores=topGanadores.length===0?`<tr><td colspan="3" class="p-4 text-center text-xs text-slate-400">Sin datos</td></tr>`:'';
@@ -1706,6 +1839,7 @@ function updateAllViews(){
             
             if(!infStatsGus[refKey])infStatsGus[refKey]={name:rawRef,refs:0,dep:0,ret:0,net:0,com:0};
             let dep=getVal(r.depositos);let ret=getVal(r.retiros);let net=getVal(r.neto);let com=getVal(r.comision);
+            if (!com && net !== 0) com = net * rate;
             infStatsGus[refKey].dep+=dep;infStatsGus[refKey].ret+=ret;infStatsGus[refKey].net+=net;infStatsGus[refKey].com+=com;
         });
 
@@ -1721,7 +1855,7 @@ function updateAllViews(){
 
         let displayBonos=[...bonos];
         if(bonoFilters.dateFrom||bonoFilters.dateTo)displayBonos=displayBonos.filter(b=>isWithinDateRange(b.date,bonoFilters.dateFrom,bonoFilters.dateTo));
-        if(bonoFilters.dest)displayBonos=displayBonos.filter(b=>(b.assignedTo||'').toLowerCase().includes(bonoFilters.dest));
+        if(bonoFilters.dest)displayBonos=displayBonos.filter(b=>cleanStr(b.assignedTo).includes(cleanStr(bonoFilters.dest)));
         if(bonoFilters.amount&&!isNaN(parseFloat(bonoFilters.amount)))displayBonos=displayBonos.filter(b=>Math.abs(parseFloat(b.amount)||0)===parseFloat(bonoFilters.amount));
         if(bonoFilters.agency&&bonoFilters.agency!=='all')displayBonos=displayBonos.filter(b=>b.company&&b.company.toLowerCase()===bonoFilters.agency.toLowerCase());
         if(bonoFilters.status&&bonoFilters.status!=='all')displayBonos=displayBonos.filter(b=>b.status===bonoFilters.status);
@@ -1731,8 +1865,12 @@ function updateAllViews(){
             let hB='';const pagB=paginate(displayBonos,'bonos');
             for(let i=0;i<pagB.length;i++){
                 const b=pagB[i];
-                let statusBadge=(b.status==='Ganado')?`<span class="bg-emerald-100 text-emerald-700 px-2 py-1 rounded text-[10px] font-black uppercase">Ganó ${fmt(b.amountWon)}</span>`:`<span class="bg-slate-100 text-slate-600 px-2 py-1 rounded text-[10px] font-black uppercase">Entregado</span>`;
-                let btnAction=(userType==='bonos'||isSuperAdmin)?`<div class="flex justify-center gap-1">${b.status!=='Ganado'?`<button onclick="actionBonoWin('${b.id}')" class="px-2 py-1 bg-emerald-500 text-white text-[10px] rounded">Ganar</button>`:''}<button onclick="actionDelete('${b.id}', 'bono')" class="w-7 h-7 bg-rose-50 text-rose-500 rounded"><i class="fas fa-trash"></i></button></div>`:`<span class="text-[10px] text-slate-400 font-bold">-</span>`;
+                let statusBadge='';
+                if(b.status==='Ganado') statusBadge=`<span class="bg-emerald-100 text-emerald-700 px-2 py-1 rounded text-[10px] font-black uppercase">Ganó ${fmt(b.amountWon)}</span>`;
+                else if(b.status==='Perdido') statusBadge=`<span class="bg-rose-100 text-rose-700 px-2 py-1 rounded text-[10px] font-black uppercase">Perdido</span>`;
+                else statusBadge=`<span class="bg-slate-100 text-slate-600 px-2 py-1 rounded text-[10px] font-black uppercase">Entregado</span>`;
+                
+                let btnAction=(userType==='bonos'||isSuperAdmin)?`<div class="flex justify-center gap-1">${(b.status!=='Ganado' && b.status!=='Perdido')?`<button onclick="actionBonoWin('${b.id}')" class="px-2 py-1 bg-emerald-500 text-white text-[10px] rounded">Ganar</button>`:''}<button onclick="actionDelete('${b.id}', 'bono')" class="w-7 h-7 bg-rose-50 text-rose-500 rounded"><i class="fas fa-trash"></i></button></div>`:`<span class="text-[10px] text-slate-400 font-bold">-</span>`;
                 hB+=`<tr class="border-b border-rose-50"><td data-label="Fecha" class="p-3 text-xs font-bold text-slate-600">${fmtDate(b.date)}</td><td data-label="Jugador" class="p-3 text-xs font-bold text-indigo-600 uppercase flex items-center gap-1">${b.assignedTo} <span class="bg-indigo-100 text-indigo-700 px-1 py-0.5 rounded text-[9px]">${b.company||'Sepybet'}</span></td><td data-label="Monto Inicial" class="p-3 text-sm font-black">${fmt(b.amount)}</td><td data-label="Detalle" class="p-3 text-xs text-slate-500">${b.concept}</td><td data-label="Estado" class="p-3">${statusBadge}</td><td data-label="Acción" class="p-3 text-center">${btnAction}</td></tr>`;
             }
             elTableBonos.innerHTML=hB||`<tr><td colspan="6" class="p-4 text-center text-sm text-slate-400">Sin bonos.</td></tr>`;
@@ -1740,7 +1878,7 @@ function updateAllViews(){
 
         let displayGiros=[...giros];
         if(giroFilters.dateFrom||giroFilters.dateTo)displayGiros=displayGiros.filter(g=>isWithinDateRange(g.date,giroFilters.dateFrom,giroFilters.dateTo));
-        if(giroFilters.dest)displayGiros=displayGiros.filter(g=>(g.dest||'').toLowerCase().includes(giroFilters.dest));
+        if(giroFilters.dest)displayGiros=displayGiros.filter(g=>cleanStr(g.dest).includes(cleanStr(giroFilters.dest)));
         if(giroFilters.agency&&giroFilters.agency!=='all')displayGiros=displayGiros.filter(g=>g.company&&g.company.toLowerCase()===giroFilters.agency.toLowerCase());
         if(giroFilters.status&&giroFilters.status!=='all')displayGiros=displayGiros.filter(g=>g.status===giroFilters.status);
         
@@ -1758,7 +1896,7 @@ function updateAllViews(){
 
         let displayRef=[...referrals];
         if(refFilters.dateFrom||refFilters.dateTo)displayRef=displayRef.filter(r=>isWithinDateRange(r.date,refFilters.dateFrom,refFilters.dateTo));
-        if(refFilters.name)displayRef=displayRef.filter(r=>String(r.referrer||'').toLowerCase().includes(refFilters.name)||String(r.referred||'').toLowerCase().includes(refFilters.name));
+        if(refFilters.name)displayRef=displayRef.filter(r=>cleanStr(r.referrer).includes(cleanStr(refFilters.name))||cleanStr(r.referred).includes(cleanStr(refFilters.name)));
         if(refFilters.cedula)displayRef=displayRef.filter(r=>String(r.cedula||'').includes(refFilters.cedula));
         if(refFilters.agency&&refFilters.agency!=='all')displayRef=displayRef.filter(r=>r.company&&r.company.toLowerCase()===refFilters.agency.toLowerCase());
         
@@ -1777,8 +1915,8 @@ function updateAllViews(){
     if(userType==='cajero_afiliados'||isSuperAdmin||userType==='admin'||userType==='master'){
         let displayRend=[...rendimientos];
         if(melFilters.dateFrom||melFilters.dateTo)displayRend=displayRend.filter(r=>isWithinDateRange(r.date,melFilters.dateFrom,melFilters.dateTo));
-        if(melFilters.inf)displayRend=displayRend.filter(r=>String(r.referrer||'').toLowerCase().includes(melFilters.inf));
-        if(melFilters.jug)displayRend=displayRend.filter(r=>String(r.referred||'').toLowerCase().includes(melFilters.jug));
+        if(melFilters.inf)displayRend=displayRend.filter(r=>cleanStr(r.referrer).includes(cleanStr(melFilters.inf)));
+        if(melFilters.jug)displayRend=displayRend.filter(r=>cleanStr(r.referred).includes(cleanStr(melFilters.jug)));
         
         const elTableRend=document.getElementById('mel-table-history');
         if(elTableRend){
@@ -1817,33 +1955,82 @@ function updateAllViews(){
             elTableInactivos.innerHTML=hI||`<tr><td colspan="5" class="p-4 text-center text-sm text-slate-400">Sin inactivos.</td></tr>`;
         }
         
+        // --- BONOS SALDO REAL ---
+        let fBonosReal = records.filter(r => r.concept && String(r.concept).toLowerCase().includes('bono saldo real'));
+        if(bonoRealFilters.dateFrom || bonoRealFilters.dateTo) fBonosReal = fBonosReal.filter(r => isWithinDateRange(r.date, bonoRealFilters.dateFrom, bonoRealFilters.dateTo));
+        if(bonoRealFilters.jugador) fBonosReal = fBonosReal.filter(r => String(r.receipt).toLowerCase().includes(bonoRealFilters.jugador) || String(r.comment).toLowerCase().includes(bonoRealFilters.jugador));
+        
+        const elTotalBonoReal = document.getElementById('bonoreal-total-sum');
+        if(elTotalBonoReal) elTotalBonoReal.innerText = fmt(fBonosReal.reduce((sum, r) => sum + Math.abs(r.amount), 0));
+
+        const elTableBonosReal = document.getElementById('table-bonos-real-list');
+        if(elTableBonosReal) {
+            let hBR = ''; const pagBR = paginate(fBonosReal, 'bonosReal');
+            for(let i=0; i<pagBR.length; i++){
+                const r = pagBR[i];
+                let badge = r.status==='Verificado' ? `<span class="bg-emerald-100 text-emerald-700 px-2 py-1 rounded text-[10px] font-black uppercase"><i class="fas fa-check"></i> Verif</span>` : `<span class="bg-amber-100 text-amber-700 px-2 py-1 rounded text-[10px] font-black uppercase">Pendiente</span>`;
+                hBR += `<tr class="border-b border-slate-50"><td data-label="Fecha" class="p-3 text-xs font-bold pl-2">${fmtDate(r.date)}</td><td data-label="Jugador" class="p-3 text-xs font-bold uppercase text-indigo-600">${r.receipt || '-'}</td><td data-label="Monto" class="p-3 text-sm font-black text-emerald-600">${fmt(Math.abs(r.amount))}</td><td data-label="Concepto" class="p-3 text-[10px] italic text-slate-500">${r.comment || r.concept}</td><td data-label="Responsable" class="p-3 text-xs font-bold text-slate-600">${USERS[r.createdBy]?.name || r.createdBy}</td><td data-label="Estado" class="p-3 text-center pr-2">${badge}</td></tr>`;
+            }
+            elTableBonosReal.innerHTML = hBR || `<tr><td colspan="6" class="p-4 text-center text-sm text-slate-400">No hay bonos de saldo real registrados.</td></tr>`;
+        }
     }
 
     if(userType==='influencer'||isSuperAdmin){
         const infMonth=document.getElementById('inf-month-filter')?.value||globalMF;
-        const myId=normalizeInf(currentUser);const myName=normalizeInf(USERS[myId]?.name||'');
         
-        const myReferrals=referrals.filter(r=>normalizeInf(r.referrer)===myId||(myName!==''&&normalizeInf(r.referrer)===myName));
-        const myRendimientos=rendimientos.filter(r=>(normalizeInf(r.referrer)===myId||(myName!==''&&normalizeInf(r.referrer)===myName))&&isSameMonth(r.date,infMonth));
+        // CORRECCIÓN INFLUENCER: BUSCAR MATCH EXACTO USANDO CLEANSTR
+        const myKey = cleanStr(currentUser);
+        const myNameClean = cleanStr(USERS[currentUser]?.name || '');
+
+        const isMyPlayer = (refName) => {
+            // Si es SuperAdmin y no hay busqueda específica, deja pasar todos para poder buscar y ver todo el volumen
+            if(userType !== 'influencer' && document.getElementById('inf-search').value === '') return true;
+            if(!refName) return false;
+            
+            const c = cleanStr(refName);
+            if(userType !== 'influencer' && document.getElementById('inf-search').value !== '') {
+               return c.includes(cleanStr(document.getElementById('inf-search').value));
+            }
+            return c === myKey || (myNameClean !== '' && c === myNameClean);
+        };
+
+        const myReferrals=referrals.filter(r=>isMyPlayer(r.referrer));
+        const myRendimientos=rendimientos.filter(r=>isMyPlayer(r.referrer) && isSameMonth(r.date,infMonth));
 
         const elDashQty=document.getElementById('inf-dash-qty');if(elDashQty)elDashQty.innerText=myReferrals.length;
         let sumDep=0,sumRet=0,sumNet=0,sumCom=0;const playerSummary={};
         
-        // CORRECCIÓN MATEMÁTICA EN VIVO DEL INFLUENCER
-        const rateKey=cleanStr(currentUser);
-        const userRateObj=Object.values(USERS).find(u=>u.name&&cleanStr(u.name)===rateKey) || USERS[rateKey];
-        let userRate=(userRateObj&&userRateObj.comision)?parseFloat(userRateObj.comision):20;
-        
-        const labelEl=document.getElementById('inf-dash-com-label');
-        if(labelEl)labelEl.innerText=`MI GANANCIA (${userRate}%)`;
+        let userRate = 20; // Default
+        if(userType === 'influencer'){
+             const rateUserObj=Object.values(USERS).find(u=>u.name&&cleanStr(u.name)===myKey) || USERS[myKey] || USERS[currentUser];
+             userRate=(rateUserObj&&rateUserObj.comision)?parseFloat(rateUserObj.comision):20;
+             const labelEl=document.getElementById('inf-dash-com-label');
+             if(labelEl)labelEl.innerText=`MI GANANCIA (${userRate}%)`;
+        } else {
+             const labelEl=document.getElementById('inf-dash-com-label');
+             if(labelEl)labelEl.innerText=`GANANCIAS RED (Global)`;
+        }
         
         myRendimientos.forEach(r=>{
             const dep=getVal(r.depositos);const ret=getVal(r.retiros);const net=getVal(r.neto);
-            const com = net * (userRate / 100); 
+            let com = getVal(r.comision);
+            
+            // Si el valor viene nulo en BD (raro) pero hay neto, lo calcula con la tasa personal
+            if (!com && net !== 0) {
+                 if(userType === 'influencer') com = net * (userRate / 100); 
+                 else {
+                     // Si el admin lo esta viendo, calculamos en base a la comision individual del que generó este rendimiento
+                     const indKey = cleanStr(r.referrer);
+                     const indRateObj = Object.values(USERS).find(u=>u.name&&cleanStr(u.name)===indKey) || USERS[indKey];
+                     const indRate = (indRateObj&&indRateObj.comision)?parseFloat(indRateObj.comision):20;
+                     com = net * (indRate / 100);
+                 }
+            }
+            
             sumDep+=dep;sumRet+=ret;sumNet+=net;sumCom+=com;
             
             const pName=String(r.referred||'').toUpperCase().trim();
-            if(!playerSummary[pName])playerSummary[pName]={name:pName,dep:0,ret:0,net:0,com:0};
+            if(!playerSummary[pName])playerSummary[pName]={name:pName,dep:0,ret:0,net:0,com:0, inf: r.referrer};
             playerSummary[pName].dep+=dep;playerSummary[pName].ret+=ret;playerSummary[pName].net+=net;playerSummary[pName].com+=com;
         });
 
@@ -1862,7 +2049,8 @@ function updateAllViews(){
             let hInf='';const pagInf=paginate(summaryArray,'infdash');
             for(let i=0;i<pagInf.length;i++){
                 const p=pagInf[i];
-                hInf+=`<tr class="border-b border-slate-50"><td data-label="Jugador" class="p-3 text-xs font-bold uppercase text-indigo-600">${p.name}</td><td data-label="Depósitos" class="p-3 text-sm font-black text-emerald-500">${fmt(p.dep)}</td><td data-label="Retiros" class="p-3 text-sm font-black text-rose-500">${fmt(p.ret)}</td><td data-label="Neto" class="p-3 text-sm font-black">${fmt(p.net)}</td><td data-label="Mi Comisión" class="p-3 text-sm font-black text-amber-500 text-right">${fmt(p.com)}</td><td data-label="Detalle" class="p-3 text-center hidden md:table-cell"><button onclick="viewPlayerDetails('${p.name}')" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-600 px-3 py-1.5 rounded-lg font-bold"><i class="fas fa-search"></i> Ver</button></td></tr>`;
+                let displayJugador = (userType !== 'influencer') ? `${p.name} <span class="block text-[9px] text-slate-400 mt-0.5"><i class="fas fa-bullhorn mr-1"></i>${p.inf}</span>` : p.name;
+                hInf+=`<tr class="border-b border-slate-50"><td data-label="Jugador" class="p-3 text-xs font-bold uppercase text-indigo-600">${displayJugador}</td><td data-label="Depósitos" class="p-3 text-sm font-black text-emerald-500">${fmt(p.dep)}</td><td data-label="Retiros" class="p-3 text-sm font-black text-rose-500">${fmt(p.ret)}</td><td data-label="Neto" class="p-3 text-sm font-black">${fmt(p.net)}</td><td data-label="Mi Comisión" class="p-3 text-sm font-black text-amber-500 text-right">${fmt(p.com)}</td><td data-label="Detalle" class="p-3 text-center hidden md:table-cell"><button onclick="viewPlayerDetails('${p.name}')" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-600 px-3 py-1.5 rounded-lg font-bold"><i class="fas fa-search"></i> Ver</button></td></tr>`;
             }
             tbodyInf.innerHTML=hInf||`<tr><td colspan="6" class="p-4 text-center text-sm text-slate-400">Sin movimientos.</td></tr>`;
         }
@@ -1889,7 +2077,16 @@ function updateAllViews(){
                 for(let i=0;i<pagDet.length;i++){
                     const r=pagDet[i];
                     let dep=getVal(r.depositos);let ret=getVal(r.retiros);let neto=getVal(r.neto);
-                    let com = neto * (userRate / 100); 
+                    let com = getVal(r.comision);
+                    if (!com && neto !== 0) {
+                         if(userType === 'influencer') com = neto * (userRate / 100); 
+                         else {
+                             const indKey = cleanStr(r.referrer);
+                             const indRateObj = Object.values(USERS).find(u=>u.name&&cleanStr(u.name)===indKey) || USERS[indKey];
+                             const indRate = (indRateObj&&indRateObj.comision)?parseFloat(indRateObj.comision):20;
+                             com = neto * (indRate / 100);
+                         }
+                    }
                     hDet+=`<tr class="border-b border-slate-50"><td data-label="Fecha" class="p-3 text-xs font-bold text-slate-600">${fmtDate(r.date)}</td><td data-label="Depósitos" class="p-3 text-sm font-black text-emerald-500">${fmt(dep)}</td><td data-label="Retiros" class="p-3 text-sm font-black text-rose-500">${fmt(ret)}</td><td data-label="Neto Generado" class="p-3 text-sm font-black">${fmt(neto)}</td><td data-label="Mi Comisión" class="p-3 text-sm font-black text-amber-500 text-right">${fmt(com)}</td></tr>`;
                 }
                 tbodyDetail.innerHTML=hDet||`<tr><td colspan="5" class="p-4 text-center text-sm text-slate-400">Sin registros en este mes.</td></tr>`;

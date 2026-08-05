@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#f8fafc">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -12,6 +13,7 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<!-- SDK de Supabase -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
     tailwind.config = {
@@ -27,16 +29,15 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
 body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; overflow-x: hidden; color: #334155; }
-.glass-header { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(226, 232, 240, 0.8); }
+.glass-header { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-bottom: 1px solid rgba(226, 232, 240, 0.8); }
 .glass-dark { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); }
 .card-shadow { box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.03), 0 0 3px rgba(0,0,0,0.02); }
 .shadow-floating { box-shadow: 0 20px 40px -10px rgba(99, 102, 241, 0.15); }
-.glow-emerald { box-shadow: 0 0 15px rgba(16, 185, 129, 0.3); }
 .hover-lift { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
 .hover-lift:hover { transform: translateY(-4px); box-shadow: 0 15px 30px -5px rgba(99, 102, 241, 0.1); }
-.bg-mesh { position: fixed; inset: 0; z-index: -1; background-image: radial-gradient(at 0% 0%, hsla(253,16%,7%,0.03) 0, transparent 50%), radial-gradient(at 100% 0%, hsla(160,84%,39%,0.03) 0, transparent 50%); }
+.bg-mesh { position: absolute; inset: 0; z-index: -1; background-image: radial-gradient(at 0% 0%, hsla(253,16%,7%,0.03) 0, transparent 50%), radial-gradient(at 100% 0%, hsla(160,84%,39%,0.03) 0, transparent 50%); }
 .login-bg { background: radial-gradient(circle at top right, #e0e7ff, #f8fafc 50%, #f1f5f9); }
-.hide-scroll::-webkit-scrollbar { display: none; }
+.hide-scrollbar::-webkit-scrollbar { display: none; }
 * { -webkit-tap-highlight-color: transparent; }
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
@@ -54,13 +55,15 @@ input[type="number"] { -moz-appearance: textfield; }
 .toggle-checkbox:checked + .toggle-label::after { transform: translateX(100%); border-color: white; }
 @media(max-width:768px){
     .resp-table thead{display:none}.resp-table,.resp-table tbody,.resp-table tr,.resp-table td{display:block;width:100%}
-    .resp-table tr{margin-bottom:1rem;background-color:#fff;border-radius:1.5rem;border:1px solid #e2e8f0;box-shadow:0 4px 15px -5px rgba(0,0,0,0.03);padding:0.75rem}
+    .resp-table tr{margin-bottom:1rem;background-color:#fff;border-radius:1.5rem;border:1px solid #e2e8f0;box-shadow:0 10px 25px -5px rgba(0,0,0,0.03);padding:0.75rem}
     .resp-table td{display:flex;justify-content:space-between;align-items:center;border:none!important;padding:0.75rem!important;border-bottom:1px solid #f8fafc!important;text-align:right}
     .resp-table td:last-child{border-bottom:none!important;justify-content:center;padding-top:1rem!important}
     .resp-table td::before{content:attr(data-label);font-size:0.65rem;font-weight:800;text-transform:uppercase;color:#94a3b8;text-align:left;margin-right:1rem; letter-spacing: 0.05em;}
 }
-.sidebar-mobile { transform: translateX(-100%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-.sidebar-mobile.open { transform: translateX(0); }
+.sidebar { transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+.sidebar.open { transform: translateX(0); }
+.overlay { opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+.overlay.open { opacity: 1; pointer-events: auto; }
 </style>
 </head>
 <body class="text-slate-700 antialiased selection:bg-brand-100 selection:text-brand-900">
@@ -103,99 +106,101 @@ input[type="number"] { -moz-appearance: textfield; }
 
 <div id="screen-app" class="hidden min-h-screen flex relative">
     
-    <!-- OVERLAY MÓVIL -->
+    <!-- OVERLAY MÓVIL (Mismo del index 13 original) -->
     <div id="sidebar-overlay" onclick="toggleMenu(false)" class="fixed inset-0 bg-slate-950/40 backdrop-blur-sm z-40 hidden opacity-0 transition-opacity duration-300 md:hidden"></div>
     
-    <!-- SIDEBAR CORREGIDO PARA MÓVIL (Usa clases responsivas separadas) -->
-    <aside id="sidebar-menu" class="fixed inset-y-0 left-0 z-50 w-72 bg-slate-950 flex flex-col py-6 border-r border-slate-800 sidebar-mobile md:relative md:transform-none md:w-[88px] md:hover:w-72 transition-all duration-300 group overflow-hidden h-screen">
-        <div class="w-12 h-12 mx-auto rounded-xl bg-gradient-to-tr from-brand-500 to-blue-500 flex items-center justify-center text-white shadow-[0_0_15px_rgba(99,102,241,0.4)] mb-8 flex-shrink-0 relative">
+    <!-- SIDEBAR ORIGINAL CORREGIDO (Mismo de index 13) -->
+    <aside id="sidebar-menu" class="sidebar fixed inset-y-0 left-0 w-64 md:relative md:w-[88px] md:hover:w-72 bg-slate-950 flex flex-col py-6 border-r border-slate-800 z-50 transform -translate-x-full md:translate-x-0 group overflow-hidden h-screen">
+        <!-- Logo -->
+        <div class="w-12 h-12 mx-auto md:mx-auto ml-6 md:ml-auto rounded-xl bg-gradient-to-tr from-brand-500 to-blue-500 flex items-center justify-center text-white shadow-[0_0_15px_rgba(99,102,241,0.4)] mb-8 flex-shrink-0 relative">
             <i class="fas fa-bolt text-xl"></i>
             <button onclick="toggleMenu(false)" class="absolute -right-16 text-slate-400 hover:text-white p-2 md:hidden"><i class="fas fa-times text-2xl"></i></button>
         </div>
 
         <div class="flex-1 w-full flex flex-col overflow-y-auto hide-scroll space-y-1.5 px-0 pb-4">
+            
             <button onclick="switchTab('tab-dashboard')" id="btn-tab-dashboard" class="hidden w-[calc(100%-1.5rem)] mx-auto text-left px-4 py-3.5 rounded-2xl text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-all flex items-center gap-4 overflow-hidden">
-                <i class="fas fa-chart-pie w-5 text-xl text-center flex-shrink-0"></i><span class="whitespace-nowrap md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">Panel Global</span>
+                <i class="fas fa-chart-pie w-5 text-xl text-center flex-shrink-0"></i><span class="whitespace-nowrap opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">Panel Global</span>
             </button>
             <button onclick="switchTab('tab-register')" id="btn-tab-register" class="hidden w-[calc(100%-1.5rem)] mx-auto text-left px-4 py-3.5 rounded-2xl text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-all flex items-center gap-4 overflow-hidden">
-                <i class="fas fa-plus-circle w-5 text-xl text-center flex-shrink-0"></i><span class="whitespace-nowrap md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">Carga/Registro</span>
+                <i class="fas fa-plus-circle w-5 text-xl text-center flex-shrink-0"></i><span class="whitespace-nowrap opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">Carga/Registro</span>
             </button>
             <button onclick="switchTab('tab-auditoria')" id="btn-tab-auditoria" class="hidden w-[calc(100%-1.5rem)] mx-auto text-left px-4 py-3.5 rounded-2xl text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-all flex items-center gap-4 overflow-hidden">
-                <i class="fas fa-search w-5 text-xl text-center flex-shrink-0"></i><span class="whitespace-nowrap md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">Auditoría Saldos</span>
+                <i class="fas fa-search w-5 text-xl text-center flex-shrink-0"></i><span class="whitespace-nowrap opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">Auditoría Saldos</span>
             </button>
             <button onclick="switchTab('tab-gussepy')" id="btn-tab-gussepy" class="hidden w-[calc(100%-1.5rem)] mx-auto text-left px-4 py-3.5 rounded-2xl text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-all flex items-center gap-4 overflow-hidden">
-                <i class="fas fa-hand-holding-usd w-5 text-xl text-center flex-shrink-0"></i><span class="whitespace-nowrap md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">Adelantos</span>
+                <i class="fas fa-hand-holding-usd w-5 text-xl text-center flex-shrink-0"></i><span class="whitespace-nowrap opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">Adelantos</span>
             </button>
             <button onclick="switchTab('tab-bonos-reales')" id="btn-tab-bonos-reales" class="hidden w-[calc(100%-1.5rem)] mx-auto text-left px-4 py-3.5 rounded-2xl text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-all flex items-center gap-4 overflow-hidden">
-                <i class="fas fa-ticket-alt w-5 text-xl text-center flex-shrink-0"></i><span class="whitespace-nowrap md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">Bonos Reales</span>
+                <i class="fas fa-ticket-alt w-5 text-xl text-center flex-shrink-0 text-emerald-400"></i><span class="whitespace-nowrap opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">Bonos Reales</span>
             </button>
 
             <div class="hidden w-[calc(100%-2rem)] h-px bg-slate-800 mx-auto my-2" id="divider-1"></div>
             
             <button onclick="switchTab('tab-maria-dash')" id="btn-tab-maria-dash" class="hidden w-[calc(100%-1.5rem)] mx-auto text-left px-4 py-3.5 rounded-2xl text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-all flex items-center gap-4 overflow-hidden">
-                <i class="fas fa-trophy w-5 text-xl text-center flex-shrink-0"></i><span class="whitespace-nowrap md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">Panel Bonos</span>
+                <i class="fas fa-trophy w-5 text-xl text-center flex-shrink-0 text-rose-400"></i><span class="whitespace-nowrap opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">Panel Bonos</span>
             </button>
             <button onclick="switchTab('tab-maria-add')" id="btn-tab-maria-add" class="hidden w-[calc(100%-1.5rem)] mx-auto text-left px-4 py-3.5 rounded-2xl text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-all flex items-center gap-4 overflow-hidden">
-                <i class="fas fa-gift w-5 text-xl text-center flex-shrink-0"></i><span class="whitespace-nowrap md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">Emitir Bono</span>
+                <i class="fas fa-gift w-5 text-xl text-center flex-shrink-0 text-rose-400"></i><span class="whitespace-nowrap opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">Emitir Bono</span>
             </button>
             <button onclick="switchTab('tab-maria-list')" id="btn-tab-maria-list" class="hidden w-[calc(100%-1.5rem)] mx-auto text-left px-4 py-3.5 rounded-2xl text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-all flex items-center gap-4 overflow-hidden">
-                <i class="fas fa-list-alt w-5 text-xl text-center flex-shrink-0"></i><span class="whitespace-nowrap md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">Lista Bonos</span>
+                <i class="fas fa-list-alt w-5 text-xl text-center flex-shrink-0 text-rose-400"></i><span class="whitespace-nowrap opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">Lista Bonos</span>
             </button>
             <button onclick="switchTab('tab-giros-add')" id="btn-tab-giros-add" class="hidden w-[calc(100%-1.5rem)] mx-auto text-left px-4 py-3.5 rounded-2xl text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-all flex items-center gap-4 overflow-hidden">
-                <i class="fas fa-sync w-5 text-xl text-center flex-shrink-0"></i><span class="whitespace-nowrap md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">Otorgar Giros</span>
+                <i class="fas fa-sync w-5 text-xl text-center flex-shrink-0 text-indigo-400"></i><span class="whitespace-nowrap opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">Otorgar Giros</span>
             </button>
             <button onclick="switchTab('tab-giros-list')" id="btn-tab-giros-list" class="hidden w-[calc(100%-1.5rem)] mx-auto text-left px-4 py-3.5 rounded-2xl text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-all flex items-center gap-4 overflow-hidden">
-                <i class="fas fa-history w-5 text-xl text-center flex-shrink-0"></i><span class="whitespace-nowrap md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">Lista Giros</span>
+                <i class="fas fa-history w-5 text-xl text-center flex-shrink-0 text-indigo-400"></i><span class="whitespace-nowrap opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">Lista Giros</span>
             </button>
 
             <div class="hidden w-[calc(100%-2rem)] h-px bg-slate-800 mx-auto my-2" id="divider-2"></div>
             
             <button onclick="switchTab('tab-maria-ref-add')" id="btn-tab-maria-ref-add" class="hidden w-[calc(100%-1.5rem)] mx-auto text-left px-4 py-3.5 rounded-2xl text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-all flex items-center gap-4 overflow-hidden">
-                <i class="fas fa-user-plus w-5 text-xl text-center flex-shrink-0"></i><span class="whitespace-nowrap md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">Nuevo Referido</span>
+                <i class="fas fa-user-plus w-5 text-xl text-center flex-shrink-0 text-emerald-400"></i><span class="whitespace-nowrap opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">Registrar Ref.</span>
             </button>
             <button onclick="switchTab('tab-maria-ref-list')" id="btn-tab-maria-ref-list" class="hidden w-[calc(100%-1.5rem)] mx-auto text-left px-4 py-3.5 rounded-2xl text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-all flex items-center gap-4 overflow-hidden">
-                <i class="fas fa-users w-5 text-xl text-center flex-shrink-0"></i><span class="whitespace-nowrap md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">Lista Referidos</span>
+                <i class="fas fa-users w-5 text-xl text-center flex-shrink-0 text-emerald-400"></i><span class="whitespace-nowrap opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">Lista Referidos</span>
             </button>
             <button onclick="switchTab('tab-melanie-add')" id="btn-tab-melanie-add" class="hidden w-[calc(100%-1.5rem)] mx-auto text-left px-4 py-3.5 rounded-2xl text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-all flex items-center gap-4 overflow-hidden">
-                <i class="fas fa-calculator w-5 text-xl text-center flex-shrink-0"></i><span class="whitespace-nowrap md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">Carga Afiliados</span>
+                <i class="fas fa-calculator w-5 text-xl text-center flex-shrink-0 text-pink-400"></i><span class="whitespace-nowrap opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">Carga Afiliados</span>
             </button>
             <button onclick="switchTab('tab-melanie-list')" id="btn-tab-melanie-list" class="hidden w-[calc(100%-1.5rem)] mx-auto text-left px-4 py-3.5 rounded-2xl text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-all flex items-center gap-4 overflow-hidden">
-                <i class="fas fa-list w-5 text-xl text-center flex-shrink-0"></i><span class="whitespace-nowrap md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">Historial Cargas</span>
+                <i class="fas fa-list w-5 text-xl text-center flex-shrink-0 text-pink-400"></i><span class="whitespace-nowrap opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">Historial Cargas</span>
             </button>
-
-            <!-- NUEVOS MENÚS SEPARADOS PARA CRM -->
+            
+            <!-- BOTONES CRM EXACTAMENTE IGUALES AL DISEÑO ORIGINAL -->
             <button onclick="switchTab('tab-crm-contacts')" id="btn-tab-crm-contacts" class="hidden w-[calc(100%-1.5rem)] mx-auto text-left px-4 py-3.5 rounded-2xl text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-all flex items-center gap-4 overflow-hidden">
-                <i class="fas fa-address-book w-5 text-xl text-center flex-shrink-0"></i><span class="whitespace-nowrap md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">Dir. Contactos</span>
+                <i class="fas fa-address-book w-5 text-xl text-center flex-shrink-0 text-purple-400"></i><span class="whitespace-nowrap opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300 text-purple-400">Dir. Contactos</span>
             </button>
             <button onclick="switchTab('tab-crm-campaigns')" id="btn-tab-crm-campaigns" class="hidden w-[calc(100%-1.5rem)] mx-auto text-left px-4 py-3.5 rounded-2xl text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-all flex items-center gap-4 overflow-hidden">
-                <i class="fas fa-bullhorn w-5 text-xl text-center flex-shrink-0"></i><span class="whitespace-nowrap md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">Campañas CRM</span>
+                <i class="fas fa-bullhorn w-5 text-xl text-center flex-shrink-0 text-purple-400"></i><span class="whitespace-nowrap opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300 text-purple-400">Campañas CRM</span>
             </button>
 
             <button onclick="switchTab('tab-influencer-dash')" id="btn-tab-influencer-dash" class="hidden w-[calc(100%-1.5rem)] mx-auto text-left px-4 py-3.5 rounded-2xl text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-all flex items-center gap-4 overflow-hidden">
-                <i class="fas fa-chart-bar w-5 text-xl text-center flex-shrink-0"></i><span class="whitespace-nowrap md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">Panel VIP</span>
+                <i class="fas fa-chart-bar w-5 text-xl text-center flex-shrink-0 text-amber-500"></i><span class="whitespace-nowrap opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">Panel VIP</span>
             </button>
             <button onclick="switchTab('tab-influencer-details')" id="btn-tab-influencer-details" class="hidden w-[calc(100%-1.5rem)] mx-auto text-left px-4 py-3.5 rounded-2xl text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-all flex items-center gap-4 overflow-hidden">
-                <i class="fas fa-list-ul w-5 text-xl text-center flex-shrink-0"></i><span class="whitespace-nowrap md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">Detalle Jugador</span>
+                <i class="fas fa-list-ul w-5 text-xl text-center flex-shrink-0 text-amber-500"></i><span class="whitespace-nowrap opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">Detalle Jugador</span>
             </button>
             <button onclick="switchTab('tab-inactivos')" id="btn-tab-inactivos" class="hidden w-[calc(100%-1.5rem)] mx-auto text-left px-4 py-3.5 rounded-2xl text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-all flex items-center gap-4 overflow-hidden">
-                <i class="fas fa-user-clock w-5 text-xl text-center flex-shrink-0"></i><span class="whitespace-nowrap md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">Inactivos</span>
+                <i class="fas fa-user-clock w-5 text-xl text-center flex-shrink-0 text-orange-400"></i><span class="whitespace-nowrap opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">Inactivos</span>
             </button>
             
             <div class="hidden w-[calc(100%-2rem)] h-px bg-slate-800 mx-auto my-2" id="divider-3"></div>
             <button onclick="switchTab('tab-sync-db')" id="btn-tab-sync-db" class="hidden w-[calc(100%-1.5rem)] mx-auto text-left px-4 py-3.5 rounded-2xl text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-all flex items-center gap-4 overflow-hidden">
-                <i class="fas fa-database w-5 text-xl text-center flex-shrink-0"></i><span class="whitespace-nowrap md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">Sync BD</span>
+                <i class="fas fa-database w-5 text-xl text-center flex-shrink-0 text-blue-400"></i><span class="whitespace-nowrap opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">Sync BD</span>
             </button>
         </div>
 
         <div class="mt-auto w-full flex flex-col gap-1.5 pt-4 border-t border-slate-800">
             <button id="btn-install-pwa" onclick="installPWA()" class="hidden w-[calc(100%-1.5rem)] mx-auto text-left px-4 py-3 rounded-2xl text-sm font-bold text-emerald-400 hover:bg-slate-800 hover:text-emerald-300 transition-all flex items-center gap-4 overflow-hidden">
-                <i class="fas fa-download w-5 text-xl text-center flex-shrink-0"></i><span class="whitespace-nowrap md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">Instalar App</span>
+                <i class="fas fa-download w-5 text-xl text-center flex-shrink-0"></i><span class="whitespace-nowrap opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">Instalar App</span>
             </button>
             <button onclick="openPasswordModal()" class="w-[calc(100%-1.5rem)] mx-auto text-left px-4 py-3 rounded-2xl text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-all flex items-center gap-4 overflow-hidden">
-                <i class="fas fa-key w-5 text-xl text-center flex-shrink-0"></i><span class="whitespace-nowrap md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">Cambiar Clave</span>
+                <i class="fas fa-key w-5 text-xl text-center flex-shrink-0"></i><span class="whitespace-nowrap opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">Cambiar Clave</span>
             </button>
             <button onclick="logout()" class="w-[calc(100%-1.5rem)] mx-auto text-left px-4 py-3 rounded-2xl text-sm font-bold text-rose-500 hover:bg-rose-500/20 transition-all flex items-center gap-4 overflow-hidden">
-                <i class="fas fa-sign-out-alt w-5 text-xl text-center flex-shrink-0"></i><span class="whitespace-nowrap md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">Salir</span>
+                <i class="fas fa-sign-out-alt w-5 text-xl text-center flex-shrink-0"></i><span class="whitespace-nowrap opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">Salir</span>
             </button>
         </div>
     </aside>
@@ -277,7 +282,6 @@ input[type="number"] { -moz-appearance: textfield; }
                         <h3 class="text-3xl font-black text-slate-800 relative z-10 tracking-tight" id="dash-jesus">$0.00</h3>
                         <div class="mt-4 flex items-end justify-between h-8 relative z-10">
                             <div class="text-[11px] font-bold text-blue-500 bg-blue-50/80 px-2 py-1 rounded-md border border-blue-100"><i class="fas fa-calendar-week mr-1"></i> 7d: <span id="dash-jesus-week">$0.00</span></div>
-                            <svg class="w-16 h-6 stroke-blue-400" fill="none" viewBox="0 0 100 30" preserveAspectRatio="none"><path d="M0,30 L20,20 L40,25 L60,10 L80,15 L100,5" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
                         </div>
                     </div>
 
@@ -291,7 +295,6 @@ input[type="number"] { -moz-appearance: textfield; }
                         <h3 class="text-3xl font-black text-slate-800 relative z-10 tracking-tight" id="dash-tito">$0.00</h3>
                         <div class="mt-4 flex items-end justify-between h-8 relative z-10">
                             <div class="text-[11px] font-bold text-emerald-500 bg-emerald-50/80 px-2 py-1 rounded-md border border-emerald-100"><i class="fas fa-calendar-week mr-1"></i> 7d: <span id="dash-tito-week">$0.00</span></div>
-                            <svg class="w-16 h-6 stroke-emerald-400" fill="none" viewBox="0 0 100 30" preserveAspectRatio="none"><path d="M0,30 L20,20 L40,25 L60,10 L80,15 L100,5" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M0,30 L20,20 L40,25 L60,10 L80,15 L100,5 L100,30 L0,30 Z" fill="rgba(52, 211, 153, 0.1)" stroke="none"/></svg>
                         </div>
                     </div>
 
@@ -319,6 +322,62 @@ input[type="number"] { -moz-appearance: textfield; }
                     </div>
                 </div>
 
+                <!-- RENDIMIENTO BONOS / GIROS PARA ADMIN / MASTER -->
+                <div id="panel-gussepy-bonos" class="hidden mb-6 space-y-6 theme-maria bg-white border border-rose-100 p-6 sm:p-8 rounded-[24px] card-shadow relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-64 h-64 bg-rose-50 rounded-full blur-[80px] pointer-events-none -z-10"></div>
+                    
+                    <!-- BONOS METRICAS -->
+                    <h2 class="text-xl font-black text-rose-900 border-b border-rose-100 pb-3 flex items-center"><i class="fas fa-chart-line mr-3 text-rose-500"></i> Rendimiento General Bonos/Giros</h2>
+                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div class="bg-white card-shadow p-5 rounded-2xl border border-slate-100"><p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Emitidos</p><h3 class="text-3xl font-black text-slate-800 mt-1" id="gus-dash-qty-entregados">0</h3></div>
+                        <div class="bg-rose-50 p-5 rounded-2xl border border-rose-100"><p class="text-[10px] font-black text-rose-400 uppercase tracking-widest">Inversión Total</p><h3 class="text-3xl font-black text-rose-600 mt-1" id="gus-dash-val-entregados">$0.00</h3></div>
+                        <div class="bg-white card-shadow p-5 rounded-2xl border border-slate-100"><p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Ganados</p><h3 class="text-3xl font-black text-slate-800 mt-1" id="gus-dash-qty-ganados">0</h3></div>
+                        <div class="bg-emerald-50 p-5 rounded-2xl border border-emerald-100"><p class="text-[10px] font-black text-emerald-500 uppercase tracking-widest">Total Pagado</p><h3 class="text-3xl font-black text-emerald-600 mt-1" id="gus-dash-val-ganados">$0.00</h3></div>
+                    </div>
+                    
+                    <!-- BONOS REALES -->
+                    <h2 class="text-xl font-black text-teal-900 border-b border-teal-100 pb-3 mt-8 flex items-center"><i class="fas fa-ticket-alt mr-3 text-teal-500"></i> Bonos Reales (Saldos)</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-white card-shadow p-5 rounded-2xl border border-teal-100 flex justify-between items-center group hover:border-teal-300 transition-colors">
+                            <div class="flex-1"><p class="text-[10px] font-black text-teal-600 uppercase tracking-widest">Total Entregados</p><h3 class="text-3xl font-black text-slate-800 mt-1" id="gus-total-bonos-reales">0</h3></div>
+                            <div class="w-12 h-12 bg-teal-50 rounded-2xl flex items-center justify-center text-teal-400 text-xl group-hover:scale-110 transition-transform"><i class="fas fa-gift"></i></div>
+                        </div>
+                        <div class="bg-teal-50 p-5 rounded-2xl border border-teal-100 flex justify-between items-center group hover:bg-teal-100 transition-colors">
+                            <div class="flex-1"><p class="text-[10px] font-black text-teal-600 uppercase tracking-widest">Inversión (Reales)</p><h3 class="text-3xl font-black text-teal-700 mt-1" id="gus-valor-bonos-reales">$0.00</h3></div>
+                            <div class="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-teal-500 text-xl shadow-sm group-hover:scale-110 transition-transform"><i class="fas fa-dollar-sign"></i></div>
+                        </div>
+                    </div>
+                    
+                    <!-- TOP GANADORES -->
+                    <div class="grid grid-cols-1 mt-6">
+                        <div class="bg-white border border-slate-100 rounded-[24px] card-shadow overflow-hidden flex flex-col">
+                            <div class="px-6 py-4 bg-slate-50 flex items-center border-b border-slate-100"><i class="fas fa-trophy mr-2 text-amber-500"></i><h3 class="text-sm font-black text-slate-700">Top 5 Ganadores Históricos</h3></div>
+                            <div class="overflow-x-auto p-2">
+                                <table class="w-full text-left"><tbody id="gus-table-top-ganadores" class="divide-y divide-slate-50"></tbody></table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- RENDIMIENTO INFLUYENTES -->
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-indigo-100 pb-3 mt-10 gap-4">
+                        <h2 class="text-xl font-black text-slate-800 flex items-center"><i class="fas fa-users-cog mr-3 text-indigo-500"></i> Rendimiento de Influyentes</h2>
+                        <div class="flex items-center gap-3 bg-slate-50 p-1.5 rounded-xl border border-slate-200">
+                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-3">Mes:</label>
+                            <input type="month" id="gus-inf-month-filter" onchange="updateAllViews()" class="bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs font-bold text-indigo-700 outline-none shadow-sm">
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-[24px] card-shadow border border-slate-100 overflow-hidden mt-4">
+                        <div class="overflow-x-auto hide-scrollbar w-full">
+                            <table class="w-full text-left whitespace-nowrap resp-table">
+                                <thead class="bg-slate-50 border-b border-slate-100 text-[10px] font-black text-slate-400 uppercase tracking-widest hidden md:table-header-group">
+                                    <tr><th class="p-4 pl-6">Influyente</th><th class="p-4 text-center">Ref.</th><th class="p-4 text-right">Depósitos</th><th class="p-4 text-right">Retiros</th><th class="p-4 text-right">Neto</th><th class="p-4 text-right">Com. Plat.</th><th class="p-4 pr-6 text-right">Pagar</th></tr>
+                                </thead>
+                                <tbody id="gus-table-influencers" class="divide-y divide-slate-50 text-sm font-semibold text-slate-600"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- DISEÑO DIVIDIDO: TABLA (IZQ) + ACTIVIDAD EN VIVO (DER) -->
                 <div id="panel-dash-movimientos" class="hidden">
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-8">
@@ -334,7 +393,7 @@ input[type="number"] { -moz-appearance: textfield; }
                             <div class="overflow-x-auto">
                                 <table class="w-full text-left whitespace-nowrap resp-table">
                                     <thead class="bg-slate-50/80 border-b border-slate-100 text-[10px] font-extrabold text-slate-400 uppercase tracking-widest hidden md:table-header-group">
-                                        <tr><th class="p-5 pl-8">Fecha y Hora</th><th class="p-5 text-right">Monto</th><th class="p-5">Concepto</th><th class="p-5">Cuenta</th><th class="p-5 text-center">Estado</th><th class="p-5 text-center">Ref</th><th class="p-5 pr-8 text-center">Acción</th></tr>
+                                        <tr><th class="p-4 pl-8">Fecha y Hora</th><th class="p-4 text-right">Monto</th><th class="p-4">Concepto</th><th class="p-4">Cuenta</th><th class="p-4 text-center">Estado</th><th class="p-4 text-center">Ref</th><th class="p-4 pr-8 text-center">Acción</th></tr>
                                     </thead>
                                     <tbody id="dash-table-body" class="divide-y divide-slate-50 text-xs font-semibold text-slate-600"></tbody>
                                 </table>
@@ -342,14 +401,14 @@ input[type="number"] { -moz-appearance: textfield; }
                             <div id="pagination-dash" class="hidden px-8 py-5 border-t border-slate-100 bg-slate-50/50 justify-between items-center">
                                 <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Total: <span id="total-reg-dash">0</span></span>
                                 <div class="flex items-center gap-2">
-                                    <button onclick="changePage('dash', -1)" id="btn-prev-dash" class="w-9 h-9 rounded-xl bg-white border border-slate-200 text-slate-600 flex items-center justify-center hover:bg-slate-50 hover:text-brand-600 transition-colors shadow-sm disabled:opacity-40"><i class="fas fa-chevron-left text-xs"></i></button>
+                                    <button onclick="changePage('dash', -1)" id="btn-prev-dash" class="w-9 h-9 rounded-xl bg-white border border-slate-200 text-slate-600 flex items-center justify-center hover:bg-slate-50 shadow-sm disabled:opacity-40"><i class="fas fa-chevron-left text-xs"></i></button>
                                     <span class="text-xs font-bold text-slate-600 px-3 py-1 bg-white border border-slate-200 rounded-xl shadow-sm"><span id="page-num-dash">1</span> / <span id="page-tot-dash">1</span></span>
-                                    <button onclick="changePage('dash', 1)" id="btn-next-dash" class="w-9 h-9 rounded-xl bg-white border border-slate-200 text-slate-600 flex items-center justify-center hover:bg-slate-50 hover:text-brand-600 transition-colors shadow-sm disabled:opacity-40"><i class="fas fa-chevron-right text-xs"></i></button>
+                                    <button onclick="changePage('dash', 1)" id="btn-next-dash" class="w-9 h-9 rounded-xl bg-white border border-slate-200 text-slate-600 flex items-center justify-center hover:bg-slate-50 shadow-sm disabled:opacity-40"><i class="fas fa-chevron-right text-xs"></i></button>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- ACTIVIDAD EN VIVO (TIMELINE VISUAL Y DINÁMICO) -->
+                        <!-- ACTIVIDAD EN VIVO -->
                         <div class="lg:col-span-1 bg-white border border-slate-100 rounded-[24px] card-shadow p-6 flex flex-col h-[500px]">
                             <div class="flex justify-between items-center mb-6 shrink-0">
                                 <h3 class="text-sm font-black text-slate-800">Actividad en Vivo</h3>
@@ -552,7 +611,7 @@ input[type="number"] { -moz-appearance: textfield; }
                             <thead class="bg-slate-50/80 border-b border-slate-100 text-[10px] font-extrabold text-slate-400 uppercase tracking-widest hidden md:table-header-group">
                                 <tr><th class="p-5 pl-8">Fecha</th><th class="p-5 text-right">Monto</th><th class="p-5">Concepto</th><th class="p-5 text-center">Estado</th><th class="p-5">Detalle</th><th class="p-5 pr-8 text-center">Acción</th></tr>
                             </thead>
-                            <tbody id="table-gussepy-advances" class="divide-y divide-slate-50 text-sm font-semibold text-slate-600"></tbody>
+                            <tbody id="table-gussepy-advances" class="divide-y divide-slate-50 text-xs font-semibold text-slate-600"></tbody>
                         </table>
                     </div>
                     <div id="pagination-gussepy" class="hidden px-8 py-5 border-t border-slate-100 bg-slate-50/50 justify-between items-center">
@@ -1077,9 +1136,9 @@ input[type="number"] { -moz-appearance: textfield; }
                 </div>
 
                 <div class="bg-white border border-purple-100 rounded-[24px] card-shadow overflow-hidden flex flex-col">
-                    <div class="px-8 py-6 border-b border-purple-50 bg-purple-50/30 flex justify-between items-center">
+                    <div class="px-8 py-6 border-b border-purple-50 bg-purple-50/30 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                         <h3 class="text-lg font-extrabold text-purple-900 tracking-tight">Lista de Contactos</h3>
-                        <input type="text" id="search-contacts" oninput="renderContactsTable()" placeholder="Buscar usuario o teléfono..." class="bg-white border border-slate-200 rounded-xl px-4 py-2 text-xs font-bold outline-none focus:border-purple-500 w-48 sm:w-64 shadow-sm">
+                        <input type="text" id="search-contacts" oninput="renderContactsTable()" placeholder="Buscar usuario o teléfono..." class="bg-white border border-slate-200 rounded-xl px-4 py-2 text-xs font-bold outline-none focus:border-purple-500 w-full sm:w-64 shadow-sm">
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left whitespace-nowrap resp-table">
@@ -1185,9 +1244,16 @@ input[type="number"] { -moz-appearance: textfield; }
                 </div>
 
                 <div class="bg-white border border-slate-100 rounded-[2.5rem] card-shadow overflow-hidden flex flex-col">
-                    <div class="px-8 py-6 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
+                    <div class="px-8 py-6 border-b border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                         <h3 class="text-lg font-extrabold text-slate-800 tracking-tight">Audiencia de la Campaña</h3>
-                        <button onclick="openCampDownloadModal()" class="px-5 py-2 bg-purple-100 text-purple-700 hover:bg-purple-200 rounded-xl text-xs font-bold transition-colors shadow-sm"><i class="fas fa-download mr-1"></i> Exportar Listas</button>
+                        <div class="flex gap-2 w-full sm:w-auto">
+                            <select id="cd-filter-status" onchange="renderCampaignDetails()" class="bg-white border border-slate-200 rounded-xl px-4 py-2 text-xs font-bold outline-none focus:border-purple-500 shadow-sm w-full sm:w-auto">
+                                <option value="all">Todos los usuarios</option>
+                                <option value="deposited">Sí Recargaron</option>
+                                <option value="not_deposited">No Recargaron</option>
+                            </select>
+                            <button onclick="openCampDownloadModal()" class="px-5 py-2 bg-purple-100 text-purple-700 hover:bg-purple-200 rounded-xl text-xs font-bold transition-colors shadow-sm w-full sm:w-auto"><i class="fas fa-download mr-1"></i> Exportar</button>
+                        </div>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left whitespace-nowrap resp-table">
@@ -1229,11 +1295,10 @@ input[type="number"] { -moz-appearance: textfield; }
             </div>
         </div>
 
-        <!-- TAB INFLUENCER VIP DASHBOARD (DISEÑO GAMIFICADO 880) -->
+        <!-- TAB INFLUENCER VIP DASHBOARD (DISEÑO GAMIFICADO ORIGINAL) -->
         <div id="tab-influencer-dash" class="hidden fade-in tab-content">
             <div class="max-w-6xl mx-auto space-y-8">
                 
-                <!-- EL DISEÑO MORADO EXACTO QUE PEDISTE -->
                 <div class="bg-gradient-to-br from-[#3b38a4] to-[#1e1b4b] rounded-[24px] p-8 md:p-10 shadow-floating relative overflow-hidden">
                     <div class="absolute top-0 right-0 w-96 h-96 bg-brand-500/20 rounded-full blur-[100px] pointer-events-none"></div>
                     
@@ -1299,24 +1364,39 @@ input[type="number"] { -moz-appearance: textfield; }
                     </div>
                 </div>
 
-                <div class="bg-white border border-slate-100 rounded-[2.5rem] card-shadow overflow-hidden flex flex-col">
-                    <div class="px-8 py-6 border-b border-slate-100 bg-slate-50/50">
-                        <h3 class="text-lg font-extrabold text-slate-800 tracking-tight">Desglose de Ganancias</h3>
+                <!-- DIVISIÓN: TABLA A LA IZQUIERDA Y NOTIFICACIONES A LA DERECHA -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-8">
+                    <!-- TABLA -->
+                    <div class="lg:col-span-2 bg-white border border-slate-100 rounded-[2.5rem] card-shadow overflow-hidden flex flex-col">
+                        <div class="px-8 py-6 border-b border-slate-100 bg-slate-50/50">
+                            <h3 class="text-lg font-extrabold text-slate-800 tracking-tight">Desglose de Ganancias</h3>
+                        </div>
+                        <div class="overflow-x-auto hide-scrollbar w-full">
+                            <table id="inf-main-export-table" class="w-full text-left whitespace-nowrap resp-table">
+                                <thead class="bg-white border-b border-slate-100 text-[10px] font-extrabold text-slate-400 uppercase tracking-widest hidden md:table-header-group">
+                                    <tr><th class="p-5 pl-8">Jugador (ID)</th><th class="p-5 text-right">Depósitos</th><th class="p-5 text-right">Retiros</th><th class="p-5 text-right">Neto Generado</th><th class="p-5 pr-8 text-right">Mi Comisión</th><th class="p-5 text-center hidden md:table-cell">Historial</th></tr>
+                                </thead>
+                                <tbody id="inf-table-body" class="divide-y divide-slate-50 text-sm font-semibold text-slate-600"></tbody>
+                            </table>
+                        </div>
+                        <div id="pagination-infdash" class="hidden px-8 py-5 border-t border-slate-100 bg-slate-50/50 justify-between items-center">
+                            <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Total: <span id="total-reg-infdash">0</span></span>
+                            <div class="flex items-center gap-2">
+                                <button onclick="changePage('infdash', -1)" id="btn-prev-infdash" class="w-9 h-9 rounded-xl bg-white border border-slate-200 text-slate-600 flex items-center justify-center hover:bg-slate-50 hover:text-brand-600 transition-colors shadow-sm disabled:opacity-40"><i class="fas fa-chevron-left text-xs"></i></button>
+                                <span class="text-xs font-bold text-slate-600 px-3 py-1 bg-white border border-slate-200 rounded-xl shadow-sm"><span id="page-num-infdash">1</span> / <span id="page-tot-infdash">1</span></span>
+                                <button onclick="changePage('infdash', 1)" id="btn-next-infdash" class="w-9 h-9 rounded-xl bg-white border border-slate-200 text-slate-600 flex items-center justify-center hover:bg-slate-50 hover:text-brand-600 transition-colors shadow-sm disabled:opacity-40"><i class="fas fa-chevron-right text-xs"></i></button>
+                            </div>
+                        </div>
                     </div>
-                    <div class="overflow-x-auto">
-                        <table id="inf-main-export-table" class="w-full text-left whitespace-nowrap resp-table">
-                            <thead class="bg-white border-b border-slate-100 text-[10px] font-extrabold text-slate-400 uppercase tracking-widest hidden md:table-header-group">
-                                <tr><th class="p-5 pl-8">Jugador (ID)</th><th class="p-5 text-right">Depósitos</th><th class="p-5 text-right">Retiros</th><th class="p-5 text-right">Neto Generado</th><th class="p-5 pr-8 text-right">Mi Comisión</th><th class="p-5 text-center hidden md:table-cell">Historial</th></tr>
-                            </thead>
-                            <tbody id="inf-table-body" class="divide-y divide-slate-50 text-sm font-semibold text-slate-600"></tbody>
-                        </table>
-                    </div>
-                    <div id="pagination-infdash" class="hidden px-8 py-5 border-t border-slate-100 bg-slate-50/50 justify-between items-center">
-                        <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Total: <span id="total-reg-infdash">0</span></span>
-                        <div class="flex items-center gap-2">
-                            <button onclick="changePage('infdash', -1)" id="btn-prev-infdash" class="w-9 h-9 rounded-xl bg-white border border-slate-200 text-slate-600 flex items-center justify-center hover:bg-slate-50 hover:text-brand-600 transition-colors shadow-sm disabled:opacity-40"><i class="fas fa-chevron-left text-xs"></i></button>
-                            <span class="text-xs font-bold text-slate-600 px-3 py-1 bg-white border border-slate-200 rounded-xl shadow-sm"><span id="page-num-infdash">1</span> / <span id="page-tot-infdash">1</span></span>
-                            <button onclick="changePage('infdash', 1)" id="btn-next-infdash" class="w-9 h-9 rounded-xl bg-white border border-slate-200 text-slate-600 flex items-center justify-center hover:bg-slate-50 hover:text-brand-600 transition-colors shadow-sm disabled:opacity-40"><i class="fas fa-chevron-right text-xs"></i></button>
+
+                    <!-- ACTIVIDAD EN VIVO (Para Influencers) -->
+                    <div class="lg:col-span-1 bg-white border border-slate-100 rounded-[2.5rem] card-shadow p-6 flex flex-col h-[500px]">
+                        <div class="flex justify-between items-center mb-6 shrink-0">
+                            <h3 class="text-sm font-black text-slate-800">Tu Actividad en Vivo</h3>
+                            <i class="fas fa-satellite-dish text-indigo-500 animate-pulse"></i>
+                        </div>
+                        <div id="live-timeline-feed-inf" class="flex-1 relative border-l-2 border-slate-100 ml-3 space-y-6 overflow-y-auto pr-2 pb-4 hide-scrollbar">
+                            <div class="flex items-center justify-center h-full text-xs font-bold text-slate-400">Cargando actividad...</div>
                         </div>
                     </div>
                 </div>
@@ -1489,8 +1569,8 @@ input[type="number"] { -moz-appearance: textfield; }
             <div>
                 <label class="block text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2 ml-1">Formato de Descarga</label>
                 <select id="dw-camp-format" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-5 py-4 font-bold text-sm outline-none focus:border-purple-500 shadow-sm">
-                    <option value="user_phone">Usuarios y Teléfonos</option>
-                    <option value="user_only">Solo Nombres de Usuario</option>
+                    <option value="user_phone">Nombres (Limpios/Base) y Teléfonos</option>
+                    <option value="user_only">Solo Nombres de Usuario Limpios</option>
                 </select>
             </div>
 
@@ -1609,7 +1689,7 @@ if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.s
 let deferredPrompt;window.addEventListener('beforeinstallprompt',(e)=>{e.preventDefault();deferredPrompt=e;const installBtn=document.getElementById('btn-install-pwa');if(installBtn)installBtn.classList.remove('hidden');});
 function installPWA(){if(!deferredPrompt)return;deferredPrompt.prompt();deferredPrompt.userChoice.then(()=>{deferredPrompt=null;const installBtn=document.getElementById('btn-install-pwa');if(installBtn)installBtn.classList.add('hidden');});}
 
-// === DB CONFIG ===
+// Credenciales y cliente de Supabase
 const supabaseUrl = 'https://gzwdlktuubzqawqffvmk.supabase.co';
 const supabaseKey = 'sb_publishable_2QxcowQzdSiz-YtKOBPatA_nN7mD-F6';
 const db = window.supabase ? window.supabase.createClient(supabaseUrl, supabaseKey) : null;
@@ -1704,7 +1784,25 @@ window.onload=()=>{
 
 function logout(){localStorage.removeItem('sb_user_data');currentUser=null;clearTimeout(inactivityTimer);clearInterval(autoSyncTimer);showScreen('login');records=[];advances=[];bonos=[];giros=[];referrals=[];rendimientos=[];window.location.reload();}
 function resetInactivityTimer(){clearTimeout(inactivityTimer);if(currentUser)inactivityTimer=setTimeout(()=>{showToast('Sesión cerrada por inactividad.','warning');logout();},15*60*1000);}
-function toggleMenu(forceOpen){const sidebar=document.getElementById('sidebar-menu');const overlay=document.getElementById('sidebar-overlay');if(!sidebar||!overlay)return;const isOpen=!sidebar.classList.contains('-translate-x-full');const shouldOpen=forceOpen!==undefined?forceOpen:!isOpen;if(shouldOpen){overlay.classList.remove('hidden');setTimeout(()=>overlay.classList.remove('opacity-0'),10);sidebar.classList.remove('-translate-x-full');}else{overlay.classList.add('opacity-0');sidebar.classList.add('-translate-x-full');setTimeout(()=>overlay.classList.add('hidden'),300);}}
+
+// === CONTROL DEL MENÚ MÓVIL REPARADO ===
+function toggleMenu(forceOpen) {
+    const sidebar = document.getElementById('sidebar-menu');
+    const overlay = document.getElementById('sidebar-overlay');
+    if (!sidebar || !overlay) return;
+    const isOpen = sidebar.classList.contains('open');
+    const shouldOpen = forceOpen !== undefined ? forceOpen : !isOpen;
+    if (shouldOpen) {
+        overlay.classList.remove('hidden');
+        setTimeout(() => overlay.classList.add('open'), 10);
+        sidebar.classList.add('open');
+    } else {
+        overlay.classList.remove('open');
+        sidebar.classList.remove('open');
+        setTimeout(() => overlay.classList.add('hidden'), 300);
+    }
+}
+
 function togglePassword(){const passInput=document.getElementById('login-pass');const icon=document.getElementById('eye-icon');if(passInput.type==='password'){passInput.type='text';icon.classList.replace('fa-eye','fa-eye-slash');}else{passInput.type='password';icon.classList.replace('fa-eye-slash','fa-eye');}}
 function showToast(msg,type='success'){const container=document.getElementById('toast-container');const toast=document.createElement('div');toast.className=`toast-enter flex items-center gap-3 px-5 py-4 rounded-2xl shadow-floating text-white text-sm font-bold ${type==='success'?'bg-slate-800':type==='warning'?'bg-amber-500':'bg-rose-500'}`;toast.innerHTML=`<i class="fas ${type==='success'?'fa-check-circle text-emerald-400':type==='warning'?'fa-exclamation-triangle text-white':'fa-exclamation-circle text-white'} text-lg"></i> ${msg}`;container.appendChild(toast);setTimeout(()=>{toast.style.opacity='0';setTimeout(()=>toast.remove(),400);},5000);}
 function showScreen(screen){document.getElementById('screen-login').classList.add('hidden');document.getElementById('screen-app').classList.add('hidden');document.getElementById(`screen-${screen}`).classList.remove('hidden');}
@@ -1785,7 +1883,7 @@ function loginUI(user){
     });
     
     ['divider-1','divider-2','divider-3'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.add('hidden');});
-    ['panel-admin','panel-personal','panel-gussepy-bonos','panel-add-gussepy','panel-dash-movimientos','filter-user-container','admin-select-user','admin-select-user-bank'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.add('hidden');});
+    ['panel-admin','panel-personal','panel-gussepy-bonos','panel-dash-movimientos','filter-user-container','admin-select-user','admin-select-user-bank'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.add('hidden');});
 
     const uploadSections = document.querySelectorAll('.upload-section');
     if (user.type === 'cajero_afiliados' || user.type === 'bonos' || isSuperAdmin) {
@@ -1808,9 +1906,11 @@ function loginUI(user){
         }
         switchTab('tab-dashboard');
     }else if(user.type==='master'){
+        // AHORA MASTER (GUSSEPY) VE TODO EL DASHBOARD IGUAL QUE ADMIN
         ['btn-tab-dashboard','btn-tab-gussepy','btn-tab-maria-list','btn-tab-giros-list','btn-tab-maria-ref-list','btn-tab-melanie-list','btn-tab-crm-contacts','btn-tab-crm-campaigns','btn-tab-inactivos','btn-tab-bonos-reales','divider-1','divider-2'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('hidden');});
-        ['panel-admin','panel-gussepy-bonos'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('hidden');});
+        ['panel-admin','panel-dash-movimientos','panel-gussepy-bonos'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('hidden');});
         
+        // Hide upload components in CRM for Master
         if(document.getElementById('crm-upload-contacts-panel')) document.getElementById('crm-upload-contacts-panel').classList.add('hidden');
         if(document.getElementById('crm-create-campaign-panel')) document.getElementById('crm-create-campaign-panel').classList.add('hidden');
         if(document.getElementById('cd-upload-panel')) document.getElementById('cd-upload-panel').classList.add('hidden');
@@ -1824,6 +1924,7 @@ function loginUI(user){
         ['btn-tab-register', 'btn-tab-melanie-add', 'btn-tab-melanie-list', 'btn-tab-crm-contacts', 'btn-tab-crm-campaigns', 'btn-tab-bonos-reales'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('hidden');});
         ['admin-select-user', 'admin-select-user-bank'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('hidden');});
         
+        // Show CRM inputs
         if(document.getElementById('crm-upload-contacts-panel')) document.getElementById('crm-upload-contacts-panel').classList.remove('hidden');
         if(document.getElementById('crm-create-campaign-panel')) document.getElementById('crm-create-campaign-panel').classList.remove('hidden');
         if(document.getElementById('cd-upload-panel')) document.getElementById('cd-upload-panel').classList.remove('hidden');
@@ -1845,22 +1946,23 @@ function switchTab(tabId){
     ['tab-dashboard','tab-register','tab-gussepy','tab-auditoria','tab-maria-dash','tab-maria-add','tab-maria-list','tab-giros-add','tab-giros-list','tab-maria-ref-add','tab-maria-ref-list','tab-melanie-add','tab-melanie-list','tab-crm-contacts','tab-crm-campaigns','tab-crm-campaign-detail','tab-inactivos','tab-influencer-dash','tab-influencer-details','tab-bonos-reales','tab-sync-db'].forEach(id=>{
         const btn=document.getElementById('btn-'+id);
         if(btn){
-            btn.classList.remove('bg-indigo-600','text-white','shadow-sm','bg-rose-600','bg-slate-800','bg-pink-600','bg-purple-600','bg-amber-500','bg-emerald-600','bg-blue-400');
-            btn.classList.add('text-slate-400','hover:bg-slate-800');
+            btn.classList.remove('bg-indigo-50','text-indigo-600','bg-rose-50','bg-pink-50','text-pink-600','bg-purple-50','text-purple-600','text-rose-600','bg-emerald-50','text-emerald-600','bg-amber-50','text-amber-600','bg-blue-50','text-blue-600');
+            btn.classList.add('text-slate-500','hover:bg-slate-100');
+            btn.querySelector('span').classList.remove('md:opacity-100');
         }
     });
     const content=document.getElementById(tabId);if(content)content.classList.remove('hidden');
     const activeBtn=document.getElementById('btn-'+tabId);
     if(activeBtn){
-        activeBtn.classList.remove('text-slate-400','hover:bg-slate-800');
-        if(isSuperAdmin)activeBtn.classList.add('bg-slate-800','text-white','shadow-sm');
-        else if(tabId.includes('maria')||tabId.includes('giros'))activeBtn.classList.add('bg-rose-600','text-white','shadow-sm');
-        else if(tabId.includes('melanie'))activeBtn.classList.add('bg-pink-600','text-white','shadow-sm');
-        else if(tabId.includes('influencer')||tabId.includes('campaigns')||tabId.includes('contacts'))activeBtn.classList.add('bg-purple-600','text-white','shadow-sm');
-        else if(tabId.includes('inactivos'))activeBtn.classList.add('bg-amber-500','text-white','shadow-sm');
-        else if(tabId.includes('bonos-reales')||tabId.includes('ref-'))activeBtn.classList.add('bg-emerald-600','text-white','shadow-sm');
-        else if(tabId.includes('sync-db'))activeBtn.classList.add('bg-blue-400','text-white','shadow-sm');
-        else activeBtn.classList.add('bg-indigo-600','text-white','shadow-sm');
+        activeBtn.classList.remove('text-slate-500','hover:bg-slate-100');
+        activeBtn.querySelector('span').classList.add('md:opacity-100'); 
+        if(tabId.includes('maria')||tabId.includes('giros'))activeBtn.classList.add('bg-rose-50','text-rose-600');
+        else if(tabId.includes('melanie'))activeBtn.classList.add('bg-pink-50','text-pink-600');
+        else if(tabId.includes('influencer')||tabId.includes('campaign')||tabId.includes('contact'))activeBtn.classList.add('bg-purple-50','text-purple-600');
+        else if(tabId.includes('inactivos'))activeBtn.classList.add('bg-amber-50','text-amber-600');
+        else if(tabId.includes('bonos-reales')||tabId.includes('ref-'))activeBtn.classList.add('bg-emerald-50','text-emerald-600');
+        else if(tabId.includes('sync-db'))activeBtn.classList.add('bg-blue-50','text-blue-600');
+        else activeBtn.classList.add('bg-indigo-50','text-indigo-600');
     }
     toggleMenu(false);
 }
@@ -1888,7 +1990,7 @@ async function fetchData(isBackground=false){
         const results = await Promise.all(promises);
         const [resUsers, resRec, resAdv, resBon, resGir, resRef, resRend] = results;
 
-        // CRM Tables Fetch (Protegido por try-catch independiente para que no bloquee el "Modo Local" de todo el sistema si falta la tabla)
+        // CRM Tables Fetch (Protegido para Modo Local)
         try {
             const crmResults = await Promise.all([
                 db.from('contacts').select('*'),
@@ -1930,7 +2032,7 @@ async function fetchData(isBackground=false){
         updateBonoDatalist(); 
         updateMelanieDropdowns();
     } catch(err) {
-        if(!isBackground) showToast("Error al obtener datos. Modo local activo.", "warning");
+        if(!isBackground) showToast("Base de datos en modo local temporal.", "warning");
         resetPagesAndUpdate(); 
     } finally {
         if(!isBackground)document.getElementById('global-loader').classList.add('hidden');
@@ -2005,7 +2107,7 @@ function renderContactsTable() {
     const filter = document.getElementById('search-contacts')?.value.toLowerCase().trim() || '';
     
     let list = Object.keys(contactsMap).map(k => ({
-        norm: k, orig: contactsMap[k].orig, phone: contactsMap[k].phone
+        norm: k, orig: contactsMap[k].orig || '-', phone: contactsMap[k].phone || '-'
     }));
     
     if(filter) {
@@ -2016,11 +2118,11 @@ function renderContactsTable() {
     const pag = paginate(list, 'contacts');
     pag.forEach(c => {
         html += `
-        <tr class="border-b border-slate-50 hover:bg-purple-50/30 transition-colors">
-            <td data-label="Usuario" class="p-4 pl-8 font-black text-purple-600 uppercase">${c.norm}</td>
-            <td data-label="Nombre Original" class="p-4 text-xs text-slate-500">${c.orig || '-'}</td>
-            <td data-label="Teléfono" class="p-4 font-mono text-sm font-bold text-slate-700">${c.phone}</td>
-            <td data-label="Acción" class="p-4 pr-8 text-center"><span class="text-emerald-500"><i class="fas fa-check-circle"></i></span></td>
+        <tr class="border-b border-slate-50 hover:bg-slate-50/50 transition-colors">
+            <td data-label="Usuario Limpio" class="p-5 pl-8 font-black text-purple-600 uppercase">${c.norm}</td>
+            <td data-label="Nombre Original" class="p-5 text-xs text-slate-500">${c.orig}</td>
+            <td data-label="Teléfono" class="p-5 font-mono text-sm font-bold text-slate-700">${c.phone}</td>
+            <td data-label="Acción" class="p-5 pr-8 text-center"><span class="text-emerald-500"><i class="fas fa-check-circle"></i></span></td>
         </tr>`;
     });
     tbody.innerHTML = html || `<tr><td colspan="4" class="p-8 text-center text-sm font-bold text-slate-400">No hay contactos guardados o no coinciden con la búsqueda.</td></tr>`;
@@ -2078,7 +2180,7 @@ async function processCampaign() {
                 await db.from('campaign_targets').insert(chunk);
             }
             
-            showToast("Campaña creada. Usa la Lupa para ver detalles y analizar el ROI.", "success");
+            showToast("Campaña creada. Entra a 'Ver Detalles' para analizar el ROI.", "success");
             document.getElementById('camp-name').value = '';
             fileInput.value = '';
             fetchData(true);
@@ -2105,7 +2207,7 @@ function renderCampaignsTable() {
         const ud=JSON.parse(localStorage.getItem('sb_user_data'));
         const isMaster = ud && ud.type === 'master';
         
-        let actBtns = `<button onclick="viewCampaignDetails('${camp.id}')" class="px-4 py-2.5 bg-purple-50 hover:bg-purple-100 text-purple-700 rounded-xl text-xs font-bold transition-colors shadow-sm whitespace-nowrap"><i class="fas fa-search mr-1.5"></i> Detalle y ROI</button>`;
+        let actBtns = `<button onclick="viewCampaignDetails('${camp.id}')" class="px-4 py-2.5 bg-purple-50 hover:bg-purple-100 text-purple-700 rounded-xl text-xs font-bold transition-colors shadow-sm whitespace-nowrap"><i class="fas fa-search mr-1.5"></i> Detalles y ROI</button>`;
         if(!isMaster) actBtns += `<button onclick="deleteCampaign('${camp.id}')" class="w-10 h-10 bg-rose-50 hover:bg-rose-100 text-rose-500 rounded-xl transition-colors shadow-sm ml-2 flex items-center justify-center"><i class="fas fa-trash"></i></button>`;
 
         html += `
@@ -2132,40 +2234,51 @@ function viewCampaignDetails(id) {
     document.getElementById('cd-title').innerText = camp.name;
     document.getElementById('cd-date').innerText = fmtDate(camp.date_sent);
     
+    // Resetear filtro al entrar
+    const selFilter = document.getElementById('cd-filter-status');
+    if(selFilter) selFilter.value = 'all';
+
     renderCampaignDetails();
     switchTab('tab-crm-campaign-detail');
 }
 
 function renderCampaignDetails() {
     if(!currentCampaignId) return;
-    const targets = campaignTargetsList.filter(t => t.campaign_id === currentCampaignId);
+    const allTargets = campaignTargetsList.filter(t => t.campaign_id === currentCampaignId);
     
-    const total = targets.length;
-    const conv = targets.filter(t => t.deposited).length;
-    const rev = targets.reduce((acc, t) => acc + parseFloat(t.amount_deposited || 0), 0);
+    const total = allTargets.length;
+    const conv = allTargets.filter(t => t.deposited).length;
+    const rev = allTargets.reduce((acc, t) => acc + parseFloat(t.amount_deposited || 0), 0);
     const rate = total > 0 ? ((conv / total) * 100).toFixed(1) : 0;
 
-    document.getElementById('cd-metric-contacted').innerText = total;
-    document.getElementById('cd-metric-deposited').innerText = conv;
-    document.getElementById('cd-metric-conversion').innerText = `${rate}%`;
-    document.getElementById('cd-metric-roi').innerText = fmt(rev);
+    const elTotal = document.getElementById('cd-metric-contacted'); if(elTotal) elTotal.innerText = total;
+    const elConv = document.getElementById('cd-metric-deposited'); if(elConv) elConv.innerText = conv;
+    const elRate = document.getElementById('cd-metric-conversion'); if(elRate) elRate.innerText = `${rate}%`;
+    const elRoi = document.getElementById('cd-metric-roi'); if(elRoi) elRoi.innerText = fmt(rev);
+
+    // FILTRO DINÁMICO
+    const filterVal = document.getElementById('cd-filter-status')?.value || 'all';
+    let displayTargets = allTargets;
+    if(filterVal === 'deposited') displayTargets = allTargets.filter(t => t.deposited);
+    else if(filterVal === 'not_deposited') displayTargets = allTargets.filter(t => !t.deposited);
 
     const tbody = document.getElementById('cd-table-body');
+    if(!tbody) return;
     let html = '';
-    targets.forEach(t => {
+    displayTargets.forEach(t => {
         let phone = contactsMap[t.username] ? contactsMap[t.username].phone : '-';
         let badge = t.deposited ? `<span class="px-3 py-1.5 bg-emerald-50 text-emerald-600 border border-emerald-100 rounded-xl text-[10px] font-black uppercase"><i class="fas fa-check mr-1"></i> Sí depositó</span>` : `<span class="px-3 py-1.5 bg-slate-50 text-slate-400 border border-slate-200 rounded-xl text-[10px] font-black uppercase"><i class="fas fa-times mr-1"></i> No</span>`;
         let amtClass = t.deposited ? 'text-emerald-600' : 'text-slate-300';
         
         html += `
-        <tr class="border-b border-slate-50 hover:bg-slate-50/50">
+        <tr class="border-b border-slate-50 hover:bg-slate-50/50 transition-colors">
             <td data-label="Usuario" class="p-4 pl-8 font-black uppercase text-purple-600">${t.username}</td>
             <td data-label="Teléfono" class="p-4 font-mono text-sm font-bold text-slate-600">${phone}</td>
             <td data-label="Depositó" class="p-4 text-center">${badge}</td>
             <td data-label="Monto" class="p-4 pr-8 text-right font-black ${amtClass}">${fmt(t.amount_deposited)}</td>
         </tr>`;
     });
-    tbody.innerHTML = html;
+    tbody.innerHTML = html || `<tr><td colspan="4" class="p-8 text-center text-sm font-bold text-slate-400">No hay usuarios con este filtro.</td></tr>`;
 }
 
 // Analizar Excel Reporte Backoffice y Cruzarlo con la Campaña
@@ -2304,7 +2417,7 @@ async function confirmCampDownload() {
 }
 
 async function deleteCampaign(id) {
-    if(!confirm("¿Seguro que deseas eliminar esta campaña?")) return;
+    if(!confirm("¿Seguro que deseas eliminar esta campaña y sus estadísticas?")) return;
     try {
         await db.from('campaigns').delete().eq('id', id);
         showToast("Campaña eliminada", "success");
@@ -3083,7 +3196,7 @@ function updateAllViews(){
     injectExportButtons();
 
     // RENDERIZAR CAMPAÑAS CRM Y CONTACTOS
-    if(userType === 'cajero_afiliados' || isSuperAdmin || userType === 'admin') {
+    if(userType === 'cajero_afiliados' || isSuperAdmin || userType === 'admin' || userType === 'master') {
         renderCampaignsTable();
         renderContactsTable();
     }
@@ -3479,7 +3592,7 @@ function updateAllViews(){
             for(let i=0;i<pagInf.length;i++){
                 const p=pagInf[i];
                 let displayJugador = (userType !== 'influencer') ? `${p.name} <span class="block text-[9px] text-slate-400 mt-0.5"><i class="fas fa-bullhorn mr-1"></i>${p.inf}</span>` : p.name;
-                hInf+=`<tr class="border-b border-slate-50 hover:bg-slate-50/50 transition-colors"><td data-label="Jugador" class="p-5 pl-8 text-sm font-bold uppercase text-indigo-600">${displayJugador}</td><td data-label="Depósitos" class="p-5 text-sm font-black text-emerald-500 text-right">${fmt(p.dep)}</td><td data-label="Retiros" class="p-5 text-sm font-black text-rose-500 text-right">${fmt(p.ret)}</td><td data-label="Neto" class="p-5 text-sm font-black text-slate-700 text-right">${fmt(p.net)}</td><td data-label="Mi Comisión" class="p-5 pr-8 text-sm font-black text-purple-600 text-right">${fmt(p.com)}</td><td data-label="Detalle" class="p-5 text-center hidden md:table-cell"><button onclick="viewPlayerDetails('${p.name}')" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-600 px-3 py-1.5 rounded-lg font-bold"><i class="fas fa-search mr-1"></i> Ver</button></td></tr>`;
+                hInf+=`<tr class="border-b border-slate-50 hover:bg-slate-50/50 transition-colors"><td data-label="Jugador" class="p-5 pl-8 text-sm font-bold uppercase text-indigo-600">${displayJugador}</td><td data-label="Depósitos" class="p-5 text-sm font-black text-emerald-500 text-right">${fmt(p.dep)}</td><td data-label="Retiros" class="p-5 text-sm font-black text-rose-500 text-right">${fmt(p.ret)}</td><td data-label="Neto" class="p-5 text-sm font-black text-slate-700 text-right">${fmt(p.net)}</td><td data-label="Mi Comisión" class="p-5 pr-8 text-sm font-black text-purple-600 text-right">${fmt(p.com)}</td><td data-label="Detalle" class="p-5 text-center hidden md:table-cell"><button onclick="viewPlayerDetails('${p.name.replace(/'/g,"\\'")}')" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg text-xs font-bold transition-colors shadow-sm whitespace-nowrap"><i class="fas fa-search mr-1"></i> Ver Historial</button></td></tr>`;
             }
             tbodyInf.innerHTML=hInf||`<tr><td colspan="6" class="p-8 text-center text-sm font-bold text-slate-400">Sin movimientos.</td></tr>`;
         }
@@ -3537,14 +3650,16 @@ function updateAllViews(){
   }
 }
 
-// === LÓGICA DEL FEED EN VIVO ===
+// === LÓGICA DEL FEED EN VIVO (Con Notificaciones para Influencers) ===
 function renderTimeline() {
-    const feedContainer = document.getElementById('live-timeline-feed');
-    if(!feedContainer) return;
+    const adminFeedContainer = document.getElementById('live-timeline-feed');
+    const infFeedContainer = document.getElementById('live-timeline-feed-inf');
+    
     const ud=JSON.parse(localStorage.getItem('sb_user_data'));
     if(!ud) return;
     const uType = ud.type;
     const myKey = cleanStr(currentUser);
+    const myNameClean = cleanStr(USERS[myKey]?.name || USERS[currentUser]?.name || '');
 
     let events = [];
 
@@ -3582,26 +3697,6 @@ function renderTimeline() {
 
     events.sort((a,b) => b.date - a.date);
 
-    let filteredEvents = [];
-    if (uType === 'influencer') {
-        filteredEvents = events.filter(e => e.type === 'referral' && cleanStr(e.user) === myKey);
-    } else if (uType === 'bonos') {
-        filteredEvents = events.filter(e => e.type === 'bono');
-    } else if (uType === 'cajero_afiliados') {
-        filteredEvents = events.filter(e => e.type === 'referral');
-    } else if (uType === 'master') {
-        filteredEvents = events.filter(e => e.type === 'advance' || e.type === 'record');
-    } else {
-        filteredEvents = events;
-    }
-
-    filteredEvents = filteredEvents.slice(0, 15);
-
-    if (filteredEvents.length === 0) {
-        feedContainer.innerHTML = '<p class="text-xs font-bold text-slate-400 italic mt-4 text-center">No hay actividad reciente en tu radar.</p>';
-        return;
-    }
-
     const now = new Date();
     const timeAgo = (d) => {
         const diffMin = Math.floor((now - d) / 60000);
@@ -3612,31 +3707,52 @@ function renderTimeline() {
         return `HACE ${Math.floor(diffHr / 24)} DÍAS`;
     };
 
-    let html = '';
-    filteredEvents.forEach(e => {
-        let color = 'bg-slate-100', dot = 'bg-slate-400';
-        if (e.type === 'record') { color = 'bg-emerald-100 border-white'; dot = 'bg-emerald-500'; }
-        else if (e.type === 'referral') { color = 'bg-indigo-100 border-white'; dot = 'bg-indigo-500'; }
-        else if (e.type === 'advance') { color = 'bg-amber-100 border-white'; dot = 'bg-amber-400'; }
-        else if (e.type === 'bono') { color = 'bg-rose-100 border-white'; dot = 'bg-rose-500'; }
+    const buildHtml = (filteredEvents) => {
+        if (filteredEvents.length === 0) return '<p class="text-xs font-bold text-slate-400 italic mt-4 text-center">No hay actividad reciente.</p>';
+        let html = '';
+        filteredEvents.slice(0, 15).forEach(e => {
+            let color = 'bg-slate-100', dot = 'bg-slate-400';
+            if (e.type === 'record') { color = 'bg-emerald-100 border-white'; dot = 'bg-emerald-500'; }
+            else if (e.type === 'referral') { color = 'bg-indigo-100 border-white'; dot = 'bg-indigo-500'; }
+            else if (e.type === 'advance') { color = 'bg-amber-100 border-white'; dot = 'bg-amber-400'; }
+            else if (e.type === 'bono') { color = 'bg-rose-100 border-white'; dot = 'bg-rose-500'; }
 
-        if (e.type === 'record' && e.status !== 'Verificado') {
-            color = 'bg-blue-100 border-white'; dot = 'bg-blue-500';
-        }
+            if (e.type === 'record' && e.status !== 'Verificado') { color = 'bg-blue-100 border-white'; dot = 'bg-blue-500'; }
 
-        let userLabel = e.type === 'referral' ? `Red de @${e.user}` : (e.type === 'record' ? `Asignado a ${e.user}` : '');
+            let userLabel = e.type === 'referral' ? `Red de @${e.user}` : (e.type === 'record' ? `Asignado a ${e.user}` : '');
 
-        html += `
-        <div class="relative pl-6">
-            <div class="absolute -left-[9px] top-1 w-4 h-4 ${color} border-2 rounded-full flex items-center justify-center ${e.type==='record'&&e.status==='Verificado'?'glow-emerald':''}">
-                <div class="w-2 h-2 ${dot} rounded-full"></div>
-            </div>
-            <p class="text-[9px] font-extrabold text-slate-400 uppercase tracking-widest mb-0.5">${timeAgo(e.date)}</p>
-            <p class="text-sm font-bold text-slate-700">${e.title} ${e.desc}</p>
-            <p class="text-xs text-slate-500 font-semibold mt-0.5">${userLabel}</p>
-        </div>`;
-    });
-    feedContainer.innerHTML = html;
+            html += `
+            <div class="relative pl-6">
+                <div class="absolute -left-[9px] top-1 w-4 h-4 ${color} border-2 rounded-full flex items-center justify-center ${e.type==='record'&&e.status==='Verificado'?'glow-emerald':''}">
+                    <div class="w-2 h-2 ${dot} rounded-full"></div>
+                </div>
+                <p class="text-[9px] font-extrabold text-slate-400 uppercase tracking-widest mb-0.5">${timeAgo(e.date)}</p>
+                <p class="text-sm font-bold text-slate-700">${e.title} ${e.desc}</p>
+                <p class="text-xs text-slate-500 font-semibold mt-0.5">${userLabel}</p>
+            </div>`;
+        });
+        return html;
+    };
+
+    // Para Admin / Cajeros / Master / Gussepy
+    if(adminFeedContainer) {
+        let adminEvents = events;
+        if (uType === 'bonos') adminEvents = events.filter(e => e.type === 'bono');
+        else if (uType === 'cajero_afiliados') adminEvents = events.filter(e => e.type === 'referral');
+        adminFeedContainer.innerHTML = buildHtml(adminEvents);
+    }
+
+    // Para Influencers
+    if(infFeedContainer) {
+        let infEvents = events.filter(e => e.type === 'referral' && (cleanStr(e.user) === myKey || cleanStr(e.user) === myNameClean));
+        infFeedContainer.innerHTML = buildHtml(infEvents);
+    }
+}
+
+function viewPlayerDetails(playerName){
+    document.getElementById('inf-detail-player').value=String(playerName).toUpperCase().trim();
+    switchTab('tab-influencer-details');
+    updateAllViews();
 }
 </script>
 </body>

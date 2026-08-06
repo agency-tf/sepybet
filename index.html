@@ -29,13 +29,14 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
 body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; overflow-x: hidden; color: #334155; }
-.glass-header { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-bottom: 1px solid rgba(226, 232, 240, 0.8); }
+.glass-header { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(226, 232, 240, 0.8); }
 .glass-dark { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); }
 .card-shadow { box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.03), 0 0 3px rgba(0,0,0,0.02); }
 .shadow-floating { box-shadow: 0 20px 40px -10px rgba(99, 102, 241, 0.15); }
+.glow-emerald { box-shadow: 0 0 15px rgba(16, 185, 129, 0.3); }
 .hover-lift { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
 .hover-lift:hover { transform: translateY(-4px); box-shadow: 0 15px 30px -5px rgba(99, 102, 241, 0.1); }
-.bg-mesh { position: absolute; inset: 0; z-index: -1; background-image: radial-gradient(at 0% 0%, hsla(253,16%,7%,0.03) 0, transparent 50%), radial-gradient(at 100% 0%, hsla(160,84%,39%,0.03) 0, transparent 50%); }
+.bg-mesh { position: fixed; inset: 0; z-index: -1; background-image: radial-gradient(at 0% 0%, hsla(253,16%,7%,0.03) 0, transparent 50%), radial-gradient(at 100% 0%, hsla(160,84%,39%,0.03) 0, transparent 50%); }
 .login-bg { background: radial-gradient(circle at top right, #e0e7ff, #f8fafc 50%, #f1f5f9); }
 .hide-scrollbar::-webkit-scrollbar { display: none; }
 * { -webkit-tap-highlight-color: transparent; }
@@ -55,15 +56,27 @@ input[type="number"] { -moz-appearance: textfield; }
 .toggle-checkbox:checked + .toggle-label::after { transform: translateX(100%); border-color: white; }
 @media(max-width:768px){
     .resp-table thead{display:none}.resp-table,.resp-table tbody,.resp-table tr,.resp-table td{display:block;width:100%}
-    .resp-table tr{margin-bottom:1rem;background-color:#fff;border-radius:1.5rem;border:1px solid #e2e8f0;box-shadow:0 10px 25px -5px rgba(0,0,0,0.03);padding:0.75rem}
+    .resp-table tr{margin-bottom:1rem;background-color:#fff;border-radius:1.5rem;border:1px solid #e2e8f0;box-shadow:0 4px 15px -5px rgba(0,0,0,0.03);padding:0.75rem}
     .resp-table td{display:flex;justify-content:space-between;align-items:center;border:none!important;padding:0.75rem!important;border-bottom:1px solid #f8fafc!important;text-align:right}
     .resp-table td:last-child{border-bottom:none!important;justify-content:center;padding-top:1rem!important}
     .resp-table td::before{content:attr(data-label);font-size:0.65rem;font-weight:800;text-transform:uppercase;color:#94a3b8;text-align:left;margin-right:1rem; letter-spacing: 0.05em;}
 }
-.sidebar { transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-.sidebar.open { transform: translateX(0); }
-.overlay { opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
-.overlay.open { opacity: 1; pointer-events: auto; }
+.sidebar-mobile { transform: translateX(-100%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+.sidebar-mobile.open { transform: translateX(0); }
+
+/* Corrección del texto en el sidebar para evitar que se asome */
+.sidebar-text {
+    white-space: nowrap;
+    overflow: hidden;
+    max-width: 0;
+    opacity: 0;
+    transition: max-width 0.3s ease, opacity 0.3s ease, margin 0.3s ease;
+}
+.group:hover .sidebar-text, .sidebar-mobile.open .sidebar-text {
+    max-width: 200px;
+    opacity: 1;
+    margin-left: 1rem;
+}
 </style>
 </head>
 <body class="text-slate-700 antialiased selection:bg-brand-100 selection:text-brand-900">
@@ -106,101 +119,117 @@ input[type="number"] { -moz-appearance: textfield; }
 
 <div id="screen-app" class="hidden min-h-screen flex relative">
     
-    <!-- OVERLAY MÓVIL (Mismo del index 13 original) -->
+    <!-- OVERLAY MÓVIL -->
     <div id="sidebar-overlay" onclick="toggleMenu(false)" class="fixed inset-0 bg-slate-950/40 backdrop-blur-sm z-40 hidden opacity-0 transition-opacity duration-300 md:hidden"></div>
     
-    <!-- SIDEBAR ORIGINAL CORREGIDO (Mismo de index 13) -->
-    <aside id="sidebar-menu" class="sidebar fixed inset-y-0 left-0 w-64 md:relative md:w-[88px] md:hover:w-72 bg-slate-950 flex flex-col py-6 border-r border-slate-800 z-50 transform -translate-x-full md:translate-x-0 group overflow-hidden h-screen">
-        <!-- Logo -->
+    <!-- SIDEBAR ORIGINAL CORREGIDO (Letra P oculta al minimizar) -->
+    <aside id="sidebar-menu" class="fixed inset-y-0 left-0 z-50 w-72 bg-slate-950 flex flex-col py-6 border-r border-slate-800 sidebar-mobile md:relative md:transform-none md:w-[88px] md:hover:w-72 transition-all duration-300 group overflow-x-hidden h-screen">
         <div class="w-12 h-12 mx-auto md:mx-auto ml-6 md:ml-auto rounded-xl bg-gradient-to-tr from-brand-500 to-blue-500 flex items-center justify-center text-white shadow-[0_0_15px_rgba(99,102,241,0.4)] mb-8 flex-shrink-0 relative">
             <i class="fas fa-bolt text-xl"></i>
             <button onclick="toggleMenu(false)" class="absolute -right-16 text-slate-400 hover:text-white p-2 md:hidden"><i class="fas fa-times text-2xl"></i></button>
         </div>
 
-        <div class="flex-1 w-full flex flex-col overflow-y-auto hide-scroll space-y-1.5 px-0 pb-4">
+        <div class="flex-1 w-full flex flex-col overflow-y-auto hide-scrollbar space-y-1.5 px-0 pb-4">
             
-            <button onclick="switchTab('tab-dashboard')" id="btn-tab-dashboard" class="hidden w-[calc(100%-1.5rem)] mx-auto text-left px-4 py-3.5 rounded-2xl text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-all flex items-center gap-4 overflow-hidden">
-                <i class="fas fa-chart-pie w-5 text-xl text-center flex-shrink-0"></i><span class="whitespace-nowrap opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">Panel Global</span>
+            <button onclick="switchTab('tab-dashboard')" id="btn-tab-dashboard" class="hidden w-[calc(100%-1.5rem)] mx-auto text-left px-4 py-3.5 rounded-2xl text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-all flex items-center">
+                <i class="fas fa-chart-pie w-5 text-xl text-center flex-shrink-0"></i><span class="sidebar-text">Panel Global</span>
             </button>
-            <button onclick="switchTab('tab-register')" id="btn-tab-register" class="hidden w-[calc(100%-1.5rem)] mx-auto text-left px-4 py-3.5 rounded-2xl text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-all flex items-center gap-4 overflow-hidden">
-                <i class="fas fa-plus-circle w-5 text-xl text-center flex-shrink-0"></i><span class="whitespace-nowrap opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">Carga/Registro</span>
+            
+            <!-- MENÚ PARA GUSSEPY (CÁLCULO EXTERNAS) -->
+            <button onclick="switchTab('tab-gussepy-externas')" id="btn-tab-gussepy-externas" class="hidden w-[calc(100%-1.5rem)] mx-auto text-left px-4 py-3.5 rounded-2xl text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-all flex items-center">
+                <i class="fas fa-money-bill-wave w-5 text-xl text-center flex-shrink-0 text-amber-400"></i><span class="sidebar-text text-amber-400">Comisiones Ext.</span>
             </button>
-            <button onclick="switchTab('tab-auditoria')" id="btn-tab-auditoria" class="hidden w-[calc(100%-1.5rem)] mx-auto text-left px-4 py-3.5 rounded-2xl text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-all flex items-center gap-4 overflow-hidden">
-                <i class="fas fa-search w-5 text-xl text-center flex-shrink-0"></i><span class="whitespace-nowrap opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">Auditoría Saldos</span>
+
+            <!-- MENÚ DE AJUSTES/CONFIGURACIÓN PARA GUSSEPY -->
+            <button onclick="switchTab('tab-config')" id="btn-tab-config" class="hidden w-[calc(100%-1.5rem)] mx-auto text-left px-4 py-3.5 rounded-2xl text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-all flex items-center">
+                <i class="fas fa-cog w-5 text-xl text-center flex-shrink-0 text-slate-300"></i><span class="sidebar-text text-slate-300">Ajustes Comisiones</span>
             </button>
-            <button onclick="switchTab('tab-gussepy')" id="btn-tab-gussepy" class="hidden w-[calc(100%-1.5rem)] mx-auto text-left px-4 py-3.5 rounded-2xl text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-all flex items-center gap-4 overflow-hidden">
-                <i class="fas fa-hand-holding-usd w-5 text-xl text-center flex-shrink-0"></i><span class="whitespace-nowrap opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">Adelantos</span>
+            
+            <button onclick="switchTab('tab-register')" id="btn-tab-register" class="hidden w-[calc(100%-1.5rem)] mx-auto text-left px-4 py-3.5 rounded-2xl text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-all flex items-center">
+                <i class="fas fa-plus-circle w-5 text-xl text-center flex-shrink-0"></i><span class="sidebar-text">Carga/Registro</span>
             </button>
-            <button onclick="switchTab('tab-bonos-reales')" id="btn-tab-bonos-reales" class="hidden w-[calc(100%-1.5rem)] mx-auto text-left px-4 py-3.5 rounded-2xl text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-all flex items-center gap-4 overflow-hidden">
-                <i class="fas fa-ticket-alt w-5 text-xl text-center flex-shrink-0 text-emerald-400"></i><span class="whitespace-nowrap opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">Bonos Reales</span>
+            <button onclick="switchTab('tab-auditoria')" id="btn-tab-auditoria" class="hidden w-[calc(100%-1.5rem)] mx-auto text-left px-4 py-3.5 rounded-2xl text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-all flex items-center">
+                <i class="fas fa-search w-5 text-xl text-center flex-shrink-0"></i><span class="sidebar-text">Auditoría Saldos</span>
+            </button>
+            <button onclick="switchTab('tab-gussepy')" id="btn-tab-gussepy" class="hidden w-[calc(100%-1.5rem)] mx-auto text-left px-4 py-3.5 rounded-2xl text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-all flex items-center">
+                <i class="fas fa-hand-holding-usd w-5 text-xl text-center flex-shrink-0"></i><span class="sidebar-text">Adelantos</span>
+            </button>
+            <button onclick="switchTab('tab-bonos-reales')" id="btn-tab-bonos-reales" class="hidden w-[calc(100%-1.5rem)] mx-auto text-left px-4 py-3.5 rounded-2xl text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-all flex items-center">
+                <i class="fas fa-ticket-alt w-5 text-xl text-center flex-shrink-0 text-emerald-400"></i><span class="sidebar-text">Bonos Reales</span>
+            </button>
+
+            <!-- MENÚ BUZÓN DE MENSAJES -->
+            <button onclick="switchTab('tab-buzon')" id="btn-tab-buzon" class="w-[calc(100%-1.5rem)] mx-auto text-left px-4 py-3.5 rounded-2xl text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-all flex items-center relative">
+                <i class="fas fa-envelope w-5 text-xl text-center flex-shrink-0 text-sky-400"></i>
+                <span id="unread-badge" class="absolute top-2 left-7 bg-rose-500 w-3 h-3 rounded-full hidden border border-slate-900"></span>
+                <span class="sidebar-text text-sky-400">Buzón Interno</span>
             </button>
 
             <div class="hidden w-[calc(100%-2rem)] h-px bg-slate-800 mx-auto my-2" id="divider-1"></div>
             
-            <button onclick="switchTab('tab-maria-dash')" id="btn-tab-maria-dash" class="hidden w-[calc(100%-1.5rem)] mx-auto text-left px-4 py-3.5 rounded-2xl text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-all flex items-center gap-4 overflow-hidden">
-                <i class="fas fa-trophy w-5 text-xl text-center flex-shrink-0 text-rose-400"></i><span class="whitespace-nowrap opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">Panel Bonos</span>
+            <button onclick="switchTab('tab-maria-dash')" id="btn-tab-maria-dash" class="hidden w-[calc(100%-1.5rem)] mx-auto text-left px-4 py-3.5 rounded-2xl text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-all flex items-center">
+                <i class="fas fa-trophy w-5 text-xl text-center flex-shrink-0 text-rose-400"></i><span class="sidebar-text">Panel Bonos</span>
             </button>
-            <button onclick="switchTab('tab-maria-add')" id="btn-tab-maria-add" class="hidden w-[calc(100%-1.5rem)] mx-auto text-left px-4 py-3.5 rounded-2xl text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-all flex items-center gap-4 overflow-hidden">
-                <i class="fas fa-gift w-5 text-xl text-center flex-shrink-0 text-rose-400"></i><span class="whitespace-nowrap opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">Emitir Bono</span>
+            <button onclick="switchTab('tab-maria-add')" id="btn-tab-maria-add" class="hidden w-[calc(100%-1.5rem)] mx-auto text-left px-4 py-3.5 rounded-2xl text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-all flex items-center">
+                <i class="fas fa-gift w-5 text-xl text-center flex-shrink-0 text-rose-400"></i><span class="sidebar-text">Emitir Bono</span>
             </button>
-            <button onclick="switchTab('tab-maria-list')" id="btn-tab-maria-list" class="hidden w-[calc(100%-1.5rem)] mx-auto text-left px-4 py-3.5 rounded-2xl text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-all flex items-center gap-4 overflow-hidden">
-                <i class="fas fa-list-alt w-5 text-xl text-center flex-shrink-0 text-rose-400"></i><span class="whitespace-nowrap opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">Lista Bonos</span>
+            <button onclick="switchTab('tab-maria-list')" id="btn-tab-maria-list" class="hidden w-[calc(100%-1.5rem)] mx-auto text-left px-4 py-3.5 rounded-2xl text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-all flex items-center">
+                <i class="fas fa-list-alt w-5 text-xl text-center flex-shrink-0 text-rose-400"></i><span class="sidebar-text">Lista Bonos</span>
             </button>
-            <button onclick="switchTab('tab-giros-add')" id="btn-tab-giros-add" class="hidden w-[calc(100%-1.5rem)] mx-auto text-left px-4 py-3.5 rounded-2xl text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-all flex items-center gap-4 overflow-hidden">
-                <i class="fas fa-sync w-5 text-xl text-center flex-shrink-0 text-indigo-400"></i><span class="whitespace-nowrap opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">Otorgar Giros</span>
+            <button onclick="switchTab('tab-giros-add')" id="btn-tab-giros-add" class="hidden w-[calc(100%-1.5rem)] mx-auto text-left px-4 py-3.5 rounded-2xl text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-all flex items-center">
+                <i class="fas fa-sync w-5 text-xl text-center flex-shrink-0 text-indigo-400"></i><span class="sidebar-text">Otorgar Giros</span>
             </button>
-            <button onclick="switchTab('tab-giros-list')" id="btn-tab-giros-list" class="hidden w-[calc(100%-1.5rem)] mx-auto text-left px-4 py-3.5 rounded-2xl text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-all flex items-center gap-4 overflow-hidden">
-                <i class="fas fa-history w-5 text-xl text-center flex-shrink-0 text-indigo-400"></i><span class="whitespace-nowrap opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">Lista Giros</span>
+            <button onclick="switchTab('tab-giros-list')" id="btn-tab-giros-list" class="hidden w-[calc(100%-1.5rem)] mx-auto text-left px-4 py-3.5 rounded-2xl text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-all flex items-center">
+                <i class="fas fa-history w-5 text-xl text-center flex-shrink-0 text-indigo-400"></i><span class="sidebar-text">Lista Giros</span>
             </button>
 
             <div class="hidden w-[calc(100%-2rem)] h-px bg-slate-800 mx-auto my-2" id="divider-2"></div>
             
-            <button onclick="switchTab('tab-maria-ref-add')" id="btn-tab-maria-ref-add" class="hidden w-[calc(100%-1.5rem)] mx-auto text-left px-4 py-3.5 rounded-2xl text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-all flex items-center gap-4 overflow-hidden">
-                <i class="fas fa-user-plus w-5 text-xl text-center flex-shrink-0 text-emerald-400"></i><span class="whitespace-nowrap opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">Registrar Ref.</span>
+            <button onclick="switchTab('tab-maria-ref-add')" id="btn-tab-maria-ref-add" class="hidden w-[calc(100%-1.5rem)] mx-auto text-left px-4 py-3.5 rounded-2xl text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-all flex items-center">
+                <i class="fas fa-user-plus w-5 text-xl text-center flex-shrink-0 text-emerald-400"></i><span class="sidebar-text">Registrar Ref.</span>
             </button>
-            <button onclick="switchTab('tab-maria-ref-list')" id="btn-tab-maria-ref-list" class="hidden w-[calc(100%-1.5rem)] mx-auto text-left px-4 py-3.5 rounded-2xl text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-all flex items-center gap-4 overflow-hidden">
-                <i class="fas fa-users w-5 text-xl text-center flex-shrink-0 text-emerald-400"></i><span class="whitespace-nowrap opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">Lista Referidos</span>
+            <button onclick="switchTab('tab-maria-ref-list')" id="btn-tab-maria-ref-list" class="hidden w-[calc(100%-1.5rem)] mx-auto text-left px-4 py-3.5 rounded-2xl text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-all flex items-center">
+                <i class="fas fa-users w-5 text-xl text-center flex-shrink-0 text-emerald-400"></i><span class="sidebar-text">Lista Referidos</span>
             </button>
-            <button onclick="switchTab('tab-melanie-add')" id="btn-tab-melanie-add" class="hidden w-[calc(100%-1.5rem)] mx-auto text-left px-4 py-3.5 rounded-2xl text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-all flex items-center gap-4 overflow-hidden">
-                <i class="fas fa-calculator w-5 text-xl text-center flex-shrink-0 text-pink-400"></i><span class="whitespace-nowrap opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">Carga Afiliados</span>
+            <button onclick="switchTab('tab-melanie-add')" id="btn-tab-melanie-add" class="hidden w-[calc(100%-1.5rem)] mx-auto text-left px-4 py-3.5 rounded-2xl text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-all flex items-center">
+                <i class="fas fa-calculator w-5 text-xl text-center flex-shrink-0 text-pink-400"></i><span class="sidebar-text">Carga Afiliados</span>
             </button>
-            <button onclick="switchTab('tab-melanie-list')" id="btn-tab-melanie-list" class="hidden w-[calc(100%-1.5rem)] mx-auto text-left px-4 py-3.5 rounded-2xl text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-all flex items-center gap-4 overflow-hidden">
-                <i class="fas fa-list w-5 text-xl text-center flex-shrink-0 text-pink-400"></i><span class="whitespace-nowrap opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">Historial Cargas</span>
+            <button onclick="switchTab('tab-melanie-list')" id="btn-tab-melanie-list" class="hidden w-[calc(100%-1.5rem)] mx-auto text-left px-4 py-3.5 rounded-2xl text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-all flex items-center">
+                <i class="fas fa-list w-5 text-xl text-center flex-shrink-0 text-pink-400"></i><span class="sidebar-text">Historial Cargas</span>
             </button>
             
-            <!-- BOTONES CRM EXACTAMENTE IGUALES AL DISEÑO ORIGINAL -->
-            <button onclick="switchTab('tab-crm-contacts')" id="btn-tab-crm-contacts" class="hidden w-[calc(100%-1.5rem)] mx-auto text-left px-4 py-3.5 rounded-2xl text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-all flex items-center gap-4 overflow-hidden">
-                <i class="fas fa-address-book w-5 text-xl text-center flex-shrink-0 text-purple-400"></i><span class="whitespace-nowrap opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300 text-purple-400">Dir. Contactos</span>
+            <button onclick="switchTab('tab-crm-contacts')" id="btn-tab-crm-contacts" class="hidden w-[calc(100%-1.5rem)] mx-auto text-left px-4 py-3.5 rounded-2xl text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-all flex items-center">
+                <i class="fas fa-address-book w-5 text-xl text-center flex-shrink-0 text-purple-400"></i><span class="sidebar-text text-purple-400">Dir. Contactos</span>
             </button>
-            <button onclick="switchTab('tab-crm-campaigns')" id="btn-tab-crm-campaigns" class="hidden w-[calc(100%-1.5rem)] mx-auto text-left px-4 py-3.5 rounded-2xl text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-all flex items-center gap-4 overflow-hidden">
-                <i class="fas fa-bullhorn w-5 text-xl text-center flex-shrink-0 text-purple-400"></i><span class="whitespace-nowrap opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300 text-purple-400">Campañas CRM</span>
+            <button onclick="switchTab('tab-crm-campaigns')" id="btn-tab-crm-campaigns" class="hidden w-[calc(100%-1.5rem)] mx-auto text-left px-4 py-3.5 rounded-2xl text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-all flex items-center">
+                <i class="fas fa-bullhorn w-5 text-xl text-center flex-shrink-0 text-purple-400"></i><span class="sidebar-text text-purple-400">Campañas CRM</span>
             </button>
 
-            <button onclick="switchTab('tab-influencer-dash')" id="btn-tab-influencer-dash" class="hidden w-[calc(100%-1.5rem)] mx-auto text-left px-4 py-3.5 rounded-2xl text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-all flex items-center gap-4 overflow-hidden">
-                <i class="fas fa-chart-bar w-5 text-xl text-center flex-shrink-0 text-amber-500"></i><span class="whitespace-nowrap opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">Panel VIP</span>
+            <button onclick="switchTab('tab-influencer-dash')" id="btn-tab-influencer-dash" class="hidden w-[calc(100%-1.5rem)] mx-auto text-left px-4 py-3.5 rounded-2xl text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-all flex items-center">
+                <i class="fas fa-chart-bar w-5 text-xl text-center flex-shrink-0 text-amber-500"></i><span class="sidebar-text">Panel VIP</span>
             </button>
-            <button onclick="switchTab('tab-influencer-details')" id="btn-tab-influencer-details" class="hidden w-[calc(100%-1.5rem)] mx-auto text-left px-4 py-3.5 rounded-2xl text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-all flex items-center gap-4 overflow-hidden">
-                <i class="fas fa-list-ul w-5 text-xl text-center flex-shrink-0 text-amber-500"></i><span class="whitespace-nowrap opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">Detalle Jugador</span>
+            <button onclick="switchTab('tab-influencer-details')" id="btn-tab-influencer-details" class="hidden w-[calc(100%-1.5rem)] mx-auto text-left px-4 py-3.5 rounded-2xl text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-all flex items-center">
+                <i class="fas fa-list-ul w-5 text-xl text-center flex-shrink-0 text-amber-500"></i><span class="sidebar-text">Detalle Jugador</span>
             </button>
-            <button onclick="switchTab('tab-inactivos')" id="btn-tab-inactivos" class="hidden w-[calc(100%-1.5rem)] mx-auto text-left px-4 py-3.5 rounded-2xl text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-all flex items-center gap-4 overflow-hidden">
-                <i class="fas fa-user-clock w-5 text-xl text-center flex-shrink-0 text-orange-400"></i><span class="whitespace-nowrap opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">Inactivos</span>
+            <button onclick="switchTab('tab-inactivos')" id="btn-tab-inactivos" class="hidden w-[calc(100%-1.5rem)] mx-auto text-left px-4 py-3.5 rounded-2xl text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-all flex items-center">
+                <i class="fas fa-user-clock w-5 text-xl text-center flex-shrink-0 text-orange-400"></i><span class="sidebar-text">Inactivos</span>
             </button>
             
             <div class="hidden w-[calc(100%-2rem)] h-px bg-slate-800 mx-auto my-2" id="divider-3"></div>
-            <button onclick="switchTab('tab-sync-db')" id="btn-tab-sync-db" class="hidden w-[calc(100%-1.5rem)] mx-auto text-left px-4 py-3.5 rounded-2xl text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-all flex items-center gap-4 overflow-hidden">
-                <i class="fas fa-database w-5 text-xl text-center flex-shrink-0 text-blue-400"></i><span class="whitespace-nowrap opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">Sync BD</span>
+            <button onclick="switchTab('tab-sync-db')" id="btn-tab-sync-db" class="hidden w-[calc(100%-1.5rem)] mx-auto text-left px-4 py-3.5 rounded-2xl text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-all flex items-center">
+                <i class="fas fa-database w-5 text-xl text-center flex-shrink-0 text-blue-400"></i><span class="sidebar-text">Sync BD</span>
             </button>
         </div>
 
-        <div class="mt-auto w-full flex flex-col gap-1.5 pt-4 border-t border-slate-800">
-            <button id="btn-install-pwa" onclick="installPWA()" class="hidden w-[calc(100%-1.5rem)] mx-auto text-left px-4 py-3 rounded-2xl text-sm font-bold text-emerald-400 hover:bg-slate-800 hover:text-emerald-300 transition-all flex items-center gap-4 overflow-hidden">
-                <i class="fas fa-download w-5 text-xl text-center flex-shrink-0"></i><span class="whitespace-nowrap opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">Instalar App</span>
+        <div class="mt-auto w-full flex flex-col gap-1.5 pt-4 border-t border-slate-800 mb-6">
+            <button id="btn-install-pwa" onclick="installPWA()" class="hidden w-[calc(100%-1.5rem)] mx-auto text-left px-4 py-3 rounded-2xl text-sm font-bold text-emerald-400 hover:bg-slate-800 hover:text-emerald-300 transition-all flex items-center">
+                <i class="fas fa-download w-5 text-xl text-center flex-shrink-0"></i><span class="sidebar-text">Instalar App</span>
             </button>
-            <button onclick="openPasswordModal()" class="w-[calc(100%-1.5rem)] mx-auto text-left px-4 py-3 rounded-2xl text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-all flex items-center gap-4 overflow-hidden">
-                <i class="fas fa-key w-5 text-xl text-center flex-shrink-0"></i><span class="whitespace-nowrap opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">Cambiar Clave</span>
+            <button onclick="openPasswordModal()" class="w-[calc(100%-1.5rem)] mx-auto text-left px-4 py-3 rounded-2xl text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-all flex items-center">
+                <i class="fas fa-key w-5 text-xl text-center flex-shrink-0"></i><span class="sidebar-text">Cambiar Clave</span>
             </button>
-            <button onclick="logout()" class="w-[calc(100%-1.5rem)] mx-auto text-left px-4 py-3 rounded-2xl text-sm font-bold text-rose-500 hover:bg-rose-500/20 transition-all flex items-center gap-4 overflow-hidden">
-                <i class="fas fa-sign-out-alt w-5 text-xl text-center flex-shrink-0"></i><span class="whitespace-nowrap opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">Salir</span>
+            <button onclick="logout()" class="w-[calc(100%-1.5rem)] mx-auto text-left px-4 py-3 rounded-2xl text-sm font-bold text-rose-500 hover:bg-rose-500/20 transition-all flex items-center">
+                <i class="fas fa-sign-out-alt w-5 text-xl text-center flex-shrink-0"></i><span class="sidebar-text">Salir</span>
             </button>
         </div>
     </aside>
@@ -219,6 +248,12 @@ input[type="number"] { -moz-appearance: textfield; }
             </div>
             
             <div class="flex items-center gap-4 md:gap-6">
+                <!-- BOTÓN BUZÓN DIRECTO EN HEADER -->
+                <button onclick="switchTab('tab-buzon')" class="relative text-slate-400 hover:text-sky-500 transition-colors p-2" title="Buzón de Mensajes">
+                    <i class="fas fa-envelope text-xl"></i>
+                    <span id="header-unread-badge" class="absolute top-1 right-1 w-2.5 h-2.5 bg-rose-500 rounded-full border-2 border-white hidden animate-pulse"></span>
+                </button>
+
                 <div id="realtime-indicator" class="hidden sm:flex items-center gap-1.5 bg-emerald-50 text-emerald-600 border border-emerald-100 px-3 py-1.5 rounded-full text-[10px] font-black tracking-widest shadow-sm"><span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> ONLINE</div>
                 <button id="btn-superadmin" onclick="openSuperAdminSwitcher()" class="hidden px-4 py-2.5 rounded-xl bg-slate-900 text-white hover:bg-slate-800 text-xs font-bold transition-all shadow-sm"><i class="fas fa-users-cog mr-1"></i> Auditoría</button>
                 
@@ -249,30 +284,22 @@ input[type="number"] { -moz-appearance: textfield; }
                     <input type="month" id="dash-month-filter" onchange="updateAllViews()" class="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-bold text-slate-700 outline-none focus:border-brand-500 transition-all w-full sm:w-auto">
                 </div>
 
-                <div id="panel-personal" class="hidden mb-6 grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div class="bg-white border border-slate-100 p-6 rounded-[24px] card-shadow hover-lift relative overflow-hidden flex flex-col justify-between group">
-                        <div class="absolute -right-8 -top-8 w-32 h-32 bg-brand-500/10 rounded-full blur-2xl group-hover:bg-brand-500/20 transition-all duration-500"></div>
-                        <div>
-                            <div class="flex justify-between items-start mb-4 relative z-10">
-                                <div class="w-12 h-12 rounded-2xl bg-brand-50 text-brand-600 flex items-center justify-center text-xl shadow-inner"><i class="fas fa-calendar-check"></i></div>
-                                <span class="bg-emerald-50 text-emerald-600 border border-emerald-100 text-[10px] font-black px-2.5 py-1 rounded-lg">BALANCE</span>
-                            </div>
-                            <p class="text-slate-400 text-[11px] font-extrabold uppercase tracking-widest mb-1 relative z-10">Total Verificado (Mes)</p>
+                <div id="panel-personal" class="hidden mb-6 grid grid-cols-1 gap-6">
+                    <!-- AQUI VA EL NUEVO CARD DE MIS COMISIONES EXT (TITO Y JESÚS) -->
+                    <div id="card-ext-user" class="hidden bg-gradient-to-br from-amber-400 to-orange-500 border border-amber-300 p-8 rounded-[24px] shadow-floating hover-lift relative overflow-hidden text-white cursor-pointer" onclick="viewExtDetailTitoJesus()">
+                        <i class="fas fa-star absolute -right-4 -bottom-4 text-7xl text-white/20 transform -rotate-12"></i>
+                        <div class="flex justify-between items-start mb-4 relative z-10">
+                            <div class="w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-2xl border border-white/20 shadow-inner"><i class="fas fa-money-bill-wave"></i></div>
+                            <span class="bg-white/20 backdrop-blur-md border border-white/20 px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider">A FAVOR <i class="fas fa-external-link-alt ml-1 text-[10px]"></i></span>
                         </div>
-                        <h3 class="text-4xl font-black text-slate-800 relative z-10 tracking-tight mt-2" id="dash-personal">$0.00</h3>
-                    </div>
-                    <div class="bg-white border border-slate-100 p-5 rounded-[24px] card-shadow relative flex flex-col">
-                        <div class="flex justify-between items-center mb-2"><p class="text-slate-400 text-[11px] font-extrabold uppercase tracking-widest">Depósitos (7 días)</p><i class="fas fa-chart-line text-emerald-500"></i></div>
-                        <div class="flex-1 relative min-h-[120px] w-full"><canvas id="chart-week"></canvas></div>
-                    </div>
-                    <div class="bg-white border border-slate-100 p-5 rounded-[24px] card-shadow relative flex flex-col">
-                        <div class="flex justify-between items-center mb-2"><p class="text-slate-400 text-[11px] font-extrabold uppercase tracking-widest">Histórico (3 meses)</p><i class="fas fa-chart-bar text-blue-500"></i></div>
-                        <div class="flex-1 relative min-h-[120px] w-full"><canvas id="chart-months"></canvas></div>
+                        <p class="text-xs text-amber-900 font-black uppercase tracking-widest mb-1 relative z-10">Mis Comisiones Externas (Mes)</p>
+                        <h3 class="text-5xl font-black text-white relative z-10 tracking-tight" id="dash-ext-user-val">$0.00</h3>
                     </div>
                 </div>
 
+                <!-- PANELES ADMINISTRATIVOS PARA MASTER / ADMIN (SIN GRAFICOS PERSONALES) -->
                 <div id="panel-admin" class="hidden mb-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <div class="bg-white border border-slate-100 p-6 rounded-[24px] card-shadow hover-lift relative overflow-hidden group">
+                    <div class="bg-white border border-slate-100 p-6 rounded-[24px] card-shadow relative overflow-hidden group">
                         <div class="absolute -right-6 -top-6 w-24 h-24 bg-blue-50 rounded-full blur-2xl group-hover:bg-blue-100 transition-colors"></div>
                         <div class="flex justify-between items-start mb-4 relative z-10">
                             <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl shadow-inner"><i class="fas fa-user"></i></div>
@@ -280,12 +307,9 @@ input[type="number"] { -moz-appearance: textfield; }
                         </div>
                         <p class="text-xs text-slate-400 font-bold uppercase tracking-widest mb-1 relative z-10">Saldo Jesús</p>
                         <h3 class="text-3xl font-black text-slate-800 relative z-10 tracking-tight" id="dash-jesus">$0.00</h3>
-                        <div class="mt-4 flex items-end justify-between h-8 relative z-10">
-                            <div class="text-[11px] font-bold text-blue-500 bg-blue-50/80 px-2 py-1 rounded-md border border-blue-100"><i class="fas fa-calendar-week mr-1"></i> 7d: <span id="dash-jesus-week">$0.00</span></div>
-                        </div>
                     </div>
 
-                    <div class="bg-white border border-slate-100 p-6 rounded-[24px] card-shadow hover-lift relative overflow-hidden group">
+                    <div class="bg-white border border-slate-100 p-6 rounded-[24px] card-shadow relative overflow-hidden group">
                         <div class="absolute -right-6 -top-6 w-24 h-24 bg-emerald-50 rounded-full blur-2xl group-hover:bg-emerald-100 transition-colors"></div>
                         <div class="flex justify-between items-start mb-4 relative z-10">
                             <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl shadow-inner"><i class="fas fa-user-tie"></i></div>
@@ -293,12 +317,31 @@ input[type="number"] { -moz-appearance: textfield; }
                         </div>
                         <p class="text-xs text-slate-400 font-bold uppercase tracking-widest mb-1 relative z-10">Saldo Tito</p>
                         <h3 class="text-3xl font-black text-slate-800 relative z-10 tracking-tight" id="dash-tito">$0.00</h3>
-                        <div class="mt-4 flex items-end justify-between h-8 relative z-10">
-                            <div class="text-[11px] font-bold text-emerald-500 bg-emerald-50/80 px-2 py-1 rounded-md border border-emerald-100"><i class="fas fa-calendar-week mr-1"></i> 7d: <span id="dash-tito-week">$0.00</span></div>
-                        </div>
                     </div>
 
-                    <div class="bg-gradient-to-br from-amber-400 to-orange-500 border border-amber-300 p-6 rounded-[24px] shadow-floating hover-lift relative overflow-hidden text-white">
+                    <!-- TARJETAS PARA GUSSEPY (Para desglosar comisiones tito/jesus) -->
+                    <div id="card-ext-gus-jesus" class="hidden cursor-pointer bg-gradient-to-br from-blue-500 to-indigo-600 border border-blue-400 p-6 rounded-[24px] shadow-floating hover-lift relative overflow-hidden text-white" onclick="viewExtDetailGussepy()">
+                        <i class="fas fa-user absolute -right-4 -bottom-4 text-7xl text-white/10 transform -rotate-12"></i>
+                        <div class="flex justify-between items-start mb-4 relative z-10">
+                            <div class="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-xl border border-white/20 shadow-inner"><i class="fas fa-file-invoice-dollar"></i></div>
+                            <span class="bg-white/20 backdrop-blur-md border border-white/20 px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider">A PAGAR <i class="fas fa-arrow-right ml-1"></i></span>
+                        </div>
+                        <p class="text-[11px] text-blue-100 font-black uppercase tracking-widest mb-1 relative z-10">Comisión Ext. Jesús</p>
+                        <h3 class="text-4xl font-black text-white relative z-10 tracking-tight" id="dash-ext-gus-jesus">$0.00</h3>
+                    </div>
+
+                    <div id="card-ext-gus-tito" class="hidden cursor-pointer bg-gradient-to-br from-emerald-500 to-teal-600 border border-emerald-400 p-6 rounded-[24px] shadow-floating hover-lift relative overflow-hidden text-white" onclick="viewExtDetailGussepy()">
+                        <i class="fas fa-user-tie absolute -right-4 -bottom-4 text-7xl text-white/10 transform -rotate-12"></i>
+                        <div class="flex justify-between items-start mb-4 relative z-10">
+                            <div class="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-xl border border-white/20 shadow-inner"><i class="fas fa-file-invoice-dollar"></i></div>
+                            <span class="bg-white/20 backdrop-blur-md border border-white/20 px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider">A PAGAR <i class="fas fa-arrow-right ml-1"></i></span>
+                        </div>
+                        <p class="text-[11px] text-emerald-100 font-black uppercase tracking-widest mb-1 relative z-10">Comisión Ext. Tito</p>
+                        <h3 class="text-4xl font-black text-white relative z-10 tracking-tight" id="dash-ext-gus-tito">$0.00</h3>
+                    </div>
+
+                    <!-- ESTAS SON LAS DE ADMIN / SIN COMISIONES EXTERNAS -->
+                    <div id="card-gussepy-admin" class="bg-gradient-to-br from-amber-400 to-orange-500 border border-amber-300 p-6 rounded-[24px] shadow-floating relative overflow-hidden text-white">
                         <i class="fas fa-star absolute -right-4 -bottom-4 text-7xl text-white/20 transform -rotate-12"></i>
                         <div class="flex justify-between items-start mb-4 relative z-10">
                             <div class="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-xl border border-white/20 shadow-inner"><i class="fas fa-hand-holding-usd"></i></div>
@@ -308,7 +351,7 @@ input[type="number"] { -moz-appearance: textfield; }
                         <h3 class="text-4xl font-black text-white relative z-10 tracking-tight" id="dash-gussepy">$0.00</h3>
                     </div>
 
-                    <div class="bg-gradient-to-br from-brand-600 to-indigo-800 border border-brand-500 p-6 rounded-[24px] shadow-floating hover-lift relative overflow-hidden text-white">
+                    <div id="card-bonos-admin" class="bg-gradient-to-br from-brand-600 to-indigo-800 border border-brand-500 p-6 rounded-[24px] shadow-floating relative overflow-hidden text-white">
                         <i class="fas fa-ticket-alt absolute -right-4 -bottom-4 text-7xl text-white/10 transform -rotate-12"></i>
                         <div class="flex justify-between items-start mb-4 relative z-10">
                             <div class="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-xl border border-white/20 shadow-inner"><i class="fas fa-gift"></i></div>
@@ -390,7 +433,7 @@ input[type="number"] { -moz-appearance: textfield; }
                                     <div><h2 class="text-base font-extrabold text-slate-800 tracking-tight">Transacciones de la Red</h2><p class="text-xs font-semibold text-slate-400">Mes Actual</p></div>
                                 </div>
                             </div>
-                            <div class="overflow-x-auto">
+                            <div class="overflow-x-auto hide-scrollbar w-full">
                                 <table class="w-full text-left whitespace-nowrap resp-table">
                                     <thead class="bg-slate-50/80 border-b border-slate-100 text-[10px] font-extrabold text-slate-400 uppercase tracking-widest hidden md:table-header-group">
                                         <tr><th class="p-4 pl-8">Fecha y Hora</th><th class="p-4 text-right">Monto</th><th class="p-4">Concepto</th><th class="p-4">Cuenta</th><th class="p-4 text-center">Estado</th><th class="p-4 text-center">Ref</th><th class="p-4 pr-8 text-center">Acción</th></tr>
@@ -421,7 +464,197 @@ input[type="number"] { -moz-appearance: textfield; }
                     </div>
                 </div>
             </div>
-<!-- TAB REGISTRO MANUAL -->
+<!-- TAB AJUSTES DE COMISIONES (SOLO GUSSEPY) -->
+        <div id="tab-config" class="hidden fade-in tab-content">
+            <div class="max-w-4xl mx-auto space-y-8">
+                <div class="bg-white border border-slate-200 rounded-[24px] card-shadow overflow-hidden">
+                    <div class="px-8 py-6 border-b border-slate-100 bg-slate-50/50 flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-2xl bg-slate-100 text-slate-600 flex items-center justify-center text-xl shadow-sm"><i class="fas fa-sliders-h"></i></div>
+                        <div>
+                            <h2 class="text-xl font-black text-slate-800 tracking-tight">Reglas de Comisiones Externas</h2>
+                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Define el % de ganancia por agencia</p>
+                        </div>
+                    </div>
+                    <form id="form-settings" class="p-8 space-y-8" onsubmit="saveGlobalSettings(event)">
+                        
+                        <!-- Ambos Marcan -->
+                        <div class="bg-blue-50/30 border border-blue-100 rounded-2xl p-6">
+                            <h3 class="text-sm font-black text-blue-900 mb-4 flex items-center"><i class="fas fa-futbol mr-2 text-blue-500"></i> Agencia: Ambos Marcan</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="flex items-center justify-between bg-white border border-slate-200 p-4 rounded-xl shadow-sm">
+                                    <div><p class="text-xs font-bold text-slate-700">Para Jesús</p><p class="text-[9px] text-slate-400 uppercase">Recibe comisión</p></div>
+                                    <div class="flex items-center gap-2">
+                                        <input type="number" id="cfg-jesus-ambos" class="w-16 bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 text-xs font-black text-center outline-none focus:border-blue-500" value="10" min="0" max="100">
+                                        <span class="text-xs font-black text-slate-400">%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sepybet -->
+                        <div class="bg-indigo-50/30 border border-indigo-100 rounded-2xl p-6">
+                            <h3 class="text-sm font-black text-indigo-900 mb-4 flex items-center"><i class="fas fa-shield-alt mr-2 text-indigo-500"></i> Agencia: Sepybet</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="flex items-center justify-between bg-white border border-slate-200 p-4 rounded-xl shadow-sm">
+                                    <div><p class="text-xs font-bold text-slate-700">Para Jesús</p></div>
+                                    <div class="flex items-center gap-2">
+                                        <input type="number" id="cfg-jesus-sepy" class="w-16 bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 text-xs font-black text-center outline-none focus:border-indigo-500" value="5" min="0" max="100">
+                                        <span class="text-xs font-black text-slate-400">%</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-between bg-white border border-slate-200 p-4 rounded-xl shadow-sm">
+                                    <div><p class="text-xs font-bold text-slate-700">Para Tito</p></div>
+                                    <div class="flex items-center gap-2">
+                                        <input type="number" id="cfg-tito-sepy" class="w-16 bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 text-xs font-black text-center outline-none focus:border-indigo-500" value="5" min="0" max="100">
+                                        <span class="text-xs font-black text-slate-400">%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Chichesepy -->
+                        <div class="bg-orange-50/30 border border-orange-100 rounded-2xl p-6">
+                            <h3 class="text-sm font-black text-orange-900 mb-4 flex items-center"><i class="fas fa-store mr-2 text-orange-500"></i> Agencia: Chichesepy</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="flex items-center justify-between bg-white border border-slate-200 p-4 rounded-xl shadow-sm">
+                                    <div><p class="text-xs font-bold text-slate-700">Para Jesús</p></div>
+                                    <div class="flex items-center gap-2">
+                                        <input type="number" id="cfg-jesus-chiche" class="w-16 bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 text-xs font-black text-center outline-none focus:border-orange-500" value="5" min="0" max="100">
+                                        <span class="text-xs font-black text-slate-400">%</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-between bg-white border border-slate-200 p-4 rounded-xl shadow-sm">
+                                    <div><p class="text-xs font-bold text-slate-700">Para Tito</p></div>
+                                    <div class="flex items-center gap-2">
+                                        <input type="number" id="cfg-tito-chiche" class="w-16 bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 text-xs font-black text-center outline-none focus:border-orange-500" value="5" min="0" max="100">
+                                        <span class="text-xs font-black text-slate-400">%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Regla Adicional -->
+                        <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                            <p class="text-xs font-semibold text-slate-500"><i class="fas fa-info-circle mr-1"></i> La <b>Comisión de Plataforma</b> generada por la red VIP se sumará íntegramente a <b>Tito</b> de forma automática en la liquidación externa.</p>
+                        </div>
+
+                        <button type="submit" class="w-full py-4 bg-slate-800 hover:bg-slate-900 text-white font-extrabold rounded-2xl shadow-floating transition-transform active:scale-[0.98]"><i class="fas fa-save mr-2"></i> Guardar Reglas</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB COMISIONES EXTERNAS (GUSSEPY) -->
+        <div id="tab-gussepy-externas" class="hidden fade-in tab-content">
+            <div class="max-w-6xl mx-auto space-y-8">
+                <div class="bg-white border border-amber-200 rounded-[24px] card-shadow overflow-hidden">
+                    <div class="px-8 py-6 border-b border-amber-100 bg-amber-50/50 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center text-xl shadow-sm"><i class="fas fa-money-bill-wave"></i></div>
+                            <div>
+                                <h2 class="text-xl font-black text-slate-800 tracking-tight">Cálculo Mensual Externas</h2>
+                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Generar recibo de pago</p>
+                            </div>
+                        </div>
+                        <button onclick="switchTab('tab-config')" class="w-full sm:w-auto px-4 py-2 bg-white border border-slate-200 text-slate-600 rounded-xl text-xs font-bold hover:bg-slate-50 transition-colors shadow-sm"><i class="fas fa-sliders-h mr-1"></i> Ajustes</button>
+                    </div>
+                    <form id="form-comisiones-ext" class="p-8 space-y-6">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2 ml-2">Mes de Cálculo *</label>
+                                <input type="month" id="ext-month" required class="block w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold text-slate-700 outline-none focus:border-amber-500 transition-all shadow-sm">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-extrabold text-blue-500 uppercase tracking-widest mb-2 ml-2">Ingreso Ambos Marcan ($)</label>
+                                <input type="text" id="ext-ambos" inputmode="decimal" placeholder="0.00" class="block w-full px-5 py-4 border border-blue-100 bg-blue-50/30 rounded-2xl text-xl font-black text-blue-900 outline-none focus:border-blue-500 transition-all shadow-sm">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                            <div>
+                                <label class="block text-[10px] font-extrabold text-indigo-500 uppercase tracking-widest mb-2 ml-2">Ingreso Sepybet ($)</label>
+                                <input type="text" id="ext-sepybet" inputmode="decimal" placeholder="0.00" class="block w-full px-5 py-4 border border-indigo-100 bg-indigo-50/30 rounded-2xl text-xl font-black text-indigo-900 outline-none focus:border-indigo-500 transition-all shadow-sm">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-extrabold text-orange-500 uppercase tracking-widest mb-2 ml-2">Ingreso Chichesepy ($)</label>
+                                <input type="text" id="ext-chiche" inputmode="decimal" placeholder="0.00" class="block w-full px-5 py-4 border border-orange-100 bg-orange-50/30 rounded-2xl text-xl font-black text-orange-900 outline-none focus:border-orange-500 transition-all shadow-sm">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2 ml-2">Total Com. Plat. VIP ($)</label>
+                                <input type="text" id="ext-complat" inputmode="decimal" placeholder="0.00" class="block w-full px-5 py-4 border border-slate-200 rounded-2xl text-xl font-black text-slate-800 outline-none focus:border-amber-500 transition-all shadow-sm" title="Escribe el Total Com. Plat que generó la Red en el Panel Global">
+                            </div>
+                        </div>
+                        <button type="submit" class="w-full py-4 bg-amber-500 hover:bg-amber-600 text-white font-extrabold rounded-2xl shadow-floating transition-transform active:scale-[0.98]"><i class="fas fa-calculator mr-2"></i> Procesar y Asignar a Cuentas</button>
+                    </form>
+                </div>
+
+                <div class="bg-white border border-slate-100 rounded-[24px] card-shadow overflow-hidden flex flex-col">
+                    <div class="px-8 py-6 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
+                        <h3 class="text-lg font-extrabold text-slate-800">Historial y Desgloses</h3>
+                    </div>
+                    <div class="overflow-x-auto hide-scrollbar">
+                        <table class="w-full text-left whitespace-nowrap resp-table">
+                            <thead class="bg-slate-50/80 border-b border-slate-100 text-[10px] font-extrabold text-slate-400 uppercase tracking-widest hidden md:table-header-group">
+                                <tr><th class="p-5 pl-8">Mes</th><th class="p-5 text-right">Ambos M.</th><th class="p-5 text-right">Sepybet</th><th class="p-5 text-right">Chichesepy</th><th class="p-5 text-right">Com. Plat</th><th class="p-5 text-right text-blue-600">Para Jesús</th><th class="p-5 text-right text-emerald-600">Para Tito</th><th class="p-5 pr-8 text-center">Acción</th></tr>
+                            </thead>
+                            <tbody id="table-ext-commissions" class="divide-y divide-slate-50 text-xs font-semibold text-slate-600"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB BUZÓN DE MENSAJES CON MULTIMEDIA -->
+        <div id="tab-buzon" class="hidden fade-in tab-content">
+            <div class="max-w-7xl mx-auto space-y-6">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    
+                    <!-- REDACTAR MENSAJE -->
+                    <div class="lg:col-span-1 bg-white border border-sky-100 rounded-[24px] card-shadow p-6 sm:p-8 flex flex-col gap-4">
+                        <h2 class="text-xl font-black text-sky-900 tracking-tight flex items-center mb-2"><i class="fas fa-paper-plane mr-3 text-sky-500"></i> Redactar</h2>
+                        <form id="form-message" class="flex flex-col gap-5">
+                            <div>
+                                <label class="block text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2 ml-1">Destinatario *</label>
+                                <select id="msg-to" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-5 py-4 text-sm font-bold text-slate-700 outline-none focus:border-sky-500 transition-colors shadow-sm">
+                                    <option value="">Cargando lista...</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2 ml-1">Asunto *</label>
+                                <input type="text" id="msg-subject" required placeholder="Ej. Comprobante pago..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-5 py-4 text-sm font-bold text-slate-700 outline-none focus:border-sky-500 transition-colors shadow-sm">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2 ml-1">Mensaje *</label>
+                                <textarea id="msg-body" required rows="4" placeholder="Escribe aquí tu mensaje..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-5 py-4 text-sm font-bold text-slate-700 outline-none focus:border-sky-500 transition-colors resize-none shadow-sm"></textarea>
+                            </div>
+                            
+                            <!-- ADJUNTAR MULTIMEDIA -->
+                            <div class="bg-sky-50/50 p-4 rounded-xl border border-sky-100 border-dashed relative">
+                                <label class="block text-[10px] font-extrabold text-sky-600 uppercase tracking-widest mb-2 ml-1"><i class="fas fa-paperclip mr-1"></i> Adjuntar Multimedia (Opcional)</label>
+                                <input type="file" id="msg-file" accept="image/*,.pdf,.doc,.docx" class="block w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:font-bold file:bg-sky-100 file:text-sky-700 cursor-pointer transition-colors relative z-10" onchange="convertMsgFile(event)">
+                                <p id="msg-file-indicator" class="hidden text-xs text-sky-600 font-bold mt-2"><i class="fas fa-check-circle"></i> Archivo cargado correctamente.</p>
+                                <input type="hidden" id="msg-file-b64">
+                                <input type="hidden" id="msg-file-name">
+                            </div>
+
+                            <button type="submit" class="w-full py-4 bg-sky-500 hover:bg-sky-600 text-white font-extrabold rounded-xl shadow-floating transition-transform active:scale-[0.98]">Enviar Mensaje</button>
+                        </form>
+                    </div>
+                    
+                    <!-- BANDEJA DE ENTRADA -->
+                    <div class="lg:col-span-2 bg-white border border-slate-100 rounded-[24px] card-shadow overflow-hidden flex flex-col h-[650px]">
+                        <div class="px-8 py-6 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center shrink-0">
+                            <h3 class="text-lg font-extrabold text-slate-800 tracking-tight">Bandeja de Entrada</h3>
+                            <button onclick="fetchMessages(true)" class="w-10 h-10 rounded-xl bg-white border border-slate-200 text-slate-400 hover:text-sky-600 flex items-center justify-center shadow-sm transition-colors" title="Actualizar Bandeja"><i class="fas fa-sync-alt text-sm"></i></button>
+                        </div>
+                        <div id="inbox-list" class="flex-1 overflow-y-auto divide-y divide-slate-50 p-2 hide-scrollbar">
+                            <!-- JS inyecta mensajes aquí -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB REGISTRO MANUAL -->
         <div id="tab-register" class="hidden fade-in tab-content">
             <div class="max-w-3xl mx-auto space-y-8">
                 <div class="bg-white rounded-[24px] card-shadow overflow-hidden border border-slate-100">
@@ -565,11 +798,6 @@ input[type="number"] { -moz-appearance: textfield; }
                             <button onclick="changePage('audit', 1)" id="btn-next-audit" class="w-9 h-9 rounded-xl bg-white border border-slate-200 text-slate-600 flex items-center justify-center hover:bg-slate-50 hover:text-brand-600 transition-colors shadow-sm disabled:opacity-40"><i class="fas fa-chevron-right text-xs"></i></button>
                         </div>
                     </div>
-                    <div id="audit-empty-state" class="hidden flex-col items-center justify-center p-16 text-center">
-                        <div class="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center text-slate-300 text-3xl mb-5 shadow-inner"><i class="fas fa-search"></i></div>
-                        <h3 class="text-base font-extrabold text-slate-700">No hay registros</h3>
-                        <p class="text-xs text-slate-400 mt-1">Intenta ajustando los filtros de fecha o cuenta.</p>
-                    </div>
                 </div>
             </div>
         </div>
@@ -611,16 +839,8 @@ input[type="number"] { -moz-appearance: textfield; }
                             <thead class="bg-slate-50/80 border-b border-slate-100 text-[10px] font-extrabold text-slate-400 uppercase tracking-widest hidden md:table-header-group">
                                 <tr><th class="p-5 pl-8">Fecha</th><th class="p-5 text-right">Monto</th><th class="p-5">Concepto</th><th class="p-5 text-center">Estado</th><th class="p-5">Detalle</th><th class="p-5 pr-8 text-center">Acción</th></tr>
                             </thead>
-                            <tbody id="table-gussepy-advances" class="divide-y divide-slate-50 text-xs font-semibold text-slate-600"></tbody>
+                            <tbody id="table-gussepy-advances" class="divide-y divide-slate-50 text-sm font-semibold text-slate-600"></tbody>
                         </table>
-                    </div>
-                    <div id="pagination-gussepy" class="hidden px-8 py-5 border-t border-slate-100 bg-slate-50/50 justify-between items-center">
-                        <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Total: <span id="total-reg-gussepy">0</span></span>
-                        <div class="flex items-center gap-2">
-                            <button onclick="changePage('gussepy', -1)" id="btn-prev-gussepy" class="w-9 h-9 rounded-xl bg-white border border-slate-200 text-slate-600 flex items-center justify-center hover:bg-slate-50 hover:text-amber-600 transition-colors shadow-sm disabled:opacity-40"><i class="fas fa-chevron-left text-xs"></i></button>
-                            <span class="text-xs font-bold text-slate-600 px-3 py-1 bg-white border border-slate-200 rounded-xl shadow-sm"><span id="page-num-gussepy">1</span> / <span id="page-tot-gussepy">1</span></span>
-                            <button onclick="changePage('gussepy', 1)" id="btn-next-gussepy" class="w-9 h-9 rounded-xl bg-white border border-slate-200 text-slate-600 flex items-center justify-center hover:bg-slate-50 hover:text-amber-600 transition-colors shadow-sm disabled:opacity-40"><i class="fas fa-chevron-right text-xs"></i></button>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -654,19 +874,10 @@ input[type="number"] { -moz-appearance: textfield; }
                             <tbody id="table-bonos-real-list" class="divide-y divide-slate-50 text-xs font-semibold text-slate-600"></tbody>
                         </table>
                     </div>
-                    <div id="pagination-breales" class="hidden px-8 py-5 border-t border-slate-100 bg-slate-50/50 justify-between items-center">
-                        <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Total: <span id="total-reg-breales">0</span></span>
-                        <div class="flex items-center gap-2">
-                            <button onclick="changePage('breales', -1)" id="btn-prev-breales" class="w-9 h-9 rounded-xl bg-white border border-slate-200 text-slate-600 flex items-center justify-center hover:bg-slate-50 hover:text-teal-600 transition-colors shadow-sm disabled:opacity-40"><i class="fas fa-chevron-left text-xs"></i></button>
-                            <span class="text-xs font-bold text-slate-600 px-3 py-1 bg-white border border-slate-200 rounded-xl shadow-sm"><span id="page-num-breales">1</span> / <span id="page-tot-breales">1</span></span>
-                            <button onclick="changePage('breales', 1)" id="btn-next-breales" class="w-9 h-9 rounded-xl bg-white border border-slate-200 text-slate-600 flex items-center justify-center hover:bg-slate-50 hover:text-teal-600 transition-colors shadow-sm disabled:opacity-40"><i class="fas fa-chevron-right text-xs"></i></button>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
-
-        <!-- TAB PANEL BONOS (MARIA) -->
+<!-- TAB PANEL BONOS (MARIA) -->
         <div id="tab-maria-dash" class="hidden fade-in theme-maria tab-content">
             <div class="max-w-7xl mx-auto space-y-8">
                 <div class="bg-white p-6 rounded-[24px] card-shadow border border-rose-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -797,7 +1008,6 @@ input[type="number"] { -moz-appearance: textfield; }
         <!-- TAB HISTORIAL BONOS -->
         <div id="tab-maria-list" class="hidden fade-in theme-maria tab-content">
             <div class="max-w-7xl mx-auto space-y-6">
-                
                 <div class="bg-white border border-rose-100 p-6 rounded-[24px] card-shadow">
                     <div class="flex flex-col lg:flex-row items-end gap-4 w-full">
                         <div class="w-full lg:w-auto flex-1"><label class="block text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2 ml-1">Desde</label><input type="date" id="filter-bono-date-from" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs font-bold outline-none focus:border-rose-500 transition-colors"></div>
@@ -1014,7 +1224,6 @@ input[type="number"] { -moz-appearance: textfield; }
         <!-- TAB CARGA AFILIADOS (MELANIE) -->
         <div id="tab-melanie-add" class="hidden fade-in tab-content">
             <div class="max-w-4xl mx-auto space-y-8">
-                
                 <div class="bg-white border border-pink-100 rounded-[24px] card-shadow overflow-hidden">
                     <div class="px-8 py-8 border-b border-pink-50 bg-pink-50/30 flex items-center gap-4">
                         <div class="w-12 h-12 rounded-2xl bg-pink-100 text-pink-600 flex items-center justify-center text-xl shadow-sm"><i class="fas fa-calculator"></i></div>
@@ -1116,8 +1325,6 @@ input[type="number"] { -moz-appearance: textfield; }
             </div>
         </div>
 
-        <!-- === NUEVAS PESTAÑAS CRM SEPARADAS === -->
-        
         <!-- CRM: BASE DE CONTACTOS -->
         <div id="tab-crm-contacts" class="hidden fade-in tab-content theme-maria">
             <div class="max-w-7xl mx-auto space-y-8">
@@ -1295,7 +1502,7 @@ input[type="number"] { -moz-appearance: textfield; }
             </div>
         </div>
 
-        <!-- TAB INFLUENCER VIP DASHBOARD (DISEÑO GAMIFICADO ORIGINAL) -->
+        <!-- TAB INFLUENCER VIP DASHBOARD -->
         <div id="tab-influencer-dash" class="hidden fade-in tab-content">
             <div class="max-w-6xl mx-auto space-y-8">
                 
@@ -1549,7 +1756,7 @@ input[type="number"] { -moz-appearance: textfield; }
 </div>
 
 <!-- NUEVO MODAL: DESCARGAR CAMPAÑA CRM -->
-<div id="modal-camp-download" class="fixed inset-0 z-[60] bg-slate-900/40 backdrop-blur-md hidden items-center justify-center p-4">
+<div id="modal-camp-download" class="fixed inset-0 z-[60] bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4">
     <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-md overflow-hidden fade-in border border-purple-100">
         <div class="p-8 text-center border-b border-purple-50 bg-purple-50/50">
             <h3 class="text-xl font-black text-purple-900 tracking-tight">Descargar Audiencia</h3>
@@ -1582,6 +1789,22 @@ input[type="number"] { -moz-appearance: textfield; }
     </div>
 </div>
 
+<!-- NUEVO MODAL: DETALLE RECIBO EXTERNAS -->
+<div id="modal-ext-detail" class="fixed inset-0 z-[60] bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-md overflow-hidden fade-in border border-amber-100">
+        <div class="p-8 text-center border-b border-amber-50 bg-amber-50/50">
+            <h3 class="text-xl font-black text-slate-800 tracking-tight flex items-center justify-center gap-2"><i class="fas fa-file-invoice-dollar text-amber-500"></i> Recibo Detallado</h3>
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1" id="ext-det-month">MES</p>
+        </div>
+        <div class="p-8">
+            <div id="ext-det-body" class="space-y-4 text-sm font-semibold text-slate-600">
+                <!-- Se inyecta por JS -->
+            </div>
+            <button onclick="closeExtDetailModal()" class="w-full py-4 mt-6 bg-slate-800 hover:bg-slate-900 text-white rounded-2xl font-bold shadow-md transition-colors">Cerrar</button>
+        </div>
+    </div>
+</div>
+
 <script>
 // === MOTOR DE LIMPIEZA Y NORMALIZACIÓN ===
 const cleanStr = (str) => {
@@ -1589,22 +1812,10 @@ const cleanStr = (str) => {
     return String(str).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
 };
 
-// Limpieza para extraer SOLO el ID de usuario (Elimina basura de etiquetas)
 const normalizeUsername = (str) => {
     if (!str) return '';
     let s = String(str).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-    s = s.replace(/cliente\s*sorti365/gi, '')
-         .replace(/sepybet\s*oficial/gi, '')
-         .replace(/sepybet/gi, '')
-         .replace(/sorti365/gi, '')
-         .replace(/oficial/gi, '')
-         .replace(/cliente/gi, '')
-         .replace(/control\s*cana/gi, '')
-         .replace(/control/gi, '')
-         .replace(/ab\s*guillem/gi, '')
-         .replace(/ab\s*joselo\s*galarza/gi, '')
-         .replace(/ab\s*stalin\s*mosquera/gi, '')
-         .replace(/cnco/gi, '');
+    s = s.replace(/cliente\s*sorti365/gi, '').replace(/sepybet\s*oficial/gi, '').replace(/sepybet/gi, '').replace(/sorti365/gi, '').replace(/oficial/gi, '').replace(/cliente/gi, '').replace(/control\s*cana/gi, '').replace(/control/gi, '').replace(/ab\s*guillem/gi, '').replace(/ab\s*joselo\s*galarza/gi, '').replace(/ab\s*stalin\s*mosquera/gi, '').replace(/cnco/gi, '');
     s = s.replace(/[^a-z0-9]/g, '');
     return s.trim();
 };
@@ -1698,6 +1909,9 @@ let USERS={'michelle':{name:'Michelle',type:'admin',icon:'fa-shield-alt',color:'
 
 let currentUser=null,isSuperAdmin=false;
 let records=[],advances=[],bonos=[],giros=[],referrals=[],rendimientos=[],allReceipts=[];
+let externalCommissions = [], messages = [];
+let globalSettings = { jesus_ambos_marcan_pct: 10, jesus_sepybet_pct: 5, jesus_chichesepy_pct: 5, tito_sepybet_pct: 5, tito_chichesepy_pct: 5 };
+
 let filters={dateFrom:'',dateTo:'',user:'all',status:'all',amount:'',text:'',type:'all'};
 let bonoFilters={dateFrom:'',dateTo:'',dest:'',amount:'',agency:'all',status:'all'};
 let refFilters={dateFrom:'',dateTo:'',name:'',cedula:'',agency:'all'};
@@ -1708,11 +1922,8 @@ let pendingVerifyId=null,pendingAuthId=null,pendingBonoWinId=null,pendingGiroWin
 let inactivityTimer, autoSyncTimer, chartWeekInstance=null, chartMonthsInstance=null;
 let currentPlayersList=[],uploadData=[],bankUploadData=[],bonosRealesUploadData=[],bonosApuestasUploadData=[]; 
 
-// === VARIABLES CRM CAMPAÑAS ===
-let contactsMap = {}; 
-let campaignsList = [];
-let campaignTargetsList = [];
-let currentCampaignId = null;
+// Variables CRM 
+let contactsMap = {}; let campaignsList = []; let campaignTargetsList = []; let currentCampaignId = null;
 
 const PAGE_SIZE=15;
 let pages={dash:1,audit:1,gussepy:1,bonos:1,giros:1,ref:1,mel:1,inactivos:1,infdash:1,infdetail:1,bonosReal:1,contacts:1};
@@ -1734,7 +1945,7 @@ function paginate(dataArray,type){
 }
 
 function changeGlobalMonth(newMonth){
-    ['dash-month-filter','bonos-month-filter','inf-month-filter','gus-month-filter','inf-detail-month'].forEach(id=>{
+    ['dash-month-filter','bonos-month-filter','inf-month-filter','gus-month-filter','inf-detail-month','ext-month'].forEach(id=>{
         const el=document.getElementById(id);if(el)el.value=newMonth;
     });
     fetchData(false);
@@ -1766,7 +1977,7 @@ window.onload=()=>{
             else{currentUser=ud.id;loginUI(ud);}
         } else { showScreen('login'); }
         const now=new Date();const currentMonthStr=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
-        ['dash-month-filter','bonos-month-filter','inf-month-filter','gus-month-filter','inf-detail-month'].forEach(id=>{
+        ['dash-month-filter','bonos-month-filter','inf-month-filter','gus-month-filter','inf-detail-month','ext-month'].forEach(id=>{
             const el=document.getElementById(id);if(el){el.value=currentMonthStr;el.onchange=(e)=>changeGlobalMonth(e.target.value);}
         });
         const searchInf=document.getElementById('inf-search');if(searchInf)searchInf.onkeyup=resetPagesAndUpdate;
@@ -1774,7 +1985,7 @@ window.onload=()=>{
         ['gus-date','bono-date','ref-date','rend-date','giro-date','camp-date'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=todayStr;});
         ['reg-date','edit-date'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=nowLocalTimeStr;});
         
-        const forms=[{id:'login-form',handler:handleLogin},{id:'register-form',handler:handleRegister},{id:'form-gussepy',handler:handleGussepy},{id:'form-bonos',handler:handleBono},{id:'form-giros',handler:handleGiro},{id:'form-referrals',handler:handleReferral},{id:'form-rendimiento',handler:handleRendimiento}];
+        const forms=[{id:'login-form',handler:handleLogin},{id:'register-form',handler:handleRegister},{id:'form-gussepy',handler:handleGussepy},{id:'form-bonos',handler:handleBono},{id:'form-giros',handler:handleGiro},{id:'form-referrals',handler:handleReferral},{id:'form-rendimiento',handler:handleRendimiento},{id:'form-comisiones-ext',handler:handleComisionesExt},{id:'form-message',handler:handleSendMessage}];
         forms.forEach(form=>{const el=document.getElementById(form.id);if(el)el.addEventListener('submit',form.handler);});
         
         ['mousemove','keydown','click','touchstart','scroll'].forEach(evt=>document.addEventListener(evt,resetInactivityTimer));
@@ -1782,10 +1993,40 @@ window.onload=()=>{
     } catch (e) { showScreen('login'); }
 };
 
-function logout(){localStorage.removeItem('sb_user_data');currentUser=null;clearTimeout(inactivityTimer);clearInterval(autoSyncTimer);showScreen('login');records=[];advances=[];bonos=[];giros=[];referrals=[];rendimientos=[];window.location.reload();}
+function logout(){localStorage.removeItem('sb_user_data');currentUser=null;clearTimeout(inactivityTimer);clearInterval(autoSyncTimer);showScreen('login');records=[];advances=[];bonos=[];giros=[];referrals=[];rendimientos=[];externalCommissions=[];messages=[];window.location.reload();}
 function resetInactivityTimer(){clearTimeout(inactivityTimer);if(currentUser)inactivityTimer=setTimeout(()=>{showToast('Sesión cerrada por inactividad.','warning');logout();},15*60*1000);}
 
-// === CONTROL DEL MENÚ MÓVIL REPARADO ===
+function populateMessageDropdown() {
+    const sel = document.getElementById('msg-to');
+    if(!sel) return;
+    let html = '<option value="">Seleccione usuario...</option>';
+    
+    const myType = USERS[cleanStr(currentUser)]?.type || 'user';
+    
+    Object.keys(USERS).forEach(k => {
+        if (k === '1311397689' || cleanStr(k) === cleanStr(currentUser)) return;
+        
+        let canSend = false;
+        // Gussepy y Tito envían a todos
+        if (cleanStr(currentUser) === 'gussepy' || cleanStr(currentUser) === 'tito') {
+            canSend = true;
+        } 
+        // Internos envían a internos (admin, cajero, bonos, master, user)
+        else if (['admin', 'user', 'bonos', 'cajero_afiliados'].includes(myType)) {
+            if (['admin', 'user', 'master', 'bonos', 'cajero_afiliados'].includes(USERS[k].type)) canSend = true;
+        } 
+        // Influencers envían a Gussepy o Tito
+        else if (myType === 'influencer') {
+            if (cleanStr(k) === 'gussepy' || cleanStr(k) === 'tito') canSend = true;
+        }
+
+        if (canSend) {
+            html += `<option value="${k}">${USERS[k].name} (${USERS[k].type})</option>`;
+        }
+    });
+    sel.innerHTML = html;
+}
+
 function toggleMenu(forceOpen) {
     const sidebar = document.getElementById('sidebar-menu');
     const overlay = document.getElementById('sidebar-overlay');
@@ -1875,8 +2116,11 @@ function loginUI(user){
     const elUserDisplay=document.getElementById('user-display');if(elUserDisplay)elUserDisplay.innerText=user.name+(isSuperAdmin?" (Auditor)":"");
     const iconEl=document.getElementById('nav-icon');if(iconEl){iconEl.innerHTML=`<i class="fas ${user.icon||'fa-user'}"></i>`;iconEl.className=`w-10 h-10 rounded-xl text-white flex items-center justify-center text-lg shadow-md ${user.color||'bg-indigo-600'}`;}
     const btnSuper=document.getElementById('btn-superadmin');if(btnSuper){if(isSuperAdmin)btnSuper.classList.remove('hidden');else btnSuper.classList.add('hidden');}
+    
+    populateMessageDropdown();
     resetInactivityTimer();
-    const allTabs=['tab-dashboard','tab-register','tab-gussepy','tab-auditoria','tab-maria-dash','tab-maria-add','tab-maria-list','tab-giros-add','tab-giros-list','tab-maria-ref-add','tab-maria-ref-list','tab-melanie-add','tab-melanie-list','tab-crm-contacts','tab-crm-campaigns','tab-crm-campaign-detail','tab-influencer-dash','tab-influencer-details','tab-inactivos','tab-sync-db','tab-bonos-reales'];
+    
+    const allTabs=['tab-dashboard','tab-register','tab-gussepy','tab-auditoria','tab-maria-dash','tab-maria-add','tab-maria-list','tab-giros-add','tab-giros-list','tab-maria-ref-add','tab-maria-ref-list','tab-melanie-add','tab-melanie-list','tab-crm-contacts','tab-crm-campaigns','tab-crm-campaign-detail','tab-influencer-dash','tab-influencer-details','tab-inactivos','tab-sync-db','tab-bonos-reales','tab-gussepy-externas','tab-config'];
     allTabs.forEach(id=>{
         const btn=document.getElementById('btn-'+id);
         if(btn) btn.classList.add('hidden');
@@ -1902,15 +2146,13 @@ function loginUI(user){
         ['btn-tab-dashboard','btn-tab-register','btn-tab-gussepy','btn-tab-auditoria','btn-tab-bonos-reales','divider-1'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('hidden');});
         ['panel-admin','panel-dash-movimientos','filter-user-container','admin-select-user','admin-select-user-bank'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('hidden');});
         if(user.type==='superadmin'){
-            ['btn-tab-maria-dash','btn-tab-maria-add','btn-tab-maria-list','btn-tab-giros-add','btn-tab-giros-list','divider-2','btn-tab-maria-ref-add','btn-tab-maria-ref-list','btn-tab-melanie-add','btn-tab-melanie-list','btn-tab-crm-contacts','btn-tab-crm-campaigns','btn-tab-influencer-dash','btn-tab-influencer-details','btn-tab-inactivos','divider-3','btn-tab-sync-db'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('hidden');});
+            ['btn-tab-maria-dash','btn-tab-maria-add','btn-tab-maria-list','btn-tab-giros-add','btn-tab-giros-list','divider-2','btn-tab-maria-ref-add','btn-tab-maria-ref-list','btn-tab-melanie-add','btn-tab-melanie-list','btn-tab-crm-contacts','btn-tab-crm-campaigns','btn-tab-influencer-dash','btn-tab-influencer-details','btn-tab-inactivos','divider-3','btn-tab-sync-db','btn-tab-gussepy-externas','btn-tab-config'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('hidden');});
         }
         switchTab('tab-dashboard');
     }else if(user.type==='master'){
-        // AHORA MASTER (GUSSEPY) VE TODO EL DASHBOARD IGUAL QUE ADMIN
-        ['btn-tab-dashboard','btn-tab-gussepy','btn-tab-maria-list','btn-tab-giros-list','btn-tab-maria-ref-list','btn-tab-melanie-list','btn-tab-crm-contacts','btn-tab-crm-campaigns','btn-tab-inactivos','btn-tab-bonos-reales','divider-1','divider-2'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('hidden');});
+        ['btn-tab-dashboard','btn-tab-gussepy-externas','btn-tab-config','btn-tab-gussepy','btn-tab-maria-list','btn-tab-giros-list','btn-tab-maria-ref-list','btn-tab-melanie-list','btn-tab-crm-contacts','btn-tab-crm-campaigns','btn-tab-inactivos','btn-tab-bonos-reales','divider-1','divider-2'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('hidden');});
         ['panel-admin','panel-dash-movimientos','panel-gussepy-bonos'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('hidden');});
         
-        // Hide upload components in CRM for Master
         if(document.getElementById('crm-upload-contacts-panel')) document.getElementById('crm-upload-contacts-panel').classList.add('hidden');
         if(document.getElementById('crm-create-campaign-panel')) document.getElementById('crm-create-campaign-panel').classList.add('hidden');
         if(document.getElementById('cd-upload-panel')) document.getElementById('cd-upload-panel').classList.add('hidden');
@@ -1924,7 +2166,6 @@ function loginUI(user){
         ['btn-tab-register', 'btn-tab-melanie-add', 'btn-tab-melanie-list', 'btn-tab-crm-contacts', 'btn-tab-crm-campaigns', 'btn-tab-bonos-reales'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('hidden');});
         ['admin-select-user', 'admin-select-user-bank'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('hidden');});
         
-        // Show CRM inputs
         if(document.getElementById('crm-upload-contacts-panel')) document.getElementById('crm-upload-contacts-panel').classList.remove('hidden');
         if(document.getElementById('crm-create-campaign-panel')) document.getElementById('crm-create-campaign-panel').classList.remove('hidden');
         if(document.getElementById('cd-upload-panel')) document.getElementById('cd-upload-panel').classList.remove('hidden');
@@ -1943,28 +2184,32 @@ function loginUI(user){
 
 function switchTab(tabId){
     document.querySelectorAll('.tab-content').forEach(el=>el.classList.add('hidden'));
-    ['tab-dashboard','tab-register','tab-gussepy','tab-auditoria','tab-maria-dash','tab-maria-add','tab-maria-list','tab-giros-add','tab-giros-list','tab-maria-ref-add','tab-maria-ref-list','tab-melanie-add','tab-melanie-list','tab-crm-contacts','tab-crm-campaigns','tab-crm-campaign-detail','tab-inactivos','tab-influencer-dash','tab-influencer-details','tab-bonos-reales','tab-sync-db'].forEach(id=>{
+    ['tab-dashboard','tab-register','tab-gussepy','tab-auditoria','tab-maria-dash','tab-maria-add','tab-maria-list','tab-giros-add','tab-giros-list','tab-maria-ref-add','tab-maria-ref-list','tab-melanie-add','tab-melanie-list','tab-crm-contacts','tab-crm-campaigns','tab-crm-campaign-detail','tab-inactivos','tab-influencer-dash','tab-influencer-details','tab-bonos-reales','tab-sync-db','tab-gussepy-externas','tab-config','tab-buzon'].forEach(id=>{
         const btn=document.getElementById('btn-'+id);
         if(btn){
-            btn.classList.remove('bg-indigo-50','text-indigo-600','bg-rose-50','bg-pink-50','text-pink-600','bg-purple-50','text-purple-600','text-rose-600','bg-emerald-50','text-emerald-600','bg-amber-50','text-amber-600','bg-blue-50','text-blue-600');
+            btn.classList.remove('bg-indigo-50','text-indigo-600','bg-rose-50','bg-pink-50','text-pink-600','bg-purple-50','text-purple-600','text-rose-600','bg-emerald-50','text-emerald-600','bg-amber-50','text-amber-600','bg-blue-50','text-blue-600','bg-sky-50','text-sky-600','bg-slate-800','text-white');
             btn.classList.add('text-slate-500','hover:bg-slate-100');
-            btn.querySelector('span').classList.remove('md:opacity-100');
+            btn.querySelector('span:last-child').classList.remove('md:opacity-100');
         }
     });
     const content=document.getElementById(tabId);if(content)content.classList.remove('hidden');
     const activeBtn=document.getElementById('btn-'+tabId);
     if(activeBtn){
         activeBtn.classList.remove('text-slate-500','hover:bg-slate-100');
-        activeBtn.querySelector('span').classList.add('md:opacity-100'); 
+        activeBtn.querySelector('span:last-child').classList.add('md:opacity-100'); 
         if(tabId.includes('maria')||tabId.includes('giros'))activeBtn.classList.add('bg-rose-50','text-rose-600');
         else if(tabId.includes('melanie'))activeBtn.classList.add('bg-pink-50','text-pink-600');
         else if(tabId.includes('influencer')||tabId.includes('campaign')||tabId.includes('contact'))activeBtn.classList.add('bg-purple-50','text-purple-600');
-        else if(tabId.includes('inactivos'))activeBtn.classList.add('bg-amber-50','text-amber-600');
+        else if(tabId.includes('inactivos') || tabId.includes('gussepy-ext'))activeBtn.classList.add('bg-amber-50','text-amber-600');
         else if(tabId.includes('bonos-reales')||tabId.includes('ref-'))activeBtn.classList.add('bg-emerald-50','text-emerald-600');
         else if(tabId.includes('sync-db'))activeBtn.classList.add('bg-blue-50','text-blue-600');
+        else if(tabId.includes('buzon'))activeBtn.classList.add('bg-sky-50','text-sky-600');
+        else if(tabId.includes('config'))activeBtn.classList.add('bg-slate-800','text-white');
         else activeBtn.classList.add('bg-indigo-50','text-indigo-600');
     }
     toggleMenu(false);
+    
+    if(tabId === 'tab-buzon') { fetchMessages(true); }
 }
 
 const safeData = (res) => (res && res.data && Array.isArray(res.data)) ? res.data : [];
@@ -1976,7 +2221,7 @@ async function fetchData(isBackground=false){
     try {
         if (!db) throw new Error("Base de datos inalcanzable");
         
-        let resContacts = null, resCamps = null, resCampTargs = null;
+        let resContacts=null, resCamps=null, resCampTargs=null;
         const promises = [
             db.from('users').select('*'),
             db.from('records').select('*'),
@@ -1990,7 +2235,6 @@ async function fetchData(isBackground=false){
         const results = await Promise.all(promises);
         const [resUsers, resRec, resAdv, resBon, resGir, resRef, resRend] = results;
 
-        // CRM Tables Fetch (Protegido para Modo Local)
         try {
             const crmResults = await Promise.all([
                 db.from('contacts').select('*'),
@@ -2009,7 +2253,27 @@ async function fetchData(isBackground=false){
             }
             if(resCamps && resCamps.data) campaignsList = resCamps.data;
             if(resCampTargs && resCampTargs.data) campaignTargetsList = resCampTargs.data;
-        } catch(e) { console.warn("Aviso: Módulo CRM no disponible. Crear tablas en Supabase."); }
+        } catch(e) { console.warn("Aviso: Módulo CRM no disponible."); }
+
+        try {
+            const extraResults = await Promise.all([
+                db.from('external_commissions').select('*'),
+                db.from('messages').select('*'),
+                db.from('settings').select('*')
+            ]);
+            if(extraResults[0].data) externalCommissions = extraResults[0].data;
+            if(extraResults[1].data) messages = extraResults[1].data;
+            if(extraResults[2].data) {
+                extraResults[2].data.forEach(s => { globalSettings[s.key] = parseFloat(s.value); });
+                if(document.getElementById('cfg-jesus-ambos')) {
+                    document.getElementById('cfg-jesus-ambos').value = globalSettings.jesus_ambos_marcan_pct || 10;
+                    document.getElementById('cfg-jesus-sepy').value = globalSettings.jesus_sepybet_pct || 5;
+                    document.getElementById('cfg-jesus-chiche').value = globalSettings.jesus_chichesepy_pct || 5;
+                    document.getElementById('cfg-tito-sepy').value = globalSettings.tito_sepybet_pct || 5;
+                    document.getElementById('cfg-tito-chiche').value = globalSettings.tito_chichesepy_pct || 5;
+                }
+            }
+        } catch(e) { console.warn("Aviso: Módulos Extras no creados en Supabase aún."); }
 
         if (resUsers && resUsers.data && Array.isArray(resUsers.data)) {
             resUsers.data.forEach(u => {
@@ -2031,6 +2295,7 @@ async function fetchData(isBackground=false){
         resetPagesAndUpdate(); 
         updateBonoDatalist(); 
         updateMelanieDropdowns();
+        fetchMessages(false);
     } catch(err) {
         if(!isBackground) showToast("Base de datos en modo local temporal.", "warning");
         resetPagesAndUpdate(); 
@@ -2046,11 +2311,7 @@ const getProp = (obj, possibleKeys) => {
     return undefined;
 };
 
-// ==========================================
-// ====== MÓDULO CRM CAMPAÑAS (NUEVO) ======
-// ==========================================
-
-// 1. Manejo del Directorio de Contactos
+// === CRM: CONTACTOS Y CAMPAÑAS ===
 function handleContactsUpload(e) {
     const file = e.target.files[0]; if(!file) return;
     const reader = new FileReader();
@@ -2119,16 +2380,15 @@ function renderContactsTable() {
     pag.forEach(c => {
         html += `
         <tr class="border-b border-slate-50 hover:bg-slate-50/50 transition-colors">
-            <td data-label="Usuario Limpio" class="p-5 pl-8 font-black text-purple-600 uppercase">${c.norm}</td>
-            <td data-label="Nombre Original" class="p-5 text-xs text-slate-500">${c.orig}</td>
-            <td data-label="Teléfono" class="p-5 font-mono text-sm font-bold text-slate-700">${c.phone}</td>
-            <td data-label="Acción" class="p-5 pr-8 text-center"><span class="text-emerald-500"><i class="fas fa-check-circle"></i></span></td>
+            <td data-label="Usuario Limpio" class="p-4 pl-8 font-black text-purple-600 uppercase">${c.norm}</td>
+            <td data-label="Nombre Original" class="p-4 text-xs text-slate-500">${c.orig}</td>
+            <td data-label="Teléfono" class="p-4 font-mono text-sm font-bold text-slate-700">${c.phone}</td>
+            <td data-label="Acción" class="p-4 pr-8 text-center"><span class="text-emerald-500"><i class="fas fa-check-circle"></i></span></td>
         </tr>`;
     });
     tbody.innerHTML = html || `<tr><td colspan="4" class="p-8 text-center text-sm font-bold text-slate-400">No hay contactos guardados o no coinciden con la búsqueda.</td></tr>`;
 }
 
-// 2. Creación y Visualización de Campañas
 async function processCampaign() {
     const name = document.getElementById('camp-name').value.trim();
     const cDate = document.getElementById('camp-date').value;
@@ -2150,7 +2410,7 @@ async function processCampaign() {
                 cU = r.findIndex(x=>x.includes('usuario') || x.includes('nombre') || x.includes('jugador') || x.includes('agente'));
                 if(cU !== -1) break;
             }
-            if(cU === -1) cU = 0; // fallback a la primera columna
+            if(cU === -1) cU = 0; 
             
             let targetUsers = new Set();
             for(let i=1; i<rows.length; i++){
@@ -2207,7 +2467,7 @@ function renderCampaignsTable() {
         const ud=JSON.parse(localStorage.getItem('sb_user_data'));
         const isMaster = ud && ud.type === 'master';
         
-        let actBtns = `<button onclick="viewCampaignDetails('${camp.id}')" class="px-4 py-2.5 bg-purple-50 hover:bg-purple-100 text-purple-700 rounded-xl text-xs font-bold transition-colors shadow-sm whitespace-nowrap"><i class="fas fa-search mr-1.5"></i> Detalles y ROI</button>`;
+        let actBtns = `<button onclick="viewCampaignDetails('${camp.id}')" class="px-4 py-2.5 bg-purple-100 hover:bg-purple-200 text-purple-700 rounded-xl text-xs font-bold transition-colors shadow-sm whitespace-nowrap"><i class="fas fa-search mr-1.5"></i> Detalles y ROI</button>`;
         if(!isMaster) actBtns += `<button onclick="deleteCampaign('${camp.id}')" class="w-10 h-10 bg-rose-50 hover:bg-rose-100 text-rose-500 rounded-xl transition-colors shadow-sm ml-2 flex items-center justify-center"><i class="fas fa-trash"></i></button>`;
 
         html += `
@@ -2225,7 +2485,6 @@ function renderCampaignsTable() {
     tbody.innerHTML = html || `<tr><td colspan="6" class="p-8 text-center text-sm font-bold text-slate-400">No hay campañas registradas.</td></tr>`;
 }
 
-// 3. Analizador de Campaña y Validación (Tercer Archivo Backoffice)
 function viewCampaignDetails(id) {
     currentCampaignId = id;
     const camp = campaignsList.find(c => c.id === id);
@@ -2234,7 +2493,6 @@ function viewCampaignDetails(id) {
     document.getElementById('cd-title').innerText = camp.name;
     document.getElementById('cd-date').innerText = fmtDate(camp.date_sent);
     
-    // Resetear filtro al entrar
     const selFilter = document.getElementById('cd-filter-status');
     if(selFilter) selFilter.value = 'all';
 
@@ -2256,7 +2514,6 @@ function renderCampaignDetails() {
     const elRate = document.getElementById('cd-metric-conversion'); if(elRate) elRate.innerText = `${rate}%`;
     const elRoi = document.getElementById('cd-metric-roi'); if(elRoi) elRoi.innerText = fmt(rev);
 
-    // FILTRO DINÁMICO
     const filterVal = document.getElementById('cd-filter-status')?.value || 'all';
     let displayTargets = allTargets;
     if(filterVal === 'deposited') displayTargets = allTargets.filter(t => t.deposited);
@@ -2281,7 +2538,6 @@ function renderCampaignDetails() {
     tbody.innerHTML = html || `<tr><td colspan="4" class="p-8 text-center text-sm font-bold text-slate-400">No hay usuarios con este filtro.</td></tr>`;
 }
 
-// Analizar Excel Reporte Backoffice y Cruzarlo con la Campaña
 function analyzeCampaignFile() {
     if(!currentCampaignId) return;
     const fileInput = document.getElementById('upload-camp-analysis-file');
@@ -2368,7 +2624,6 @@ function analyzeCampaignFile() {
     reader.readAsBinaryString(file);
 }
 
-// === DESCARGAR AUDIENCIAS SEGMENTADAS ===
 function openCampDownloadModal(id = null) {
     document.getElementById('dw-camp-id').value = id || currentCampaignId;
     document.getElementById('modal-camp-download').classList.replace('hidden', 'flex');
@@ -2426,7 +2681,343 @@ async function deleteCampaign(id) {
     } catch(e) { showToast("Error eliminando campaña", "error"); }
 }
 
-// === CONTINUACIÓN DE LAS FUNCIONES ORIGINALES ===
+// === CÁLCULO DE COMISIONES EXTERNAS (GUSSEPY) ===
+async function saveGlobalSettings(e) {
+    e.preventDefault();
+    const btn = e.target.querySelector('button');
+    const orig = btn.innerHTML; btn.innerHTML = 'Guardando...'; btn.disabled = true;
+    
+    const sets = [
+        { key: 'jesus_ambos_marcan_pct', value: document.getElementById('cfg-jesus-ambos').value },
+        { key: 'jesus_sepybet_pct', value: document.getElementById('cfg-jesus-sepy').value },
+        { key: 'jesus_chichesepy_pct', value: document.getElementById('cfg-jesus-chiche').value },
+        { key: 'tito_sepybet_pct', value: document.getElementById('cfg-tito-sepy').value },
+        { key: 'tito_chichesepy_pct', value: document.getElementById('cfg-tito-chiche').value }
+    ];
+    
+    try {
+        await db.from('settings').upsert(sets);
+        showToast("Reglas actualizadas correctamente", "success");
+        sets.forEach(s => globalSettings[s.key] = parseFloat(s.value));
+    } catch(err) { showToast("Error al guardar reglas", "error"); }
+    btn.innerHTML = orig; btn.disabled = false;
+}
+
+async function handleComisionesExt(e) {
+    e.preventDefault();
+    let month = document.getElementById('ext-month').value;
+    let ambos = getVal(document.getElementById('ext-ambos').value);
+    let sepybet = getVal(document.getElementById('ext-sepybet').value);
+    let chiche = getVal(document.getElementById('ext-chiche').value);
+    let complat = getVal(document.getElementById('ext-complat').value);
+
+    let cut_j_ambos = ambos * (globalSettings.jesus_ambos_marcan_pct/100);
+    let cut_j_sepy = sepybet * (globalSettings.jesus_sepybet_pct/100);
+    let cut_j_chiche = chiche * (globalSettings.jesus_chichesepy_pct/100);
+    let jesus_cut = cut_j_ambos + cut_j_sepy + cut_j_chiche;
+
+    let cut_t_sepy = sepybet * (globalSettings.tito_sepybet_pct/100);
+    let cut_t_chiche = chiche * (globalSettings.tito_chichesepy_pct/100);
+    let tito_cut = cut_t_sepy + cut_t_chiche + complat;
+
+    let detailsStr = `
+        <div class="mb-4 text-left">
+            <h4 class="font-black text-blue-600 mb-1 border-b border-blue-100 pb-1 flex justify-between"><span>Para Jesús:</span> <span>${fmt(jesus_cut)}</span></h4>
+            <ul class="text-xs space-y-1 mt-2 text-slate-500">
+                <li class="flex justify-between"><span>Ambos Marcan (${globalSettings.jesus_ambos_marcan_pct}%)</span> <span class="font-black text-slate-700">${fmt(cut_j_ambos)}</span></li>
+                <li class="flex justify-between"><span>Sepybet (${globalSettings.jesus_sepybet_pct}%)</span> <span class="font-black text-slate-700">${fmt(cut_j_sepy)}</span></li>
+                <li class="flex justify-between"><span>Chichesepy (${globalSettings.jesus_chichesepy_pct}%)</span> <span class="font-black text-slate-700">${fmt(cut_j_chiche)}</span></li>
+            </ul>
+        </div>
+        <div class="text-left">
+            <h4 class="font-black text-emerald-600 mb-1 border-b border-emerald-100 pb-1 flex justify-between"><span>Para Tito:</span> <span>${fmt(tito_cut)}</span></h4>
+            <ul class="text-xs space-y-1 mt-2 text-slate-500">
+                <li class="flex justify-between"><span>Sepybet (${globalSettings.tito_sepybet_pct}%)</span> <span class="font-black text-slate-700">${fmt(cut_t_sepy)}</span></li>
+                <li class="flex justify-between"><span>Chichesepy (${globalSettings.tito_chichesepy_pct}%)</span> <span class="font-black text-slate-700">${fmt(cut_t_chiche)}</span></li>
+                <li class="flex justify-between"><span>Com. Plataforma VIP</span> <span class="font-black text-slate-700">${fmt(complat)}</span></li>
+            </ul>
+        </div>
+    `;
+
+    let extId = 'EXT_' + month.replace('-','');
+    const btn = e.target.querySelector('button');
+    const orig = btn.innerHTML; btn.innerHTML = '...'; btn.disabled = true;
+
+    try {
+        const { error } = await db.from('external_commissions').upsert({
+            id: extId, month: month,
+            sepybet_income: sepybet, chichesepy_income: chiche, ambos_marcan_income: ambos,
+            com_plat_total: complat, jesus_cut: jesus_cut, tito_cut: tito_cut, 
+            details: detailsStr, created_by: cleanStr(currentUser)
+        });
+        if(!error) { showToast("Recibo generado y asignado con éxito", "success"); fetchData(true); }
+        else throw error;
+    } catch(e) { showToast("Error al guardar", "error"); }
+    btn.innerHTML = orig; btn.disabled = false;
+}
+
+async function actionDeleteExt(id) {
+    if(!confirm("¿Eliminar este recibo de comisión?")) return;
+    try {
+        const {error} = await db.from('external_commissions').delete().eq('id', id);
+        if(!error) { showToast("Cálculo eliminado", "warning"); fetchData(true); }
+    } catch(e) { showToast("Error eliminando", "error"); }
+}
+
+function viewExtDetailTitoJesus() {
+    const extComMonth = externalCommissions.find(x => x.month === document.getElementById('dash-month-filter').value);
+    if(extComMonth && extComMonth.details) {
+        document.getElementById('ext-det-month').innerText = 'PERIODO: ' + extComMonth.month;
+        document.getElementById('ext-det-body').innerHTML = extComMonth.details;
+        document.getElementById('modal-ext-detail').classList.replace('hidden', 'flex');
+    } else {
+        showToast("No hay detalles guardados para este mes.", "warning");
+    }
+}
+
+function viewExtDetailGussepy() {
+    const extComMonth = externalCommissions.find(x => x.month === document.getElementById('dash-month-filter').value);
+    if(extComMonth && extComMonth.details) {
+        document.getElementById('ext-det-month').innerText = 'PERIODO: ' + extComMonth.month;
+        document.getElementById('ext-det-body').innerHTML = extComMonth.details;
+        document.getElementById('modal-ext-detail').classList.replace('hidden', 'flex');
+    } else {
+        showToast("Aún no generaste el recibo de este mes en 'Comisiones Ext.'", "warning");
+    }
+}
+
+function closeExtDetailModal() {
+    document.getElementById('modal-ext-detail').classList.replace('flex', 'hidden');
+}
+
+
+// === LÓGICA DE BONOS REPARADA PARA M. EMILIA ===
+function handleBonosApuestasUpload(e) {
+    const file = e.target.files[0]; if(!file) return;
+    const reader = new FileReader();
+    reader.onload = function(evt) {
+        try {
+            const workbook = XLSX.read(evt.target.result, {type:'binary'});
+            const sheet = workbook.Sheets[workbook.SheetNames[0]];
+            const rows = XLSX.utils.sheet_to_json(sheet, {header:1});
+            let hIdx=-1, cIdx={};
+            for(let i=0; i<Math.min(30, rows.length); i++){
+                const cols = Array.from(rows[i]||[]).map(x=>x?String(x).toLowerCase().trim():"");
+                if(cols.includes('id apuesta') || cols.includes('es bono') || cols.includes('resultado')) {
+                    hIdx = i;
+                    cIdx.id = cols.findIndex(x=>x === 'id apuesta' || x === 'id_tx' || x === 'id');
+                    cIdx.jug = cols.findIndex(x=>x === 'jugador' || x === 'usuario' || (x.includes('jugador') && !x.includes('id')));
+                    cIdx.monto = cols.findIndex(x=>x === 'monto' || x.includes('inversión') || x.includes('inversion'));
+                    cIdx.ganancia = cols.findIndex(x=>x === 'ganancia' || x === 'monto ganado'); 
+                    cIdx.gananciaPosible = cols.findIndex(x=>x === 'ganancia posible' || x.includes('posible'));
+                    cIdx.esBono = cols.findIndex(x=>x === 'es bono' || x === 'bono');
+                    cIdx.estado = cols.findIndex(x=>x === 'resultado' || x === 'estado');
+                    cIdx.fecha = cols.findIndex(x=>x.includes('fecha creación') || x.includes('fecha'));
+                    cIdx.agente = cols.findIndex(x=>x === 'agente' || x === 'agencia' || x === 'fuente');
+                    break;
+                }
+            }
+            if(hIdx === -1) { showToast("No se detectaron columnas requeridas (Es Bono, Resultado, etc.)", "error"); return; }
+            bonosApuestasUploadData = [];
+            for(let i=hIdx+1; i<rows.length; i++){
+                const row = rows[i]||[];
+                if(!row.length) continue;
+                let esBono = String(row[cIdx.esBono]||'').toLowerCase().trim();
+                if(esBono === 'sí' || esBono === 'si' || esBono === 'yes') {
+                    let rawMonto = getVal(row[cIdx.monto]);
+                    let rawGanancia = getVal(row[cIdx.ganancia]);
+                    let rawEstado = String(row[cIdx.estado]||'').trim();
+                    let stDisplay = 'Entregado';
+                    let resLow = rawEstado.toLowerCase();
+                    
+                    if (resLow.includes('won') || resLow.includes('ganado')) {
+                        stDisplay = 'Ganado';
+                    } else if (resLow.includes('lost') || resLow.includes('perdid') || resLow.includes('void') || resLow.includes('cancel')) {
+                        stDisplay = 'Perdido';
+                    } else {
+                        stDisplay = 'Entregado'; // Equivale a Pendiente / Not Resulted
+                    }
+
+                    if (stDisplay === 'Ganado' && rawGanancia === 0) {
+                        if (cIdx.gananciaPosible !== undefined && cIdx.gananciaPosible !== -1) {
+                            rawGanancia = getVal(row[cIdx.gananciaPosible]);
+                        }
+                    }
+
+                    bonosApuestasUploadData.push({
+                        id_apuesta: String(row[cIdx.id]||Date.now()+'_'+i),
+                        jugador: String(row[cIdx.jug]||'Desconocido').trim(),
+                        monto: rawMonto, ganancia: rawGanancia, estado: stDisplay,
+                        fecha: excelToISO(row[cIdx.fecha]), agente: String(row[cIdx.agente]||'Sepybet').trim()
+                    });
+                }
+            }
+            renderBonosApuestasPreview();
+            if(bonosApuestasUploadData.length > 0) showToast(`Detectados ${bonosApuestasUploadData.length} bonos.`, 'success');
+            else showToast("No hay registros donde 'Es Bono' sea 'Sí'.", "warning");
+        } catch(err) { showToast("Error leyendo reporte", "error"); console.log(err); }
+    };
+    reader.readAsBinaryString(file);
+}
+
+function renderBonosApuestasPreview() {
+    const tbody=document.getElementById('bonos-apuestas-preview-body');
+    const cont=document.getElementById('bonos-apuestas-preview-container');
+    if(!bonosApuestasUploadData.length){cont.classList.add('hidden');cont.classList.remove('flex');return;}
+    tbody.innerHTML=bonosApuestasUploadData.map((r,i)=>`<tr><td class="py-2 text-[10px] font-bold">${r.fecha}</td><td class="py-2 text-[10px] uppercase font-bold text-indigo-600">${r.jugador}</td><td class="py-2 text-[10px] text-right font-black">${fmt(r.monto)}</td><td class="py-2 text-[10px] text-center">${r.estado}</td><td class="py-2 text-[10px] text-right text-emerald-600 font-black">${fmt(r.ganancia)}</td><td class="py-2 text-center"><button onclick="bonosApuestasUploadData.splice(${i},1); renderBonosApuestasPreview()" class="text-rose-500"><i class="fas fa-times"></i></button></td></tr>`).join('');
+    cont.classList.add('flex');cont.classList.remove('hidden');
+}
+
+async function submitBonosApuestasData() {
+    if(!bonosApuestasUploadData.length)return;
+    const btn=document.getElementById('btn-upload-bonos-apuestas');btn.disabled=true;
+    
+    // Eliminamos duplicados dentro de la misma carga
+    const uniqueBonosMap = new Map();
+    bonosApuestasUploadData.forEach(r => {
+        uniqueBonosMap.set(r.id_apuesta, r);
+    });
+    
+    let upsertData = Array.from(uniqueBonosMap.values()).map(r => ({
+        id: 'BN_AP_' + r.id_apuesta, date: r.fecha, amount: r.monto, assigned_to: r.jugador,
+        concept: 'Bono Apuesta (ID: '+r.id_apuesta+')', created_by: cleanStr(currentUser),
+        status: r.estado, amount_won: r.ganancia, company: r.agente
+    }));
+    
+    btn.innerHTML=`<i class="fas fa-spinner fa-spin mr-2"></i> Actualizando...`;
+    try {
+        const { error } = await db.from('bonos').upsert(upsertData, { onConflict: 'id' }); 
+        if(!error) { showToast("Bonos procesados y actualizados correctamente.", "success"); fetchData(true); }
+        else { showToast("Error subiendo datos.", "error"); }
+    } catch(e) { showToast("Error de red.", "error"); }
+    document.getElementById('bonos-apuestas-preview-container').classList.add('hidden');
+    document.getElementById('upload-bonos-apuestas-file').value='';
+    bonosApuestasUploadData=[]; btn.innerHTML='<i class="fas fa-sync mr-2"></i> Procesar y Actualizar Bonos'; btn.disabled=false;
+}
+
+// === BANDEJA DE MENSAJES CON ARCHIVOS MULTIMEDIA ===
+let msgAttachmentB64 = '';
+let msgAttachmentName = '';
+
+function convertMsgFile(e) {
+    const file = e.target.files[0];
+    const ind = document.getElementById('msg-file-indicator');
+    if(!file) { 
+        msgAttachmentB64=''; msgAttachmentName=''; 
+        if(ind) ind.classList.add('hidden');
+        return; 
+    }
+    if(file.size > 2 * 1024 * 1024) { 
+        showToast("El archivo no puede exceder 2MB", "warning"); 
+        e.target.value=''; 
+        if(ind) ind.classList.add('hidden');
+        return; 
+    }
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+        msgAttachmentB64 = evt.target.result;
+        msgAttachmentName = file.name;
+        if(ind) {
+            ind.innerHTML = `<i class="fas fa-check-circle"></i> Archivo cargado: ${file.name}`;
+            ind.classList.remove('hidden');
+        }
+    };
+    reader.readAsDataURL(file);
+}
+
+async function handleSendMessage(e) {
+    e.preventDefault();
+    const to = document.getElementById('msg-to').value;
+    const subject = document.getElementById('msg-subject').value;
+    const body = document.getElementById('msg-body').value;
+    
+    const btn = e.target.querySelector('button');
+    const orig = btn.innerHTML; btn.innerHTML = 'Enviando...'; btn.disabled = true;
+    try {
+        const {error} = await db.from('messages').insert([{
+            sender_id: cleanStr(currentUser),
+            receiver_id: to,
+            subject: subject,
+            body: body,
+            attachment: msgAttachmentB64,
+            attachment_name: msgAttachmentName,
+            is_read: false
+        }]);
+        if(!error) { 
+            showToast("Mensaje enviado con éxito", "success"); 
+            e.target.reset(); 
+            msgAttachmentB64=''; msgAttachmentName=''; 
+            const ind = document.getElementById('msg-file-indicator');
+            if(ind) ind.classList.add('hidden');
+            fetchData(true); 
+        }
+        else throw error;
+    } catch(err) { showToast("Error al enviar mensaje", "error"); }
+    btn.innerHTML = orig; btn.disabled = false;
+}
+
+function fetchMessages(manual = false) {
+    const myMsgs = messages.filter(m => cleanStr(m.receiver_id) === cleanStr(currentUser)).sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
+    
+    const unread = myMsgs.filter(m => !m.is_read).length;
+    const badge = document.getElementById('unread-badge');
+    const headerBadge = document.getElementById('header-unread-badge');
+    
+    if(badge && headerBadge) {
+        if(unread > 0) { 
+            badge.classList.remove('hidden'); badge.classList.add('flex'); 
+            headerBadge.classList.remove('hidden');
+        } else {
+            badge.classList.add('hidden');
+            headerBadge.classList.add('hidden');
+        }
+    }
+
+    const list = document.getElementById('inbox-list');
+    if(!list) return;
+    
+    if(myMsgs.length === 0) {
+        list.innerHTML = '<div class="p-8 text-center text-sm font-bold text-slate-400">Bandeja vacía</div>';
+        if(manual) showToast("Bandeja actualizada", "success");
+        return;
+    }
+
+    let h = '';
+    myMsgs.forEach(m => {
+        const senderName = USERS[cleanStr(m.sender_id)]?.name || m.sender_id;
+        const bg = m.is_read ? 'bg-white' : 'bg-sky-50 border-l-4 border-l-sky-500';
+        const dot = m.is_read ? '' : '<div class="w-2 h-2 rounded-full bg-sky-500 absolute top-4 right-4 animate-pulse"></div>';
+        const attachLink = (m.attachment && m.attachment_name) ? `<a href="${m.attachment}" download="${m.attachment_name}" class="mt-3 inline-flex items-center gap-1.5 bg-sky-100 hover:bg-sky-200 text-sky-700 px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-colors shadow-sm" onclick="event.stopPropagation()"><i class="fas fa-paperclip"></i> Descargar Adjunto</a>` : '';
+
+        h += `
+        <div class="p-5 ${bg} hover:bg-slate-50 transition-colors cursor-pointer relative group rounded-xl mb-2 border border-slate-100" onclick="markMessageRead('${m.id}')">
+            ${dot}
+            <div class="flex justify-between items-start mb-1">
+                <span class="text-xs font-black text-sky-700 uppercase"><i class="fas fa-user-circle mr-1"></i> ${senderName}</span>
+                <span class="text-[9px] font-bold text-slate-400">${fmtDate(m.created_at)}</span>
+            </div>
+            <h4 class="text-sm font-bold text-slate-800">${m.subject}</h4>
+            <p class="text-xs text-slate-500 mt-2 whitespace-pre-wrap">${m.body}</p>
+            ${attachLink}
+        </div>
+        `;
+    });
+    list.innerHTML = h;
+    if(manual) showToast("Bandeja actualizada", "success");
+}
+
+async function markMessageRead(id) {
+    const m = messages.find(x => x.id === id);
+    if(m && !m.is_read) {
+        m.is_read = true;
+        fetchMessages(false);
+        try { await db.from('messages').update({is_read: true}).eq('id', id); } 
+        catch(e) {}
+    }
+}
+
+
+// === SINCRONIZACIÓN Y OTRAS FUNCIONES BASE ===
 async function handleMasterSync() {
     const fileInput = document.getElementById('upload-sync-file');
     if(!fileInput.files.length) { showToast("Seleccione un archivo de Excel", "error"); return; }
@@ -2633,87 +3224,6 @@ function closePlayerDropdown(){const ul=document.getElementById('custom-player-d
 function selectPlayer(name){const input=document.getElementById('rend-referred');if(input)input.value=name;closePlayerDropdown();}
 function clearPlayerSelection(){const input=document.getElementById('rend-referred');if(input){input.value='';input.focus();}filterPlayerDropdown();openPlayerDropdown();}
 document.addEventListener('click',function(e){const input=document.getElementById('rend-referred');const dropdown=document.getElementById('custom-player-dropdown');const btnClear=document.getElementById('btn-clear-player');if(input&&dropdown){if(!input.contains(e.target)&&!dropdown.contains(e.target)&&(!btnClear||!btnClear.contains(e.target)))closePlayerDropdown();}});
-
-function handleBonosApuestasUpload(e) {
-    const file = e.target.files[0]; if(!file) return;
-    const reader = new FileReader();
-    reader.onload = function(evt) {
-        try {
-            const workbook = XLSX.read(evt.target.result, {type:'binary'});
-            const sheet = workbook.Sheets[workbook.SheetNames[0]];
-            const rows = XLSX.utils.sheet_to_json(sheet, {header:1});
-            let hIdx=-1, cIdx={};
-            for(let i=0; i<Math.min(30, rows.length); i++){
-                const r = Array.from(rows[i]||[]).map(x=>x?String(x).toLowerCase().trim():"");
-                if(r.includes('id apuesta') || r.includes('es bono') || r.includes('ganancia posible')) {
-                    hIdx = i;
-                    cIdx.id = r.findIndex(x=>x === 'id apuesta' || x === 'id_tx' || x === 'id');
-                    cIdx.jug = r.findIndex(x=>x === 'jugador' || x === 'usuario' || (x.includes('jugador') && !x.includes('id')));
-                    cIdx.monto = r.findIndex(x=>x === 'monto' || x.includes('inversión'));
-                    cIdx.ganancia = r.findIndex(x=>x === 'ganancia' || x === 'monto ganado'); 
-                    cIdx.esBono = r.findIndex(x=>x === 'es bono' || x === 'bono');
-                    cIdx.estado = r.findIndex(x=>x === 'resultado' || x === 'estado');
-                    cIdx.fecha = r.findIndex(x=>x.includes('fecha creación') || x.includes('fecha'));
-                    cIdx.agente = r.findIndex(x=>x === 'agente' || x === 'agencia' || x === 'fuente');
-                    break;
-                }
-            }
-            if(hIdx === -1) { showToast("No se detectó la cabecera correcta del reporte.", "error"); return; }
-            bonosApuestasUploadData = [];
-            for(let i=hIdx+1; i<rows.length; i++){
-                const row = rows[i]||[];
-                if(!row.length) continue;
-                let esBono = String(row[cIdx.esBono]||'').toLowerCase().trim();
-                if(esBono === 'sí' || esBono === 'si' || esBono === 'yes') {
-                    let rawMonto = getVal(row[cIdx.monto]);
-                    let rawGanancia = getVal(row[cIdx.ganancia]);
-                    let rawEstado = String(row[cIdx.estado]||'').trim();
-                    let stDisplay = 'Entregado';
-                    let resLow = rawEstado.toLowerCase();
-                    if (resLow === 'won' || resLow === 'ganado' || rawGanancia > 0) stDisplay = 'Ganado';
-                    else if (resLow === 'lost' || resLow === 'perdida' || resLow === 'perdido') stDisplay = 'Perdido';
-                    bonosApuestasUploadData.push({
-                        id_apuesta: String(row[cIdx.id]||Date.now()+'_'+i),
-                        jugador: String(row[cIdx.jug]||'Desconocido').trim(),
-                        monto: rawMonto, ganancia: rawGanancia, estado: stDisplay,
-                        fecha: excelToISO(row[cIdx.fecha]), agente: String(row[cIdx.agente]||'Sepybet').trim()
-                    });
-                }
-            }
-            renderBonosApuestasPreview();
-            if(bonosApuestasUploadData.length > 0) showToast(`Detectados ${bonosApuestasUploadData.length} bonos.`, 'success');
-            else showToast("No hay registros donde 'Es Bono' sea 'Sí'.", "warning");
-        } catch(err) { showToast("Error leyendo reporte", "error"); }
-    };
-    reader.readAsBinaryString(file);
-}
-
-function renderBonosApuestasPreview() {
-    const tbody=document.getElementById('bonos-apuestas-preview-body');
-    const cont=document.getElementById('bonos-apuestas-preview-container');
-    if(!bonosApuestasUploadData.length){cont.classList.add('hidden');cont.classList.remove('flex');return;}
-    tbody.innerHTML=bonosApuestasUploadData.map((r,i)=>`<tr><td class="py-2 text-[10px] font-bold">${r.fecha}</td><td class="py-2 text-[10px] uppercase font-bold text-indigo-600">${r.jugador}</td><td class="py-2 text-[10px] text-right font-black">${fmt(r.monto)}</td><td class="py-2 text-[10px] text-center">${r.estado}</td><td class="py-2 text-[10px] text-right text-emerald-600 font-black">${fmt(r.ganancia)}</td><td class="py-2 text-center"><button onclick="bonosApuestasUploadData.splice(${i},1); renderBonosApuestasPreview()" class="text-rose-500"><i class="fas fa-times"></i></button></td></tr>`).join('');
-    cont.classList.add('flex');cont.classList.remove('hidden');
-}
-
-async function submitBonosApuestasData() {
-    if(!bonosApuestasUploadData.length)return;
-    const btn=document.getElementById('btn-upload-bonos-apuestas');btn.disabled=true;
-    let upsertData = bonosApuestasUploadData.map(r => ({
-        id: 'BN_AP_' + r.id_apuesta, date: r.fecha, amount: r.monto, assigned_to: r.jugador,
-        concept: 'Bono Apuesta (ID: '+r.id_apuesta+')', created_by: cleanStr(currentUser),
-        status: r.estado, amount_won: r.ganancia, company: r.agente
-    }));
-    btn.innerHTML=`<i class="fas fa-spinner fa-spin mr-2"></i> Actualizando...`;
-    try {
-        const { error } = await db.from('bonos').upsert(upsertData); 
-        if(!error) { showToast("Bonos procesados y actualizados correctamente.", "success"); fetchData(true); }
-        else { showToast("Error subiendo datos.", "error"); }
-    } catch(e) { showToast("Error de red.", "error"); }
-    document.getElementById('bonos-apuestas-preview-container').classList.add('hidden');
-    document.getElementById('upload-bonos-apuestas-file').value='';
-    bonosApuestasUploadData=[]; btn.innerHTML='<i class="fas fa-sync mr-2"></i> Procesar y Actualizar Bonos'; btn.disabled=false;
-}
 
 function handleBankUpload(e){
     const file=e.target.files[0];if(!file)return;const reader=new FileReader();
@@ -3195,7 +3705,6 @@ function updateAllViews(){
 
     injectExportButtons();
 
-    // RENDERIZAR CAMPAÑAS CRM Y CONTACTOS
     if(userType === 'cajero_afiliados' || isSuperAdmin || userType === 'admin' || userType === 'master') {
         renderCampaignsTable();
         renderContactsTable();
@@ -3318,6 +3827,53 @@ function updateAllViews(){
             }
             tbodyGus.innerHTML=htmlA||`<tr><td colspan="6" class="p-4 text-center text-sm text-slate-400">Sin adelantos.</td></tr>`;
         }
+        
+        // MOSTRAR COMISIONES EXTERNAS CALCULADAS PARA TITO Y JESÚS
+        const extComMonth = externalCommissions.find(x => x.month === globalMF);
+        if (userType === 'user') {
+            if (cleanStr(currentUser) === 'tito' || cleanStr(currentUser) === 'jesus') {
+                const myExtCard = document.getElementById('card-ext-user');
+                if(myExtCard) myExtCard.classList.remove('hidden');
+                
+                const valEl = document.getElementById('dash-ext-user-val');
+                if(valEl) {
+                    if (cleanStr(currentUser) === 'tito') valEl.innerText = extComMonth ? fmt(extComMonth.tito_cut) : '$0.00';
+                    if (cleanStr(currentUser) === 'jesus') valEl.innerText = extComMonth ? fmt(extComMonth.jesus_cut) : '$0.00';
+                }
+            }
+        }
+
+        if (userType === 'master') {
+            document.getElementById('card-ext-gus-tito')?.classList.remove('hidden');
+            document.getElementById('card-ext-gus-jesus')?.classList.remove('hidden');
+            
+            document.getElementById('dash-ext-gus-tito').innerText = extComMonth ? fmt(extComMonth.tito_cut) : '$0.00';
+            document.getElementById('dash-ext-gus-jesus').innerText = extComMonth ? fmt(extComMonth.jesus_cut) : '$0.00';
+        }
+
+        // TABLA DE COMISIONES EXTERNAS PARA GUSSEPY Y ADMIN
+        if (userType === 'master' || isSuperAdmin || userType === 'admin') {
+            const tbodyExt = document.getElementById('table-ext-commissions');
+            if(tbodyExt) {
+                let hE = '';
+                [...externalCommissions].sort((a,b) => b.month.localeCompare(a.month)).forEach(ex => {
+                    hE += `
+                    <tr class="border-b border-slate-50 hover:bg-slate-50/50">
+                        <td data-label="Mes" class="p-5 pl-8 font-black uppercase text-amber-600">${ex.month}</td>
+                        <td data-label="Ambos M." class="p-5 text-right font-black">${fmt(ex.ambos_marcan_income)}</td>
+                        <td data-label="Sepybet" class="p-5 text-right font-black">${fmt(ex.sepybet_income)}</td>
+                        <td data-label="Chichesepy" class="p-5 text-right font-black">${fmt(ex.chichesepy_income)}</td>
+                        <td data-label="Com. Plat" class="p-5 text-right font-black text-slate-500">${fmt(ex.com_plat_total)}</td>
+                        <td data-label="Para Jesús" class="p-5 text-right font-black text-blue-600">${fmt(ex.jesus_cut)}</td>
+                        <td data-label="Para Tito" class="p-5 text-right font-black text-emerald-600">${fmt(ex.tito_cut)}</td>
+                        <td data-label="Acción" class="p-5 pr-8 text-center">
+                            <button onclick="actionDeleteExt('${ex.id}')" class="w-8 h-8 bg-rose-50 hover:bg-rose-100 transition-colors text-rose-500 rounded-xl"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>`;
+                });
+                tbodyExt.innerHTML = hE || `<tr><td colspan="8" class="p-8 text-center text-sm font-bold text-slate-400">No hay comisiones calculadas.</td></tr>`;
+            }
+        }
     }
 
     if(userType==='master'||userType==='bonos'||isSuperAdmin||userType==='admin'){
@@ -3377,9 +3933,9 @@ function updateAllViews(){
             let hIG='';const entries=Object.values(infStatsGus);entries.sort((a,b)=>b.com-a.com||b.refs-a.refs);
             for(let i=0;i<entries.length;i++){
                 const s=entries[i];
-                if(s.refs>0||s.dep>0||s.ret>0)hIG+=`<tr class="border-b border-slate-50"><td data-label="Influyente" class="p-3 text-xs font-bold text-indigo-600 uppercase">${s.name}</td><td data-label="Total Ref." class="p-3 text-xs font-bold text-center">${s.refs}</td><td data-label="Depósitos" class="p-3 text-sm font-black text-emerald-500">${fmt(s.dep)}</td><td data-label="Retiros" class="p-3 text-sm font-black text-rose-500">${fmt(s.ret)}</td><td data-label="Neto" class="p-3 text-sm font-black">${fmt(s.net)}</td><td data-label="Com. Plat." class="p-3 text-sm font-black text-blue-600 text-right">${fmt(s.net*0.05)}</td><td data-label="Com. Pagar" class="p-3 text-sm font-black text-purple-600 text-right">${fmt(s.com)}</td></tr>`;
+                if(s.refs>0||s.dep>0||s.ret>0)hIG+=`<tr class="border-b border-slate-50 hover:bg-slate-50/50 transition-colors"><td data-label="Influyente" class="p-5 pl-6 text-xs font-bold text-indigo-600 uppercase">${s.name}</td><td data-label="Total Ref." class="p-5 text-xs font-black text-center text-slate-700">${s.refs}</td><td data-label="Depósitos" class="p-5 text-sm font-black text-emerald-500 text-right">${fmt(s.dep)}</td><td data-label="Retiros" class="p-5 text-sm font-black text-rose-500 text-right">${fmt(s.ret)}</td><td data-label="Neto" class="p-5 text-sm font-black text-slate-700 text-right">${fmt(s.net)}</td><td data-label="Com. Plat." class="p-5 text-sm font-black text-blue-500 text-right">${fmt(s.net*0.05)}</td><td data-label="Com. Pagar" class="p-5 pr-6 text-sm font-black text-purple-600 text-right">${fmt(s.com)}</td></tr>`;
             }
-            elGusInfTable.innerHTML=hIG||`<tr><td colspan="7" class="p-6 text-center text-sm text-slate-400">Sin datos de influyentes.</td></tr>`;
+            elGusInfTable.innerHTML=hIG||`<tr><td colspan="7" class="p-8 text-center text-sm font-bold text-slate-400">Sin datos de influyentes.</td></tr>`;
         }
 
         let displayBonos=[...bonos];
@@ -3400,7 +3956,7 @@ function updateAllViews(){
                 else statusBadge=`<span class="bg-slate-100 text-slate-600 px-2 py-1 rounded text-[10px] font-black uppercase">${b.status || 'Entregado'}</span>`;
                 
                 let btnAction=(userType==='bonos'||isSuperAdmin)?`<div class="flex justify-center gap-1">${(b.status!=='Ganado' && b.status!=='Perdido')?`<button onclick="actionBonoWin('${b.id}')" class="px-2 py-1 bg-emerald-500 text-white text-[10px] rounded">Ganar</button>`:''}<button onclick="actionDelete('${b.id}', 'bono')" class="w-7 h-7 bg-rose-50 text-rose-500 rounded"><i class="fas fa-trash"></i></button></div>`:`<span class="text-[10px] text-slate-400 font-bold">-</span>`;
-                hB+=`<tr class="border-b border-rose-50"><td data-label="Fecha" class="p-3 text-xs font-bold text-slate-600">${fmtDate(b.date)}</td><td data-label="Jugador" class="p-3 text-xs font-bold text-indigo-600 uppercase flex items-center gap-1">${b.assignedTo} <span class="bg-indigo-100 text-indigo-700 px-1 py-0.5 rounded text-[9px]">${b.company||'Sepybet'}</span></td><td data-label="Monto Inicial" class="p-3 text-sm font-black">${fmt(b.amount)}</td><td data-label="Detalle" class="p-3 text-xs text-slate-500">${b.concept}</td><td data-label="Estado" class="p-3">${statusBadge}</td><td data-label="Acción" class="p-3 text-center">${btnAction}</td></tr>`;
+                hB+=`<tr class="border-b border-rose-50 hover:bg-slate-50/50 transition-colors"><td data-label="Fecha" class="p-3 text-xs font-bold text-slate-600">${fmtDate(b.date)}</td><td data-label="Jugador" class="p-3 text-xs font-bold text-indigo-600 uppercase flex items-center gap-1">${b.assignedTo} <span class="bg-indigo-100 text-indigo-700 px-1 py-0.5 rounded text-[9px]">${b.company||'Sepybet'}</span></td><td data-label="Monto Inicial" class="p-3 text-sm font-black">${fmt(b.amount)}</td><td data-label="Detalle" class="p-3 text-xs text-slate-500">${b.concept}</td><td data-label="Estado" class="p-3">${statusBadge}</td><td data-label="Acción" class="p-3 text-center">${btnAction}</td></tr>`;
             }
             elTableBonos.innerHTML=hB||`<tr><td colspan="6" class="p-4 text-center text-sm text-slate-400">Sin bonos.</td></tr>`;
         }
@@ -3418,7 +3974,7 @@ function updateAllViews(){
                 const g=pagG[i];
                 let statusBadge=(g.status==='Ganado')?`<span class="bg-emerald-100 text-emerald-700 px-2 py-1 rounded text-[10px] font-black uppercase">Ganó ${fmt(g.amountWon)}</span>`:`<span class="bg-slate-100 text-slate-600 px-2 py-1 rounded text-[10px] font-black uppercase">Entregado</span>`;
                 let btnAction=(userType==='bonos'||isSuperAdmin)?`<div class="flex justify-center gap-1">${g.status!=='Ganado'?`<button onclick="actionGiroWin('${g.id}')" class="px-2 py-1 bg-emerald-500 text-white text-[10px] rounded">Ganar</button>`:''}<button onclick="actionDelete('${g.id}', 'giro')" class="w-7 h-7 bg-rose-50 text-rose-500 rounded"><i class="fas fa-trash"></i></button></div>`:`<span class="text-[10px] text-slate-400 font-bold">-</span>`;
-                hG+=`<tr class="border-b border-rose-50"><td data-label="Fecha" class="p-3 text-xs font-bold text-slate-600">${fmtDate(g.date)}</td><td data-label="Plataforma" class="p-3 text-xs font-bold text-indigo-600 uppercase flex items-center gap-1">${g.dest} <span class="bg-indigo-100 text-indigo-700 px-1 py-0.5 rounded text-[9px]">${g.company||'Sepybet'}</span></td><td data-label="Juego" class="p-3 text-xs font-bold">${g.game}</td><td data-label="Giros" class="p-3 text-sm font-black">${g.qty}</td><td data-label="Estado" class="p-3">${statusBadge}</td><td data-label="Acción" class="p-3 text-center">${btnAction}</td></tr>`;
+                hG+=`<tr class="border-b border-rose-50 hover:bg-slate-50/50 transition-colors"><td data-label="Fecha" class="p-3 text-xs font-bold text-slate-600">${fmtDate(g.date)}</td><td data-label="Plataforma" class="p-3 text-xs font-bold text-indigo-600 uppercase flex items-center gap-1">${g.dest} <span class="bg-indigo-100 text-indigo-700 px-1 py-0.5 rounded text-[9px]">${g.company||'Sepybet'}</span></td><td data-label="Juego" class="p-3 text-xs font-bold">${g.game}</td><td data-label="Giros" class="p-3 text-sm font-black">${g.qty}</td><td data-label="Estado" class="p-3">${statusBadge}</td><td data-label="Acción" class="p-3 text-center">${btnAction}</td></tr>`;
             }
             elTableGiros.innerHTML=hG||`<tr><td colspan="7" class="p-4 text-center text-sm text-slate-400">Sin giros.</td></tr>`;
         }
@@ -3435,7 +3991,7 @@ function updateAllViews(){
             for(let i=0;i<pagR.length;i++){
                 const r=pagR[i];
                 let btnAction=(userType==='bonos'||isSuperAdmin)?`<button onclick="actionDelete('${r.id}', 'referral')" class="w-7 h-7 bg-rose-50 text-rose-500 rounded mx-auto"><i class="fas fa-trash"></i></button>`:`<span class="text-[10px] text-slate-400 font-bold">Ok</span>`;
-                hR+=`<tr class="border-b border-indigo-50"><td data-label="Fecha" class="p-3 text-xs font-bold">${fmtDate(r.date)}</td><td data-label="Referente" class="p-3 text-xs font-bold text-indigo-600 uppercase flex items-center gap-1">${r.referrer} <span class="bg-indigo-100 text-indigo-700 px-1 py-0.5 rounded text-[9px]">${r.company||'Sepybet'}</span></td><td data-label="Nuevo Referido" class="p-3 text-xs font-bold uppercase">${r.referred}</td><td data-label="Cédula" class="p-3 text-xs font-mono">${r.cedula}</td><td data-label="Pago" class="p-3 text-sm font-black text-emerald-600">${fmt(r.amount)}</td><td data-label="Acción" class="p-3 text-center">${btnAction}</td></tr>`;
+                hR+=`<tr class="border-b border-indigo-50 hover:bg-slate-50/50 transition-colors"><td data-label="Fecha" class="p-3 text-xs font-bold">${fmtDate(r.date)}</td><td data-label="Referente" class="p-3 text-xs font-bold text-indigo-600 uppercase flex items-center gap-1">${r.referrer} <span class="bg-indigo-100 text-indigo-700 px-1 py-0.5 rounded text-[9px]">${r.company||'Sepybet'}</span></td><td data-label="Nuevo Referido" class="p-3 text-xs font-bold uppercase">${r.referred}</td><td data-label="Cédula" class="p-3 text-xs font-mono">${r.cedula}</td><td data-label="Pago" class="p-3 text-sm font-black text-emerald-600">${fmt(r.amount)}</td><td data-label="Acción" class="p-3 text-center">${btnAction}</td></tr>`;
             }
             elTableRef.innerHTML=hR||`<tr><td colspan="6" class="p-4 text-center text-sm text-slate-400">Sin referidos.</td></tr>`;
         }
@@ -3453,7 +4009,7 @@ function updateAllViews(){
             for(let i=0;i<pagM.length;i++){
                 const r=pagM[i];
                 let btnAction=`<div class="flex justify-center gap-1"><button onclick="actionEditRend('${r.id}')" class="w-7 h-7 bg-blue-50 text-blue-600 rounded"><i class="fas fa-pen"></i></button><button onclick="actionDelete('${r.id}', 'rendimiento')" class="w-7 h-7 bg-rose-50 text-rose-500 rounded"><i class="fas fa-trash"></i></button></div>`;
-                hM+=`<tr class="border-b border-pink-50"><td data-label="Fecha" class="p-3 text-xs font-bold pl-2">${fmtDate(r.date)}</td><td data-label="Influyente" class="p-3 text-xs font-bold text-indigo-600 uppercase">${r.referrer}</td><td data-label="Jugador" class="p-3 text-xs font-bold uppercase">${r.referred}</td><td data-label="Depósitos" class="p-3 text-sm font-black text-emerald-600">${fmt(r.depositos)}</td><td data-label="Retiros" class="p-3 text-sm font-black text-rose-600">${fmt(r.retiros)}</td><td data-label="Comisión" class="p-3 text-sm font-black text-purple-600">${fmt(r.comision)}</td><td data-label="Acción" class="p-3 text-center pr-2">${btnAction}</td></tr>`;
+                hM+=`<tr class="border-b border-pink-50 hover:bg-slate-50/50 transition-colors"><td data-label="Fecha" class="p-3 text-xs font-bold pl-2">${fmtDate(r.date)}</td><td data-label="Influyente" class="p-3 text-xs font-bold text-indigo-600 uppercase">${r.referrer}</td><td data-label="Jugador" class="p-3 text-xs font-bold uppercase">${r.referred}</td><td data-label="Depósitos" class="p-3 text-sm font-black text-emerald-600">${fmt(r.depositos)}</td><td data-label="Retiros" class="p-3 text-sm font-black text-rose-600">${fmt(r.retiros)}</td><td data-label="Comisión" class="p-3 text-sm font-black text-purple-600">${fmt(r.comision)}</td><td data-label="Acción" class="p-3 text-center pr-2">${btnAction}</td></tr>`;
             }
             elTableRend.innerHTML=hM||`<tr><td colspan="7" class="p-4 text-center text-sm text-slate-400">Sin cargas.</td></tr>`;
         }
@@ -3479,7 +4035,7 @@ function updateAllViews(){
             let hI='';const pagI=paginate(inactivosList,'inactivos');
             for(let i=0;i<pagI.length;i++){
                 const r=pagI[i];let statusColor=r.days>30?'text-rose-600 bg-rose-100':'text-amber-600 bg-amber-100';
-                hI+=`<tr class="border-b border-amber-50"><td data-label="Influencer" class="p-3 text-xs font-bold text-indigo-600 uppercase">${r.influencer}</td><td data-label="Jugador" class="p-3 text-xs font-bold uppercase">${r.jugador}</td><td data-label="Último Mov." class="p-3 text-xs text-slate-500">${fmtDate(r.lastDate)}</td><td data-label="Días Inactivo" class="p-3 text-sm font-black text-amber-600">${r.days} días</td><td data-label="Estado" class="p-3 text-center"><span class="px-2 py-1 rounded text-[10px] font-black uppercase ${statusColor}">Alerta</span></td></tr>`;
+                hI+=`<tr class="border-b border-amber-50 hover:bg-slate-50/50 transition-colors"><td data-label="Influencer" class="p-3 text-xs font-bold text-indigo-600 uppercase">${r.influencer}</td><td data-label="Jugador" class="p-3 text-xs font-bold uppercase">${r.jugador}</td><td data-label="Último Mov." class="p-3 text-xs text-slate-500">${fmtDate(r.lastDate)}</td><td data-label="Días Inactivo" class="p-3 text-sm font-black text-amber-600">${r.days} días</td><td data-label="Estado" class="p-3 text-center"><span class="px-2 py-1 rounded text-[10px] font-black uppercase ${statusColor}">Alerta</span></td></tr>`;
             }
             elTableInactivos.innerHTML=hI||`<tr><td colspan="5" class="p-4 text-center text-sm text-slate-400">Sin inactivos.</td></tr>`;
         }
@@ -3498,7 +4054,7 @@ function updateAllViews(){
             for(let i=0; i<pagBR.length; i++){
                 const r = pagBR[i];
                 let badge = r.status==='Verificado' ? `<span class="bg-emerald-100 text-emerald-700 px-2 py-1 rounded text-[10px] font-black uppercase"><i class="fas fa-check"></i> Verif</span>` : `<span class="bg-amber-100 text-amber-700 px-2 py-1 rounded text-[10px] font-black uppercase">Pendiente</span>`;
-                hBR += `<tr class="border-b border-slate-50"><td data-label="Fecha" class="p-3 text-xs font-bold pl-2">${fmtDate(r.date)}</td><td data-label="Jugador" class="p-3 text-xs font-bold uppercase text-indigo-600">${r.receipt || '-'}</td><td data-label="Monto" class="p-3 text-sm font-black text-emerald-600">${fmt(Math.abs(r.amount))}</td><td data-label="Concepto" class="p-3 text-[10px] italic text-slate-500">${r.comment || r.concept}</td><td data-label="Responsable" class="p-3 text-xs font-bold text-slate-600">${USERS[cleanStr(r.createdBy)]?.name || r.createdBy}</td><td data-label="Estado" class="p-3 text-center pr-2">${badge}</td></tr>`;
+                hBR += `<tr class="border-b border-slate-50 hover:bg-slate-50/50 transition-colors"><td data-label="Fecha" class="p-3 text-xs font-bold pl-2">${fmtDate(r.date)}</td><td data-label="Jugador" class="p-3 text-xs font-bold uppercase text-indigo-600">${r.receipt || '-'}</td><td data-label="Monto" class="p-3 text-sm font-black text-emerald-600">${fmt(Math.abs(r.amount))}</td><td data-label="Concepto" class="p-3 text-[10px] italic text-slate-500">${r.comment || r.concept}</td><td data-label="Responsable" class="p-3 text-xs font-bold text-slate-600">${USERS[cleanStr(r.createdBy)]?.name || r.createdBy}</td><td data-label="Estado" class="p-3 text-center pr-2">${badge}</td></tr>`;
             }
             elTableBonosReal.innerHTML = hBR || `<tr><td colspan="6" class="p-4 text-center text-sm text-slate-400">No hay bonos de saldo real registrados.</td></tr>`;
         }
@@ -3650,7 +4206,6 @@ function updateAllViews(){
   }
 }
 
-// === LÓGICA DEL FEED EN VIVO (Con Notificaciones para Influencers) ===
 function renderTimeline() {
     const adminFeedContainer = document.getElementById('live-timeline-feed');
     const infFeedContainer = document.getElementById('live-timeline-feed-inf');

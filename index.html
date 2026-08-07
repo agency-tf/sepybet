@@ -67,7 +67,7 @@ input[type="number"] { -moz-appearance: textfield; }
 .sidebar-mobile { transform: translateX(-100%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
 .sidebar-mobile.open { transform: translateX(0); }
 
-/* === CORRECCIÓN DEL MENÚ PARA QUE NO SE ASOME LA LETRA 'P' === */
+/* Corrección de la P del menú para que no se asome al minimizar */
 .sidebar-text {
     white-space: nowrap;
     overflow: hidden;
@@ -291,17 +291,17 @@ input[type="number"] { -moz-appearance: textfield; }
                     <input type="month" id="dash-month-filter" onchange="updateAllViews()" class="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-bold text-slate-700 outline-none focus:border-brand-500 transition-all w-full sm:w-auto">
                 </div>
 
-                <!-- PANEL PERSONAL PARA TITO Y JESÚS CON SUS GRAFICAS INTACTAS -->
+                <!-- PANEL PERSONAL PARA TITO Y JESÚS -->
                 <div id="panel-personal" class="hidden mb-6 flex flex-col gap-6">
                     
-                    <!-- NUEVA TARJETA NARANJA DE COMISIONES EXTERNAS -->
+                    <!-- NUEVA TARJETA NARANJA DE COMISIONES EXTERNAS (Solo la ven Tito o Jesús) -->
                     <div id="card-ext-user" class="hidden bg-gradient-to-br from-amber-400 to-orange-500 border border-amber-300 p-8 rounded-[24px] shadow-floating hover-lift relative overflow-hidden text-white cursor-pointer" onclick="viewExtDetailTitoJesus()">
                         <i class="fas fa-star absolute -right-4 -bottom-4 text-7xl text-white/20 transform -rotate-12"></i>
                         <div class="flex justify-between items-start mb-4 relative z-10">
                             <div class="w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-2xl border border-white/20 shadow-inner"><i class="fas fa-money-bill-wave"></i></div>
                             <span class="bg-white/20 backdrop-blur-md border border-white/20 px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider">A FAVOR <i class="fas fa-external-link-alt ml-1 text-[10px]"></i></span>
                         </div>
-                        <p class="text-xs text-amber-900 font-black uppercase tracking-widest mb-1 relative z-10">Mis Comisiones Externas (Mes)</p>
+                        <p class="text-xs text-amber-900 font-black uppercase tracking-widest mb-1 relative z-10">Mi Saldo Extra (Mes)</p>
                         <h3 class="text-5xl font-black text-white relative z-10 tracking-tight" id="dash-ext-user-val">$0.00</h3>
                         
                         <!-- TABLA DE DESGLOSE INTERNA -->
@@ -334,9 +334,9 @@ input[type="number"] { -moz-appearance: textfield; }
                     </div>
                 </div>
 
-                <!-- PANELES ADMINISTRATIVOS PARA MASTER / ADMIN -->
+                <!-- PANELES ADMINISTRATIVOS PARA MASTER / SUPERADMIN / ADMIN -->
                 <div id="panel-admin" class="hidden mb-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <div class="bg-white border border-slate-100 p-6 rounded-[24px] card-shadow relative overflow-hidden group">
+                    <div id="card-admin-saldo-jesus" class="bg-white border border-slate-100 p-6 rounded-[24px] card-shadow relative overflow-hidden group">
                         <div class="absolute -right-6 -top-6 w-24 h-24 bg-blue-50 rounded-full blur-2xl group-hover:bg-blue-100 transition-colors"></div>
                         <div class="flex justify-between items-start mb-4 relative z-10">
                             <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl shadow-inner"><i class="fas fa-user"></i></div>
@@ -346,7 +346,7 @@ input[type="number"] { -moz-appearance: textfield; }
                         <h3 class="text-3xl font-black text-slate-800 relative z-10 tracking-tight" id="dash-jesus">$0.00</h3>
                     </div>
 
-                    <div class="bg-white border border-slate-100 p-6 rounded-[24px] card-shadow relative overflow-hidden group">
+                    <div id="card-admin-saldo-tito" class="bg-white border border-slate-100 p-6 rounded-[24px] card-shadow relative overflow-hidden group">
                         <div class="absolute -right-6 -top-6 w-24 h-24 bg-emerald-50 rounded-full blur-2xl group-hover:bg-emerald-100 transition-colors"></div>
                         <div class="flex justify-between items-start mb-4 relative z-10">
                             <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl shadow-inner"><i class="fas fa-user-tie"></i></div>
@@ -356,7 +356,8 @@ input[type="number"] { -moz-appearance: textfield; }
                         <h3 class="text-3xl font-black text-slate-800 relative z-10 tracking-tight" id="dash-tito">$0.00</h3>
                     </div>
 
-                    <!-- TARJETAS PARA GUSSEPY (Para desglosar comisiones tito/jesus) -->
+<!-- TARJETAS PARA GUSSEPY Y SUPERADMIN (Desglose comisiones extra) -->
+                    <!-- NOTA: Michelle no verá estas tarjetas por seguridad -->
                     <div id="card-ext-gus-jesus" class="hidden cursor-pointer bg-gradient-to-br from-blue-500 to-indigo-600 border border-blue-400 p-6 rounded-[24px] shadow-floating hover-lift relative overflow-hidden text-white" onclick="viewExtDetailGussepy()">
                         <i class="fas fa-user absolute -right-4 -bottom-4 text-7xl text-white/10 transform -rotate-12"></i>
                         <div class="flex justify-between items-start mb-4 relative z-10">
@@ -377,7 +378,7 @@ input[type="number"] { -moz-appearance: textfield; }
                         <h3 class="text-4xl font-black text-white relative z-10 tracking-tight" id="dash-ext-gus-tito">$0.00</h3>
                     </div>
 
-                    <!-- ESTAS SON LAS DE ADMIN -->
+                    <!-- ESTAS SON LAS DE ADMIN / MASTER -->
                     <div id="card-gussepy-admin" class="bg-gradient-to-br from-amber-400 to-orange-500 border border-amber-300 p-6 rounded-[24px] shadow-floating relative overflow-hidden text-white">
                         <i class="fas fa-star absolute -right-4 -bottom-4 text-7xl text-white/20 transform -rotate-12"></i>
                         <div class="flex justify-between items-start mb-4 relative z-10">
@@ -459,7 +460,6 @@ input[type="number"] { -moz-appearance: textfield; }
                 </div>
 
                 <!-- DISEÑO DIVIDIDO: TABLA (IZQ) + ACTIVIDAD EN VIVO (DER) -->
-                <!-- Se visualiza para Tito y Jesus también -->
                 <div id="panel-dash-movimientos" class="hidden">
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-8">
                         <div class="lg:col-span-2 bg-white border border-slate-100 rounded-[24px] card-shadow overflow-hidden flex flex-col">
@@ -500,7 +500,7 @@ input[type="number"] { -moz-appearance: textfield; }
                 </div>
             </div>
 
-            <!-- TAB AJUSTES DE COMISIONES (SOLO GUSSEPY - ACEPTA DECIMALES) -->
+            <!-- TAB AJUSTES DE COMISIONES (SOLO GUSSEPY) -->
             <div id="tab-config" class="hidden fade-in tab-content">
                 <div class="max-w-4xl mx-auto space-y-8">
                     <div class="bg-white border border-slate-200 rounded-[24px] card-shadow overflow-hidden">
@@ -571,7 +571,7 @@ input[type="number"] { -moz-appearance: textfield; }
                 </div>
             </div>
 
-<!-- TAB COMISIONES EXTERNAS (GUSSEPY) -->
+            <!-- TAB COMISIONES EXTERNAS (GUSSEPY) -->
             <div id="tab-gussepy-externas" class="hidden fade-in tab-content">
                 <div class="max-w-6xl mx-auto space-y-8">
                     <div class="bg-white border border-amber-200 rounded-[24px] card-shadow overflow-hidden">
@@ -607,7 +607,7 @@ input[type="number"] { -moz-appearance: textfield; }
                                 </div>
                                 <div>
                                     <label class="block text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2 ml-2">Total Com. Plat. VIP (Auto)</label>
-                                    <input type="text" id="ext-complat" readonly placeholder="0.00" class="block w-full px-5 py-4 border border-slate-200 bg-slate-100 rounded-2xl text-xl font-black text-slate-500 outline-none cursor-not-allowed shadow-sm" title="Se calcula automáticamente (5% del Neto VIP del mes)">
+                                    <input type="text" id="ext-complat" readonly placeholder="0.00" class="block w-full px-5 py-4 border border-slate-200 bg-slate-100 rounded-2xl text-xl font-black text-slate-500 outline-none cursor-not-allowed shadow-inner opacity-70" title="El sistema calcula el 5% del Neto VIP de este mes y lo rellena automáticamente">
                                 </div>
                             </div>
                             <button type="submit" class="w-full py-4 bg-amber-500 hover:bg-amber-600 text-white font-extrabold rounded-2xl shadow-floating transition-transform active:scale-[0.98]"><i class="fas fa-calculator mr-2"></i> Procesar y Asignar a Cuentas</button>
@@ -939,12 +939,12 @@ input[type="number"] { -moz-appearance: textfield; }
                 </div>
             </div>
 
-            <!-- TAB BONOS REALES -->
+<!-- TAB BONOS REALES -->
             <div id="tab-bonos-reales" class="hidden fade-in tab-content">
                 <div class="max-w-7xl mx-auto space-y-6">
                     <div class="bg-white border border-teal-100 p-6 rounded-[24px] card-shadow">
                         <div class="flex flex-col lg:flex-row items-end gap-4 w-full">
-                            <div class="w-full lg:w-auto flex-1"><label class="block text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2 ml-1">Desde</label><input type="date" id="filter-breales-from" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs font-bold outline-none focus:border-teal-500 transition-colors"></div>
+                            <div class="w-full lg:w-auto flex-1"><label class="block text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2 ml-1">Desde</label><input type="date" id="filter-breales-from" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs font-bold outline-none focus:border-teal-50 transition-colors"></div>
                             <div class="w-full lg:w-auto flex-1"><label class="block text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2 ml-1">Hasta</label><input type="date" id="filter-breales-to" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs font-bold outline-none focus:border-teal-500 transition-colors"></div>
                             <div class="w-full lg:w-auto flex-1"><label class="block text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2 ml-1">Buscar Jugador</label><input type="text" id="filter-breales-jugador" oninput="bonoRealFilters.jugador=this.value.trim().toLowerCase(); updateAllViews();" placeholder="ID Jugador..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs font-bold outline-none focus:border-teal-500 transition-colors"></div>
                             <div class="flex gap-2 w-full lg:w-auto mt-4 lg:mt-0">
@@ -1894,21 +1894,24 @@ input[type="number"] { -moz-appearance: textfield; }
     </div>
 </div>
 
-<!-- NUEVO MODAL: DETALLE RECIBO EXTERNAS -->
+<!-- NUEVO MODAL: DETALLE RECIBO EXTERNAS CON DISEÑO RECIBO -->
 <div id="modal-ext-detail" class="fixed inset-0 z-[60] bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4">
-    <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-md overflow-hidden fade-in border border-amber-100">
-        <div class="p-8 text-center border-b border-amber-50 bg-amber-50/50">
+    <div class="bg-[#fcfaf5] rounded-[2rem] shadow-2xl w-full max-w-md overflow-hidden fade-in border-t-8 border-t-amber-500 relative">
+        <!-- Efecto diente de sierra abajo para simular ticket -->
+        <div class="absolute bottom-0 left-0 right-0 h-4" style="background-image: radial-gradient(circle at 10px 0, transparent 10px, #fcfaf5 11px); background-size: 20px 20px; background-repeat: repeat-x; transform: translateY(100%);"></div>
+        <div class="p-8 text-center border-b border-amber-100">
             <h3 class="text-xl font-black text-slate-800 tracking-tight flex items-center justify-center gap-2"><i class="fas fa-file-invoice-dollar text-amber-500"></i> Recibo Detallado</h3>
-            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1" id="ext-det-month">MES</p>
+            <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mt-1" id="ext-det-month">PERIODO: ----</p>
         </div>
         <div class="p-8">
-            <div id="ext-det-body" class="space-y-4 text-sm font-semibold text-slate-600">
-                <!-- Se inyecta por JS -->
+            <div id="ext-det-body" class="space-y-6 text-sm font-semibold text-slate-600">
+                <!-- Se inyecta por JS (Desglose Tito y Jesús) -->
             </div>
-            <button onclick="closeExtDetailModal()" class="w-full py-4 mt-6 bg-slate-800 hover:bg-slate-900 text-white rounded-2xl font-bold shadow-md transition-colors">Cerrar</button>
+            <button onclick="closeExtDetailModal()" class="w-full py-4 mt-8 bg-slate-800 hover:bg-slate-900 text-white rounded-2xl font-bold shadow-md transition-colors">Cerrar</button>
         </div>
     </div>
 </div>
+
 <script>
 // === MOTOR DE LIMPIEZA Y NORMALIZACIÓN ===
 const cleanStr = (str) => {
@@ -2122,7 +2125,6 @@ function populateMessageDropdown() {
         }
 
         if (canSend) {
-            // MOSTRAR SOLO EL NOMBRE DEL USUARIO LIMPIO
             html += `<option value="${k}">${USERS[k].name}</option>`;
         }
     });
@@ -2801,6 +2803,7 @@ async function saveGlobalSettings(e) {
         await db.from('settings').upsert(sets);
         showToast("Reglas actualizadas correctamente", "success");
         sets.forEach(s => globalSettings[s.key] = parseFloat(s.value));
+        updateAllViews();
     } catch(err) { showToast("Error al guardar reglas", "error"); }
     btn.innerHTML = orig; btn.disabled = false;
 }
@@ -2870,21 +2873,51 @@ function viewExtDetailTitoJesus() {
     const extComMonth = externalCommissions.find(x => x.month === document.getElementById('dash-month-filter').value);
     if(extComMonth && extComMonth.details) {
         document.getElementById('ext-det-month').innerText = 'PERIODO: ' + extComMonth.month;
-        document.getElementById('ext-det-body').innerHTML = extComMonth.details;
+        
+        // Determinar qué parte del desglose mostrar basado en el usuario actual
+        const isTito = cleanStr(currentUser) === 'tito';
+        
+        let specificDetail = '';
+        if (isTito) {
+            specificDetail = `
+                <div class="text-left">
+                    <h4 class="font-black text-emerald-600 mb-1 border-b border-emerald-100 pb-1 flex justify-between"><span>Para Tito:</span> <span>${fmt(extComMonth.tito_cut)}</span></h4>
+                    <ul class="text-xs space-y-1 mt-2 text-slate-500">
+                        <li class="flex justify-between"><span>Sepybet (${globalSettings.tito_sepybet_pct}%)</span> <span class="font-black text-slate-700">${fmt(extComMonth.sepybet_income * (globalSettings.tito_sepybet_pct/100))}</span></li>
+                        <li class="flex justify-between"><span>Chichesepy (${globalSettings.tito_chichesepy_pct}%)</span> <span class="font-black text-slate-700">${fmt(extComMonth.chichesepy_income * (globalSettings.tito_chichesepy_pct/100))}</span></li>
+                        <li class="flex justify-between"><span>Com. Plataforma VIP (5%)</span> <span class="font-black text-slate-700">${fmt(extComMonth.com_plat_total)}</span></li>
+                    </ul>
+                </div>
+            `;
+        } else {
+            specificDetail = `
+                <div class="mb-4 text-left">
+                    <h4 class="font-black text-blue-600 mb-1 border-b border-blue-100 pb-1 flex justify-between"><span>Para Jesús:</span> <span>${fmt(extComMonth.jesus_cut)}</span></h4>
+                    <ul class="text-xs space-y-1 mt-2 text-slate-500">
+                        <li class="flex justify-between"><span>Ambos Marcan (${globalSettings.jesus_ambos_marcan_pct}%)</span> <span class="font-black text-slate-700">${fmt(extComMonth.ambos_marcan_income * (globalSettings.jesus_ambos_marcan_pct/100))}</span></li>
+                        <li class="flex justify-between"><span>Sepybet (${globalSettings.jesus_sepybet_pct}%)</span> <span class="font-black text-slate-700">${fmt(extComMonth.sepybet_income * (globalSettings.jesus_sepybet_pct/100))}</span></li>
+                        <li class="flex justify-between"><span>Chichesepy (${globalSettings.jesus_chichesepy_pct}%)</span> <span class="font-black text-slate-700">${fmt(extComMonth.chichesepy_income * (globalSettings.jesus_chichesepy_pct/100))}</span></li>
+                    </ul>
+                </div>
+            `;
+        }
+        
+        document.getElementById('ext-det-body').innerHTML = specificDetail;
         document.getElementById('modal-ext-detail').classList.replace('hidden', 'flex');
     } else {
         showToast("No hay detalles guardados para este mes.", "warning");
     }
 }
 
-function viewExtDetailGussepy() {
-    const extComMonth = externalCommissions.find(x => x.month === document.getElementById('dash-month-filter').value);
+function viewExtDetailGussepy(idMes=null) {
+    let targetMonth = idMes || document.getElementById('dash-month-filter').value;
+    const extComMonth = externalCommissions.find(x => x.month === targetMonth);
     if(extComMonth && extComMonth.details) {
         document.getElementById('ext-det-month').innerText = 'PERIODO: ' + extComMonth.month;
         document.getElementById('ext-det-body').innerHTML = extComMonth.details;
         document.getElementById('modal-ext-detail').classList.replace('hidden', 'flex');
     } else {
-        showToast("Aún no generaste el recibo de este mes en 'Comisiones Ext.'", "warning");
+        showToast("Aún no se ha generado el recibo para este periodo", "warning");
     }
 }
 
@@ -4017,6 +4050,7 @@ function updateAllViews(){
         
         let totalComPlatAuto = 0;
 
+        // CALCULAR COMISIONES DE LA RED Y EXTRAER EL 5% DE LA PLATAFORMA
         if(userType==='master'||userType==='bonos'||isSuperAdmin||userType==='admin'){
             const gusInfMF=document.getElementById('gus-inf-month-filter')?.value||dashMF;const infStatsGus={};
             referrals.forEach(r=>{
@@ -4042,6 +4076,7 @@ function updateAllViews(){
                 totalComPlatAuto += (s.net * 0.05);
             });
 
+            // INYECTA EL VALOR AUTOMATICO EN EL INPUT (AUNQUE ESTÉ BLOQUEADO)
             const elComPlatInput = document.getElementById('ext-complat');
             if(elComPlatInput) {
                 elComPlatInput.value = totalComPlatAuto.toFixed(2);
@@ -4148,7 +4183,7 @@ function updateAllViews(){
             }
         }
 
-        // MOSTRAR COMISIONES EXTERNAS CALCULADAS PARA TITO Y JESÚS
+        // MOSTRAR COMISIONES EXTERNAS CALCULADAS PARA TITO Y JESÚS EN SU PANEL PERSONAL (BLOQUE PRIVADO)
         const extComMonth = externalCommissions.find(x => x.month === globalMF);
         if (userType === 'user') {
             if (cleanStr(currentUser) === 'tito' || cleanStr(currentUser) === 'jesus') {
@@ -4161,9 +4196,8 @@ function updateAllViews(){
                 if(extComMonth) {
                     if (cleanStr(currentUser) === 'tito') {
                         valEl.innerText = fmt(extComMonth.tito_cut);
-                        breakdownEl.innerHTML = `<ul class="text-xs space-y-1 mt-2 text-slate-100"><li class="flex justify-between"><span>Sepybet</span> <span class="font-black">${fmt(extComMonth.sepybet_income * (globalSettings.tito_sepybet_pct/100))}</span></li><li class="flex justify-between"><span>Chichesepy</span> <span class="font-black">${fmt(extComMonth.chichesepy_income * (globalSettings.tito_chichesepy_pct/100))}</span></li><li class="flex justify-between"><span>Com. Plataforma VIP</span> <span class="font-black">${fmt(extComMonth.com_plat_total)}</span></li></ul>`;
-                    }
-                    if (cleanStr(currentUser) === 'jesus') {
+                        breakdownEl.innerHTML = `<ul class="text-xs space-y-1 mt-2 text-slate-100"><li class="flex justify-between"><span>Sepybet</span> <span class="font-black">${fmt(extComMonth.sepybet_income * (globalSettings.tito_sepybet_pct/100))}</span></li><li class="flex justify-between"><span>Chichesepy</span> <span class="font-black">${fmt(extComMonth.chichesepy_income * (globalSettings.tito_chichesepy_pct/100))}</span></li><li class="flex justify-between"><span>Com. Plataforma VIP (Auto)</span> <span class="font-black">${fmt(extComMonth.com_plat_total)}</span></li></ul>`;
+                    } else if (cleanStr(currentUser) === 'jesus') {
                         valEl.innerText = fmt(extComMonth.jesus_cut);
                         breakdownEl.innerHTML = `<ul class="text-xs space-y-1 mt-2 text-slate-100"><li class="flex justify-between"><span>Ambos Marcan</span> <span class="font-black">${fmt(extComMonth.ambos_marcan_income * (globalSettings.jesus_ambos_marcan_pct/100))}</span></li><li class="flex justify-between"><span>Sepybet</span> <span class="font-black">${fmt(extComMonth.sepybet_income * (globalSettings.jesus_sepybet_pct/100))}</span></li><li class="flex justify-between"><span>Chichesepy</span> <span class="font-black">${fmt(extComMonth.chichesepy_income * (globalSettings.jesus_chichesepy_pct/100))}</span></li></ul>`;
                     }
@@ -4174,16 +4208,21 @@ function updateAllViews(){
             }
         }
 
-        if (userType === 'master') {
+        // PANEL DE MASTER Y ADMIN - MUESTRAN LOS GLOBALES DE AMBOS
+        if (userType === 'master' || isSuperAdmin) {
             document.getElementById('card-ext-gus-tito')?.classList.remove('hidden');
             document.getElementById('card-ext-gus-jesus')?.classList.remove('hidden');
             
             if(document.getElementById('dash-ext-gus-tito')) document.getElementById('dash-ext-gus-tito').innerText = extComMonth ? fmt(extComMonth.tito_cut) : '$0.00';
             if(document.getElementById('dash-ext-gus-jesus')) document.getElementById('dash-ext-gus-jesus').innerText = extComMonth ? fmt(extComMonth.jesus_cut) : '$0.00';
+        } else {
+            // Se ocultan forzosamente para Michelle o cualquier otro rol no autorizado
+            document.getElementById('card-ext-gus-tito')?.classList.add('hidden');
+            document.getElementById('card-ext-gus-jesus')?.classList.add('hidden');
         }
 
-        // TABLA DE COMISIONES EXTERNAS PARA GUSSEPY Y ADMIN
-        if (userType === 'master' || isSuperAdmin || userType === 'admin') {
+        // TABLA DE COMISIONES EXTERNAS PARA GUSSEPY Y ADMIN (AHORA CON LA LUPA)
+        if (userType === 'master' || isSuperAdmin) {
             const tbodyExt = document.getElementById('table-ext-commissions');
             if(tbodyExt) {
                 let hE = '';
@@ -4197,7 +4236,8 @@ function updateAllViews(){
                         <td data-label="Com. Plat" class="p-5 text-right font-black text-slate-500">${fmt(ex.com_plat_total)}</td>
                         <td data-label="Para Jesús" class="p-5 text-right font-black text-blue-600">${fmt(ex.jesus_cut)}</td>
                         <td data-label="Para Tito" class="p-5 text-right font-black text-emerald-600">${fmt(ex.tito_cut)}</td>
-                        <td data-label="Acción" class="p-5 pr-8 text-center">
+                        <td data-label="Acción" class="p-5 pr-8 text-center flex justify-end gap-1">
+                            <button onclick="viewExtDetailGussepy('${ex.month}')" class="w-8 h-8 bg-sky-50 hover:bg-sky-100 transition-colors text-sky-500 rounded-xl" title="Ver Recibo Detallado"><i class="fas fa-search"></i></button>
                             <button onclick="actionDeleteExt('${ex.id}')" class="w-8 h-8 bg-rose-50 hover:bg-rose-100 transition-colors text-rose-500 rounded-xl"><i class="fas fa-trash"></i></button>
                         </td>
                     </tr>`;

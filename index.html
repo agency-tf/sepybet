@@ -2234,10 +2234,17 @@ function loginUI(user){
     ['panel-admin','panel-personal','panel-gussepy-bonos','panel-dash-movimientos','filter-user-container','admin-select-user','admin-select-user-bank'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.add('hidden');});
 
     const uploadSections = document.querySelectorAll('.upload-section');
+    // Hide all initially
+    uploadSections.forEach(el => el.classList.add('hidden'));
+
     if (user.type === 'cajero_afiliados' || user.type === 'bonos' || isSuperAdmin) {
         uploadSections.forEach(el => el.classList.remove('hidden'));
-    } else {
-        uploadSections.forEach(el => el.classList.add('hidden'));
+    }
+    
+    // Habilitar la carga masiva bancaria exclusivamente para Tito y Jesús
+    if (cleanStr(currentUser) === 'tito' || cleanStr(currentUser) === 'jesus') {
+        const bankUpload = document.getElementById('bank-upload-card');
+        if (bankUpload) bankUpload.classList.remove('hidden');
     }
     
     if(cleanStr(currentUser) === 'tito' || cleanStr(currentUser) === 'jesus') {
@@ -2874,7 +2881,6 @@ function viewExtDetailTitoJesus() {
     if(extComMonth && extComMonth.details) {
         document.getElementById('ext-det-month').innerText = 'PERIODO: ' + extComMonth.month;
         
-        // Determinar qué parte del desglose mostrar basado en el usuario actual
         const isTito = cleanStr(currentUser) === 'tito';
         
         let specificDetail = '';
@@ -4071,7 +4077,7 @@ function updateAllViews(){
                 infStatsGus[refKey].dep+=dep;infStatsGus[refKey].ret+=ret;infStatsGus[refKey].net+=net;infStatsGus[refKey].com+=com;
             });
 
-            // Sumar la comisión de plataforma de todos los influencers (5% del neto de cada uno)
+            // Saca el 5% de las ganancias globales de este mes para la Com. Plataforma
             Object.values(infStatsGus).forEach(s => {
                 totalComPlatAuto += (s.net * 0.05);
             });
@@ -4185,8 +4191,11 @@ function updateAllViews(){
 
         // MOSTRAR COMISIONES EXTERNAS CALCULADAS PARA TITO Y JESÚS EN SU PANEL PERSONAL (BLOQUE PRIVADO)
         const extComMonth = externalCommissions.find(x => x.month === globalMF);
-        if (userType === 'user') {
-            if (cleanStr(currentUser) === 'tito' || cleanStr(currentUser) === 'jesus') {
+        if (userType === 'user' || userType === 'admin') {
+            const isTito = cleanStr(currentUser) === 'tito';
+            const isJesus = cleanStr(currentUser) === 'jesus';
+            
+            if (isTito || isJesus) {
                 const myExtCard = document.getElementById('card-ext-user');
                 if(myExtCard) myExtCard.classList.remove('hidden');
                 
@@ -4194,10 +4203,10 @@ function updateAllViews(){
                 const breakdownEl = document.getElementById('dash-ext-user-breakdown');
 
                 if(extComMonth) {
-                    if (cleanStr(currentUser) === 'tito') {
+                    if (isTito) {
                         valEl.innerText = fmt(extComMonth.tito_cut);
                         breakdownEl.innerHTML = `<ul class="text-xs space-y-1 mt-2 text-slate-100"><li class="flex justify-between"><span>Sepybet</span> <span class="font-black">${fmt(extComMonth.sepybet_income * (globalSettings.tito_sepybet_pct/100))}</span></li><li class="flex justify-between"><span>Chichesepy</span> <span class="font-black">${fmt(extComMonth.chichesepy_income * (globalSettings.tito_chichesepy_pct/100))}</span></li><li class="flex justify-between"><span>Com. Plataforma VIP (Auto)</span> <span class="font-black">${fmt(extComMonth.com_plat_total)}</span></li></ul>`;
-                    } else if (cleanStr(currentUser) === 'jesus') {
+                    } else if (isJesus) {
                         valEl.innerText = fmt(extComMonth.jesus_cut);
                         breakdownEl.innerHTML = `<ul class="text-xs space-y-1 mt-2 text-slate-100"><li class="flex justify-between"><span>Ambos Marcan</span> <span class="font-black">${fmt(extComMonth.ambos_marcan_income * (globalSettings.jesus_ambos_marcan_pct/100))}</span></li><li class="flex justify-between"><span>Sepybet</span> <span class="font-black">${fmt(extComMonth.sepybet_income * (globalSettings.jesus_sepybet_pct/100))}</span></li><li class="flex justify-between"><span>Chichesepy</span> <span class="font-black">${fmt(extComMonth.chichesepy_income * (globalSettings.jesus_chichesepy_pct/100))}</span></li></ul>`;
                     }
@@ -4208,7 +4217,7 @@ function updateAllViews(){
             }
         }
 
-        // PANEL DE MASTER Y ADMIN - MUESTRAN LOS GLOBALES DE AMBOS
+        // PANEL DE MASTER Y SUPERADMIN - MUESTRAN LOS GLOBALES DE AMBOS
         if (userType === 'master' || isSuperAdmin) {
             document.getElementById('card-ext-gus-tito')?.classList.remove('hidden');
             document.getElementById('card-ext-gus-jesus')?.classList.remove('hidden');
@@ -4221,7 +4230,7 @@ function updateAllViews(){
             document.getElementById('card-ext-gus-jesus')?.classList.add('hidden');
         }
 
-        // TABLA DE COMISIONES EXTERNAS PARA GUSSEPY Y ADMIN (AHORA CON LA LUPA)
+        // TABLA DE COMISIONES EXTERNAS PARA GUSSEPY Y SUPERADMIN (AHORA CON LA LUPA)
         if (userType === 'master' || isSuperAdmin) {
             const tbodyExt = document.getElementById('table-ext-commissions');
             if(tbodyExt) {

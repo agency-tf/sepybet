@@ -132,7 +132,7 @@ input[type="number"] { -moz-appearance: textfield; }
     <!-- OVERLAY MÓVIL -->
     <div id="sidebar-overlay" onclick="toggleMenu(false)" class="fixed inset-0 bg-slate-950/40 backdrop-blur-sm z-40 hidden opacity-0 transition-opacity duration-300 md:hidden"></div>
     
-    <!-- SIDEBAR ORIGINAL CORREGIDO (Letra P oculta al minimizar) -->
+    <!-- SIDEBAR ORIGINAL CORREGIDO -->
     <aside id="sidebar-menu" class="fixed inset-y-0 left-0 z-50 w-72 bg-slate-950 flex flex-col py-6 border-r border-slate-800 sidebar-mobile md:relative md:transform-none md:w-[88px] md:hover:w-72 transition-all duration-300 group overflow-x-hidden h-screen">
         <div class="w-12 h-12 mx-auto md:mx-auto ml-6 md:ml-auto rounded-xl bg-gradient-to-tr from-brand-500 to-blue-500 flex items-center justify-center text-white shadow-[0_0_15px_rgba(99,102,241,0.4)] mb-8 flex-shrink-0 relative">
             <i class="fas fa-bolt text-xl"></i>
@@ -355,7 +355,6 @@ input[type="number"] { -moz-appearance: textfield; }
                         <p class="text-xs text-slate-400 font-bold uppercase tracking-widest mb-1 relative z-10">Saldo Tito</p>
                         <h3 class="text-3xl font-black text-slate-800 relative z-10 tracking-tight" id="dash-tito">$0.00</h3>
                     </div>
-
 <!-- TARJETAS PARA GUSSEPY Y SUPERADMIN (Desglose comisiones extra) -->
                     <!-- NOTA: Michelle no verá estas tarjetas por seguridad -->
                     <div id="card-ext-gus-jesus" class="hidden cursor-pointer bg-gradient-to-br from-blue-500 to-indigo-600 border border-blue-400 p-6 rounded-[24px] shadow-floating hover-lift relative overflow-hidden text-white" onclick="viewExtDetailGussepy()">
@@ -460,6 +459,7 @@ input[type="number"] { -moz-appearance: textfield; }
                 </div>
 
                 <!-- DISEÑO DIVIDIDO: TABLA (IZQ) + ACTIVIDAD EN VIVO (DER) -->
+                <!-- Se visualiza para Tito y Jesus también -->
                 <div id="panel-dash-movimientos" class="hidden">
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-8">
                         <div class="lg:col-span-2 bg-white border border-slate-100 rounded-[24px] card-shadow overflow-hidden flex flex-col">
@@ -734,7 +734,7 @@ input[type="number"] { -moz-appearance: textfield; }
                 </div>
             </div>
 
-            <!-- TAB REGISTRO MANUAL -->
+<!-- TAB REGISTRO MANUAL -->
             <div id="tab-register" class="hidden fade-in tab-content">
                 <div class="max-w-3xl mx-auto space-y-8">
                     <div class="bg-white rounded-[24px] card-shadow overflow-hidden border border-slate-100">
@@ -795,6 +795,7 @@ input[type="number"] { -moz-appearance: textfield; }
                         </form>
                     </div>
 
+                    <!-- CARGA MASIVA BANCARIA -->
                     <div id="bank-upload-card" class="upload-section bg-white rounded-[24px] card-shadow overflow-hidden border border-slate-100 mt-8">
                         <div class="px-8 py-8 border-b border-slate-100 bg-slate-50/50 flex items-center gap-4">
                             <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl shadow-sm"><i class="fas fa-university"></i></div>
@@ -939,12 +940,12 @@ input[type="number"] { -moz-appearance: textfield; }
                 </div>
             </div>
 
-<!-- TAB BONOS REALES -->
+            <!-- TAB BONOS REALES -->
             <div id="tab-bonos-reales" class="hidden fade-in tab-content">
                 <div class="max-w-7xl mx-auto space-y-6">
                     <div class="bg-white border border-teal-100 p-6 rounded-[24px] card-shadow">
                         <div class="flex flex-col lg:flex-row items-end gap-4 w-full">
-                            <div class="w-full lg:w-auto flex-1"><label class="block text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2 ml-1">Desde</label><input type="date" id="filter-breales-from" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs font-bold outline-none focus:border-teal-50 transition-colors"></div>
+                            <div class="w-full lg:w-auto flex-1"><label class="block text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2 ml-1">Desde</label><input type="date" id="filter-breales-from" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs font-bold outline-none focus:border-teal-500 transition-colors"></div>
                             <div class="w-full lg:w-auto flex-1"><label class="block text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2 ml-1">Hasta</label><input type="date" id="filter-breales-to" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs font-bold outline-none focus:border-teal-500 transition-colors"></div>
                             <div class="w-full lg:w-auto flex-1"><label class="block text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2 ml-1">Buscar Jugador</label><input type="text" id="filter-breales-jugador" oninput="bonoRealFilters.jugador=this.value.trim().toLowerCase(); updateAllViews();" placeholder="ID Jugador..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs font-bold outline-none focus:border-teal-500 transition-colors"></div>
                             <div class="flex gap-2 w-full lg:w-auto mt-4 lg:mt-0">
@@ -2234,7 +2235,6 @@ function loginUI(user){
     ['panel-admin','panel-personal','panel-gussepy-bonos','panel-dash-movimientos','filter-user-container','admin-select-user','admin-select-user-bank'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.add('hidden');});
 
     const uploadSections = document.querySelectorAll('.upload-section');
-    // Hide all initially
     uploadSections.forEach(el => el.classList.add('hidden'));
 
     if (user.type === 'cajero_afiliados' || user.type === 'bonos' || isSuperAdmin) {
@@ -2279,7 +2279,7 @@ function loginUI(user){
         
         if(document.getElementById('crm-upload-contacts-panel')) document.getElementById('crm-upload-contacts-panel').classList.remove('hidden');
         if(document.getElementById('crm-create-campaign-panel')) document.getElementById('crm-create-campaign-panel').classList.remove('hidden');
-        if(document.getElementById('cd-upload-panel')) document.getElementById('cd-upload-panel').classList.remove('hidden');
+        if(document.getElementById('cd-upload-panel')) document.getElementById('cd-upload-panel').classList.add('hidden');
 
         switchTab('tab-melanie-add');
     }else if(user.type==='influencer'){
@@ -3492,8 +3492,12 @@ function renderBankPreview(){
 
 async function submitBankData(){
     if(!bankUploadData.length)return;const btn=document.getElementById('btn-upload-bank');btn.disabled=true;
-    let assigned=currentUser;const adminBlockBank=document.getElementById('admin-select-user-bank');
-    if(adminBlockBank&&!adminBlockBank.classList.contains('hidden')){const assignRadio=document.querySelector('input[name="bank-assign"]:checked');if(assignRadio)assigned=assignRadio.value;}
+    let assigned=cleanStr(currentUser);
+    const adminBlockBank=document.getElementById('admin-select-user-bank');
+    if(adminBlockBank&&!adminBlockBank.classList.contains('hidden')){
+        const assignRadio=document.querySelector('input[name="bank-assign"]:checked');
+        if(assignRadio) assigned=assignRadio.value;
+    }
     bankUploadData.sort((a,b)=>new Date(a.date)-new Date(b.date));
     let newTxs=[];
     for(let i=0;i<bankUploadData.length;i++){
@@ -3996,10 +4000,21 @@ function updateAllViews(){
             }
         }
         
-        if(userType==='user'){
+        if(cleanStr(currentUser) === 'tito' || cleanStr(currentUser) === 'jesus'){
             const elDashPersonal=document.getElementById('dash-personal');
             if(elDashPersonal)elDashPersonal.innerText=fmt(fRecords.reduce((sum,r)=>(cleanStr(r.assignedTo)===cleanStr(currentUser)&&r.status==='Verificado'&&!r.isSueldo)?sum+(parseFloat(r.amount)||0):sum,0));
             
+            // Garantizar aislamiento estricto en la vista de tarjetas de administración
+            const cardJesusAdmin = document.getElementById('card-admin-saldo-jesus');
+            const cardTitoAdmin = document.getElementById('card-admin-saldo-tito');
+            if(cleanStr(currentUser) === 'tito') {
+                if(cardJesusAdmin) cardJesusAdmin.classList.add('hidden');
+                if(cardTitoAdmin) cardTitoAdmin.classList.remove('hidden');
+            } else if(cleanStr(currentUser) === 'jesus') {
+                if(cardTitoAdmin) cardTitoAdmin.classList.add('hidden');
+                if(cardJesusAdmin) cardJesusAdmin.classList.remove('hidden');
+            }
+
             const ctxWeek=document.getElementById('chart-week');
             if(ctxWeek&&typeof Chart!=='undefined'){
                 const wLabels=[];const wData=[];const t=new Date();
@@ -4028,12 +4043,16 @@ function updateAllViews(){
             }
         }
         
-        let dashRecords=[...fRecords];if(userType==='user')dashRecords=dashRecords.filter(r=>cleanStr(r.assignedTo)===cleanStr(currentUser));if(userType==='master')dashRecords=dashRecords.filter(r=>parseFloat(r.amount)>0);
+        let dashRecords=[...fRecords];
+        if(cleanStr(currentUser) === 'tito' || cleanStr(currentUser) === 'jesus') dashRecords=dashRecords.filter(r=>cleanStr(r.assignedTo)===cleanStr(currentUser));
+        if(userType==='master') dashRecords=dashRecords.filter(r=>parseFloat(r.amount)>0);
         renderRecordsTable('dash-table-body','dash-empty-state',paginate(dashRecords,'dash'),userType);
 
         let auditRecords=[...records];
         if(filters.dateFrom||filters.dateTo)auditRecords=auditRecords.filter(r=>isWithinDateRange(r.date,filters.dateFrom,filters.dateTo));
-        if(userType==='user')auditRecords=auditRecords.filter(r=>cleanStr(r.assignedTo)===cleanStr(currentUser));else if(filters.user!=='all')auditRecords=auditRecords.filter(r=>cleanStr(r.assignedTo)===cleanStr(filters.user));
+        if(cleanStr(currentUser) === 'tito' || cleanStr(currentUser) === 'jesus') auditRecords=auditRecords.filter(r=>cleanStr(r.assignedTo)===cleanStr(currentUser));
+        else if(filters.user!=='all') auditRecords=auditRecords.filter(r=>cleanStr(r.assignedTo)===cleanStr(filters.user));
+        
         if(filters.status!=='all')auditRecords=auditRecords.filter(r=>r.status===filters.status);
         if(filters.amount&&!isNaN(parseFloat(filters.amount)))auditRecords=auditRecords.filter(r=>Math.abs(parseFloat(r.amount)||0)===parseFloat(filters.amount));
         if(filters.type==='deposit')auditRecords=auditRecords.filter(r=>parseFloat(r.amount)>0);if(filters.type==='withdrawal')auditRecords=auditRecords.filter(r=>parseFloat(r.amount)<0);
@@ -4077,12 +4096,10 @@ function updateAllViews(){
                 infStatsGus[refKey].dep+=dep;infStatsGus[refKey].ret+=ret;infStatsGus[refKey].net+=net;infStatsGus[refKey].com+=com;
             });
 
-            // Saca el 5% de las ganancias globales de este mes para la Com. Plataforma
             Object.values(infStatsGus).forEach(s => {
                 totalComPlatAuto += (s.net * 0.05);
             });
 
-            // INYECTA EL VALOR AUTOMATICO EN EL INPUT (AUNQUE ESTÉ BLOQUEADO)
             const elComPlatInput = document.getElementById('ext-complat');
             if(elComPlatInput) {
                 elComPlatInput.value = totalComPlatAuto.toFixed(2);
@@ -4093,7 +4110,7 @@ function updateAllViews(){
                 let hIG='';const entries=Object.values(infStatsGus);entries.sort((a,b)=>b.com-a.com||b.refs-a.refs);
                 for(let i=0;i<entries.length;i++){
                     const s=entries[i];
-                    if(s.refs>0||s.dep>0||s.ret>0)hIG+=`<tr class="border-b border-slate-50 hover:bg-slate-50/50 transition-colors"><td data-label="Influyente" class="p-5 pl-6 text-xs font-bold text-indigo-600 uppercase">${s.name}</td><td data-label="Total Ref." class="p-5 text-xs font-black text-center text-slate-700">${s.refs}</td><td data-label="Depósitos" class="p-5 text-sm font-black text-emerald-500 text-right">${fmt(s.dep)}</td><td data-label="Retiros" class="p-5 text-sm font-black text-rose-500 text-right">${fmt(s.ret)}</td><td data-label="Neto" class="p-5 text-sm font-black text-slate-700 text-right">${fmt(s.net)}</td><td data-label="Com. Plat." class="p-5 text-sm font-black text-blue-500 text-right">${fmt(s.net*0.05)}</td><td data-label="Com. Pagar" class="p-5 pr-6 text-sm font-black text-purple-600 text-right">${fmt(s.com)}</td></tr>`;
+                    if(s.refs>0||s.dep>0||s.ret>0)hIG+=`<tr class="border-b border-slate-50 hover:bg-slate-50/50 transition-colors"><td data-label="Influyente" class="p-5 pl-6 text-xs font-bold text-indigo-600 uppercase">${s.name}</td><td data-label="Total Ref." class="p-5 text-xs font-black text-center text-slate-700">${s.refs}</td><td data-label="Depósitos" class="p-5 text-sm font-black text-emerald-500 text-right">${fmt(s.dep)}</td><td data-label="Retiros" class="p-5 text-sm font-black text-rose-500 text-right">${fmt(s.ret)}</td><td data-label="Neto" class="p-5 text-sm font-black text-slate-700 text-right">${fmt(s.net)}</td><td data-label="Com. Plat. (5%)" class="p-5 text-sm font-black text-blue-500 text-right">${fmt(s.net*0.05)}</td><td data-label="Com. Pagar" class="p-5 pr-6 text-sm font-black text-purple-600 text-right">${fmt(s.com)}</td></tr>`;
                 }
                 elGusInfTable.innerHTML=hIG||`<tr><td colspan="7" class="p-8 text-center text-sm font-bold text-slate-400">Sin datos de influyentes.</td></tr>`;
             }
@@ -4189,32 +4206,33 @@ function updateAllViews(){
             }
         }
 
-        // MOSTRAR COMISIONES EXTERNAS CALCULADAS PARA TITO Y JESÚS EN SU PANEL PERSONAL (BLOQUE PRIVADO)
+        // MOSTRAR COMISIONES EXTERNAS CALCULADAS PARA TITO Y JESÚS EN SU PANEL PERSONAL (BLOQUE PRIVADO Y AISLADO)
         const extComMonth = externalCommissions.find(x => x.month === globalMF);
-        if (userType === 'user' || userType === 'admin') {
-            const isTito = cleanStr(currentUser) === 'tito';
-            const isJesus = cleanStr(currentUser) === 'jesus';
-            
-            if (isTito || isJesus) {
-                const myExtCard = document.getElementById('card-ext-user');
-                if(myExtCard) myExtCard.classList.remove('hidden');
-                
-                const valEl = document.getElementById('dash-ext-user-val');
-                const breakdownEl = document.getElementById('dash-ext-user-breakdown');
+        const isTito = cleanStr(currentUser) === 'tito';
+        const isJesus = cleanStr(currentUser) === 'jesus';
 
-                if(extComMonth) {
-                    if (isTito) {
-                        valEl.innerText = fmt(extComMonth.tito_cut);
-                        breakdownEl.innerHTML = `<ul class="text-xs space-y-1 mt-2 text-slate-100"><li class="flex justify-between"><span>Sepybet</span> <span class="font-black">${fmt(extComMonth.sepybet_income * (globalSettings.tito_sepybet_pct/100))}</span></li><li class="flex justify-between"><span>Chichesepy</span> <span class="font-black">${fmt(extComMonth.chichesepy_income * (globalSettings.tito_chichesepy_pct/100))}</span></li><li class="flex justify-between"><span>Com. Plataforma VIP (Auto)</span> <span class="font-black">${fmt(extComMonth.com_plat_total)}</span></li></ul>`;
-                    } else if (isJesus) {
-                        valEl.innerText = fmt(extComMonth.jesus_cut);
-                        breakdownEl.innerHTML = `<ul class="text-xs space-y-1 mt-2 text-slate-100"><li class="flex justify-between"><span>Ambos Marcan</span> <span class="font-black">${fmt(extComMonth.ambos_marcan_income * (globalSettings.jesus_ambos_marcan_pct/100))}</span></li><li class="flex justify-between"><span>Sepybet</span> <span class="font-black">${fmt(extComMonth.sepybet_income * (globalSettings.jesus_sepybet_pct/100))}</span></li><li class="flex justify-between"><span>Chichesepy</span> <span class="font-black">${fmt(extComMonth.chichesepy_income * (globalSettings.jesus_chichesepy_pct/100))}</span></li></ul>`;
-                    }
-                } else {
-                    valEl.innerText = '$0.00';
-                    breakdownEl.innerHTML = '<p class="text-xs font-bold text-amber-100">Sin cálculo para este mes.</p>';
+        if (isTito || isJesus) {
+            const myExtCard = document.getElementById('card-ext-user');
+            if(myExtCard) myExtCard.classList.remove('hidden');
+            
+            const valEl = document.getElementById('dash-ext-user-val');
+            const breakdownEl = document.getElementById('dash-ext-user-breakdown');
+
+            if(extComMonth) {
+                if (isTito) {
+                    valEl.innerText = fmt(extComMonth.tito_cut);
+                    breakdownEl.innerHTML = `<ul class="text-xs space-y-1 mt-2 text-slate-100"><li class="flex justify-between"><span>Sepybet</span> <span class="font-black">${fmt(extComMonth.sepybet_income * (globalSettings.tito_sepybet_pct/100))}</span></li><li class="flex justify-between"><span>Chichesepy</span> <span class="font-black">${fmt(extComMonth.chichesepy_income * (globalSettings.tito_chichesepy_pct/100))}</span></li><li class="flex justify-between"><span>Com. Plataforma VIP (Auto)</span> <span class="font-black">${fmt(extComMonth.com_plat_total)}</span></li></ul>`;
+                } else if (isJesus) {
+                    valEl.innerText = fmt(extComMonth.jesus_cut);
+                    breakdownEl.innerHTML = `<ul class="text-xs space-y-1 mt-2 text-slate-100"><li class="flex justify-between"><span>Ambos Marcan</span> <span class="font-black">${fmt(extComMonth.ambos_marcan_income * (globalSettings.jesus_ambos_marcan_pct/100))}</span></li><li class="flex justify-between"><span>Sepybet</span> <span class="font-black">${fmt(extComMonth.sepybet_income * (globalSettings.jesus_sepybet_pct/100))}</span></li><li class="flex justify-between"><span>Chichesepy</span> <span class="font-black">${fmt(extComMonth.chichesepy_income * (globalSettings.jesus_chichesepy_pct/100))}</span></li></ul>`;
                 }
+            } else {
+                valEl.innerText = '$0.00';
+                breakdownEl.innerHTML = '<p class="text-xs font-bold text-amber-100">Sin cálculo para este mes.</p>';
             }
+        } else {
+            // OCULTA FORZOSAMENTE EL CARD DE SALDO EXTRA PARA MICHELLE U OTROS ROLES
+            document.getElementById('card-ext-user')?.classList.add('hidden');
         }
 
         // PANEL DE MASTER Y SUPERADMIN - MUESTRAN LOS GLOBALES DE AMBOS

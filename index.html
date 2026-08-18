@@ -132,7 +132,7 @@ input[type="number"] { -moz-appearance: textfield; }
     <!-- OVERLAY MÓVIL -->
     <div id="sidebar-overlay" onclick="toggleMenu(false)" class="fixed inset-0 bg-slate-950/40 backdrop-blur-sm z-40 hidden opacity-0 transition-opacity duration-300 md:hidden"></div>
     
-    <!-- SIDEBAR ORIGINAL CORREGIDO -->
+    <!-- SIDEBAR -->
     <aside id="sidebar-menu" class="fixed inset-y-0 left-0 z-50 w-72 bg-slate-950 flex flex-col py-6 border-r border-slate-800 sidebar-mobile md:relative md:transform-none md:w-[88px] md:hover:w-72 transition-all duration-300 group overflow-x-hidden h-screen">
         <div class="w-12 h-12 mx-auto md:mx-auto ml-6 md:ml-auto rounded-xl bg-gradient-to-tr from-brand-500 to-blue-500 flex items-center justify-center text-white shadow-[0_0_15px_rgba(99,102,241,0.4)] mb-8 flex-shrink-0 relative">
             <i class="fas fa-bolt text-xl"></i>
@@ -162,8 +162,14 @@ input[type="number"] { -moz-appearance: textfield; }
             <button onclick="switchTab('tab-gussepy')" id="btn-tab-gussepy" class="hidden w-[calc(100%-1.5rem)] mx-auto text-left px-4 py-3.5 rounded-2xl text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-all flex items-center">
                 <i class="fas fa-hand-holding-usd w-5 text-xl text-center flex-shrink-0"></i><span class="sidebar-text">Adelantos</span>
             </button>
+
+            <!-- NUEVO BOTÓN: CARGA BONOS REALES -->
+            <button onclick="switchTab('tab-bonos-reales-add')" id="btn-tab-bonos-reales-add" class="hidden w-[calc(100%-1.5rem)] mx-auto text-left px-4 py-3.5 rounded-2xl text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-all flex items-center">
+                <i class="fas fa-file-invoice-dollar w-5 text-xl text-center flex-shrink-0 text-emerald-400"></i><span class="sidebar-text text-emerald-400">Carga Bonos Reales</span>
+            </button>
+
             <button onclick="switchTab('tab-bonos-reales')" id="btn-tab-bonos-reales" class="hidden w-[calc(100%-1.5rem)] mx-auto text-left px-4 py-3.5 rounded-2xl text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-all flex items-center">
-                <i class="fas fa-ticket-alt w-5 text-xl text-center flex-shrink-0 text-emerald-400"></i><span class="sidebar-text">Bonos Reales</span>
+                <i class="fas fa-ticket-alt w-5 text-xl text-center flex-shrink-0 text-emerald-400"></i><span class="sidebar-text">Lista Bonos Reales</span>
             </button>
 
             <!-- MENÚ BUZÓN DE MENSAJES -->
@@ -227,6 +233,11 @@ input[type="number"] { -moz-appearance: textfield; }
             <button onclick="switchTab('tab-sync-db')" id="btn-tab-sync-db" class="hidden w-[calc(100%-1.5rem)] mx-auto text-left px-4 py-3.5 rounded-2xl text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-all flex items-center">
                 <i class="fas fa-database w-5 text-xl text-center flex-shrink-0 text-blue-400"></i><span class="sidebar-text">Sync BD</span>
             </button>
+
+            <!-- NUEVO BOTÓN PARA ELIMINACIÓN MASIVA (SUPERADMIN) -->
+            <button onclick="switchTab('tab-delete-data')" id="btn-tab-delete-data" class="hidden w-[calc(100%-1.5rem)] mx-auto text-left px-4 py-3.5 rounded-2xl text-sm font-bold text-rose-500 hover:bg-rose-500/20 transition-all flex items-center mt-2">
+                <i class="fas fa-trash-alt w-5 text-xl text-center flex-shrink-0 text-rose-500"></i><span class="sidebar-text">Borrar Datos</span>
+            </button>
         </div>
 
         <div class="mt-auto w-full flex flex-col gap-1.5 pt-4 border-t border-slate-800 mb-6">
@@ -241,8 +252,7 @@ input[type="number"] { -moz-appearance: textfield; }
             </button>
         </div>
     </aside>
-
-    <!-- ÁREA DE CONTENIDO PRINCIPAL -->
+<!-- ÁREA DE CONTENIDO PRINCIPAL -->
     <main class="flex-1 flex flex-col relative z-0 h-screen overflow-hidden">
         <div class="bg-mesh"></div>
         
@@ -355,8 +365,8 @@ input[type="number"] { -moz-appearance: textfield; }
                         <p class="text-xs text-slate-400 font-bold uppercase tracking-widest mb-1 relative z-10">Saldo Tito</p>
                         <h3 class="text-3xl font-black text-slate-800 relative z-10 tracking-tight" id="dash-tito">$0.00</h3>
                     </div>
-<!-- TARJETAS PARA GUSSEPY Y SUPERADMIN (Desglose comisiones extra) -->
-                    <!-- NOTA: Michelle no verá estas tarjetas por seguridad -->
+
+                    <!-- TARJETAS PARA GUSSEPY Y SUPERADMIN (Desglose comisiones extra) -->
                     <div id="card-ext-gus-jesus" class="hidden cursor-pointer bg-gradient-to-br from-blue-500 to-indigo-600 border border-blue-400 p-6 rounded-[24px] shadow-floating hover-lift relative overflow-hidden text-white" onclick="viewExtDetailGussepy()">
                         <i class="fas fa-user absolute -right-4 -bottom-4 text-7xl text-white/10 transform -rotate-12"></i>
                         <div class="flex justify-between items-start mb-4 relative z-10">
@@ -459,7 +469,6 @@ input[type="number"] { -moz-appearance: textfield; }
                 </div>
 
                 <!-- DISEÑO DIVIDIDO: TABLA (IZQ) + ACTIVIDAD EN VIVO (DER) -->
-                <!-- Se visualiza para Tito y Jesus también -->
                 <div id="panel-dash-movimientos" class="hidden">
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-8">
                         <div class="lg:col-span-2 bg-white border border-slate-100 rounded-[24px] card-shadow overflow-hidden flex flex-col">
@@ -947,7 +956,7 @@ input[type="number"] { -moz-appearance: textfield; }
                         <div class="flex flex-col lg:flex-row items-end gap-4 w-full">
                             <div class="w-full lg:w-auto flex-1"><label class="block text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2 ml-1">Desde</label><input type="date" id="filter-breales-from" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs font-bold outline-none focus:border-teal-500 transition-colors"></div>
                             <div class="w-full lg:w-auto flex-1"><label class="block text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2 ml-1">Hasta</label><input type="date" id="filter-breales-to" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs font-bold outline-none focus:border-teal-500 transition-colors"></div>
-                            <div class="w-full lg:w-auto flex-1"><label class="block text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2 ml-1">Buscar Jugador</label><input type="text" id="filter-breales-jugador" oninput="bonoRealFilters.jugador=this.value.trim().toLowerCase(); updateAllViews();" placeholder="ID Jugador..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs font-bold outline-none focus:border-teal-500 transition-colors"></div>
+                            <div class="w-full lg:w-auto flex-1"><label class="block text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2 ml-1">Buscar Jugador</label><input type="text" id="filter-breales-jugador" oninput="bonoRealFilters.jugador=this.value.trim().toLowerCase(); updateAllViews();" placeholder="ID Jugador o Concepto..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs font-bold outline-none focus:border-teal-500 transition-colors"></div>
                             <div class="flex gap-2 w-full lg:w-auto mt-4 lg:mt-0">
                                 <button onclick="updateAllViews()" class="flex-1 lg:flex-none px-6 py-3 bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-xs font-bold shadow-md transition-colors"><i class="fas fa-search"></i></button>
                                 <button onclick="document.getElementById('filter-breales-from').value=''; document.getElementById('filter-breales-to').value=''; document.getElementById('filter-breales-jugador').value=''; bonoRealFilters.jugador=''; updateAllViews()" class="flex-1 lg:flex-none px-6 py-3 bg-white border border-slate-200 text-slate-600 hover:bg-rose-50 hover:text-rose-500 rounded-xl text-xs font-bold shadow-sm transition-colors"><i class="fas fa-eraser"></i></button>
@@ -1040,8 +1049,7 @@ input[type="number"] { -moz-appearance: textfield; }
                     </div>
                 </div>
             </div>
-
-            <!-- TAB EMITIR BONO & CARGA EXCEL APUESTAS -->
+<!-- TAB EMITIR BONO & CARGA EXCEL APUESTAS -->
             <div id="tab-maria-add" class="hidden fade-in theme-maria tab-content">
                 <div class="max-w-3xl mx-auto space-y-8">
                     <div class="bg-white border border-rose-100 rounded-[24px] card-shadow overflow-hidden">
@@ -1325,6 +1333,32 @@ input[type="number"] { -moz-appearance: textfield; }
                 </div>
             </div>
 
+            <!-- NUEVA PESTAÑA: CARGA MASIVA BONOS REALES (MUESTRA ÚNICA) -->
+            <div id="tab-bonos-reales-add" class="hidden fade-in tab-content theme-maria">
+                <div class="max-w-4xl mx-auto space-y-8">
+                    <div class="bg-white border border-emerald-100 rounded-[24px] card-shadow overflow-hidden">
+                        <div class="px-8 py-8 border-b border-emerald-50 bg-emerald-50/30 flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-xl shadow-sm"><i class="fas fa-file-invoice-dollar"></i></div>
+                            <div>
+                                <h2 class="text-2xl font-black text-slate-800 tracking-tight">Carga de Bonos Reales (Backoffice)</h2>
+                                <p class="text-[11px] font-bold text-slate-400 mt-1 uppercase tracking-widest">Identifica la palabra "Bono" en comentarios y lo suma al Saldo Real.</p>
+                            </div>
+                        </div>
+                        <div class="p-8 space-y-6">
+                            <div>
+                                <input type="file" id="upload-bonos-reales-file" accept=".xlsx, .xls, .csv" class="block w-full text-sm text-slate-500 file:mr-4 file:py-3 file:px-5 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 cursor-pointer border-2 border-slate-100 rounded-2xl bg-slate-50 transition-colors" onchange="handleBonosRealesUpload(event)">
+                            </div>
+                            <div id="bonos-reales-preview-container" class="hidden flex-col gap-5 mt-6">
+                                <div class="bg-white border border-slate-200 rounded-2xl p-2 overflow-x-auto max-h-64 shadow-sm">
+                                    <table class="w-full text-left text-xs"><thead class="text-[10px] font-black text-slate-400 uppercase tracking-widest bg-slate-50 border-b border-slate-100"><tr><th class="p-3">Fecha</th><th class="p-3">Jugador</th><th class="p-3 text-right">Monto (Bono)</th><th class="p-3">Comentario/Detalle</th><th class="p-3 text-center"><i class="fas fa-cog"></i></th></tr></thead><tbody id="bonos-reales-preview-body" class="divide-y divide-slate-50"></tbody></table>
+                                </div>
+                                <button type="button" id="btn-upload-bonos-reales" onclick="submitBonosRealesData()" class="w-full py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold rounded-2xl shadow-floating transition-transform active:scale-[0.98]"><i class="fas fa-upload mr-2"></i> Registrar Bonos en el Sistema</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- TAB CARGA AFILIADOS (MELANIE) -->
             <div id="tab-melanie-add" class="hidden fade-in tab-content">
                 <div class="max-w-4xl mx-auto space-y-8">
@@ -1371,20 +1405,20 @@ input[type="number"] { -moz-appearance: textfield; }
                         </form>
                     </div>
 
-                    <div id="auto-upload-card" class="upload-section bg-white border border-emerald-100 rounded-[24px] card-shadow overflow-hidden">
-                        <div class="px-8 py-8 border-b border-emerald-50 bg-emerald-50/30">
-                            <h2 class="text-xl font-black text-slate-800 tracking-tight flex items-center"><i class="fas fa-file-excel text-emerald-500 mr-3 text-2xl"></i>Carga Automática de Backoffice</h2>
-                            <p class="text-xs font-semibold text-slate-500 mt-2 pl-9">Sube el reporte de Backoffice. El sistema detectará depósitos, retiros y calculará comisiones buscando la red automáticamente.</p>
+                    <div id="auto-upload-card" class="upload-section bg-white border border-pink-200 rounded-[24px] card-shadow overflow-hidden">
+                        <div class="px-8 py-8 border-b border-pink-50 bg-pink-50/30">
+                            <h2 class="text-xl font-black text-slate-800 tracking-tight flex items-center"><i class="fas fa-file-excel text-pink-500 mr-3 text-2xl"></i>Carga Automática de Rendimientos</h2>
+                            <p class="text-xs font-semibold text-slate-500 mt-2 pl-9">Sube el reporte de Backoffice. El sistema detectará depósitos y retiros para calcular las comisiones de la red automáticamente.</p>
                         </div>
                         <div class="p-8 space-y-6">
                             <div>
-                                <input type="file" id="upload-file" accept=".xlsx, .xls, .csv" class="block w-full text-sm text-slate-500 file:mr-4 file:py-3 file:px-5 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 cursor-pointer border-2 border-slate-100 rounded-2xl bg-slate-50 transition-colors" onchange="handleMelanieUpload(event)">
+                                <input type="file" id="upload-file" accept=".xlsx, .xls, .csv" class="block w-full text-sm text-slate-500 file:mr-4 file:py-3 file:px-5 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-pink-50 file:text-pink-700 hover:file:bg-pink-100 cursor-pointer border-2 border-slate-100 rounded-2xl bg-slate-50 transition-colors" onchange="handleMelanieUpload(event)">
                             </div>
                             <div id="upload-preview-container" class="hidden flex-col gap-5 mt-6">
                                 <div class="bg-white border border-slate-200 rounded-2xl p-2 overflow-x-auto max-h-64 shadow-sm">
                                     <table class="w-full text-left text-xs"><thead class="text-[10px] font-black text-slate-400 uppercase tracking-widest bg-slate-50 border-b border-slate-100"><tr><th class="p-3">Fecha</th><th class="p-3">Influencer</th><th class="p-3">Jugador</th><th class="p-3 text-right">Depósitos</th><th class="p-3 text-right">Retiros</th><th class="p-3 text-right">Comisión</th><th class="p-3 text-center"><i class="fas fa-cog"></i></th></tr></thead><tbody id="upload-preview-body" class="divide-y divide-slate-50"></tbody></table>
                                 </div>
-                                <button type="button" id="btn-upload-data" onclick="submitMelanieUploadData()" class="w-full py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold rounded-2xl shadow-floating transition-transform active:scale-[0.98]"><i class="fas fa-magic mr-2"></i> Procesar y Asignar a la Red</button>
+                                <button type="button" id="btn-upload-data" onclick="submitMelanieUploadData()" class="w-full py-4 bg-pink-600 hover:bg-pink-700 text-white font-extrabold rounded-2xl shadow-floating transition-transform active:scale-[0.98]"><i class="fas fa-magic mr-2"></i> Procesar y Asignar a la Red</button>
                             </div>
                         </div>
                     </div>
@@ -1430,7 +1464,7 @@ input[type="number"] { -moz-appearance: textfield; }
                 </div>
             </div>
 
-<!-- CRM: BASE DE CONTACTOS -->
+            <!-- CRM: BASE DE CONTACTOS -->
             <div id="tab-crm-contacts" class="hidden fade-in tab-content theme-maria">
                 <div class="max-w-7xl mx-auto space-y-8">
                     <div class="bg-white border border-purple-100 rounded-[24px] card-shadow overflow-hidden" id="crm-upload-contacts-panel">
@@ -1773,6 +1807,46 @@ input[type="number"] { -moz-appearance: textfield; }
                 </div>
             </div>
 
+            <!-- TAB BORRAR DATOS (SUPERADMIN) -->
+            <div id="tab-delete-data" class="hidden fade-in tab-content">
+                <div class="max-w-4xl mx-auto space-y-8 pt-2">
+                    <div class="bg-white border border-rose-100 rounded-[2.5rem] card-shadow overflow-hidden">
+                        <div class="px-8 py-8 border-b border-rose-50 bg-rose-50/30 flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center text-xl shadow-sm"><i class="fas fa-trash-alt"></i></div>
+                            <div>
+                                <h2 class="text-2xl font-black text-slate-800 tracking-tight">Eliminación Masiva (Peligro)</h2>
+                                <p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mt-1">Borrar datos por rango de fechas y módulo</p>
+                            </div>
+                        </div>
+                        <div class="p-8 space-y-6">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2 ml-2">Desde Fecha</label>
+                                    <input type="date" id="del-date-from" class="block w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold text-slate-700 outline-none focus:border-rose-500 transition-all shadow-sm">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2 ml-2">Hasta Fecha</label>
+                                    <input type="date" id="del-date-to" class="block w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold text-slate-700 outline-none focus:border-rose-500 transition-all shadow-sm">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2 ml-2">Módulo / Tabla</label>
+                                <select id="del-module" class="block w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold text-slate-700 outline-none focus:border-rose-500 transition-all shadow-sm">
+                                    <option value="all">Todos los Módulos</option>
+                                    <option value="records">Registros (Saldos/Bancario)</option>
+                                    <option value="advances">Adelantos (Gussepy)</option>
+                                    <option value="bonos">Bonos Emitidos</option>
+                                    <option value="giros">Giros Otorgados</option>
+                                    <option value="referrals">Referidos</option>
+                                    <option value="rendimientos">Rendimientos (Afiliados)</option>
+                                </select>
+                            </div>
+                            <button type="button" onclick="deleteDataByDateRange()" class="w-full py-4 bg-rose-600 hover:bg-rose-700 text-white font-extrabold rounded-2xl shadow-floating transition-transform active:scale-[0.98]"><i class="fas fa-exclamation-triangle mr-2"></i> Confirmar Eliminación</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="mt-12 text-center pb-8"><p class="text-[10px] font-black text-slate-300 uppercase tracking-widest">SISTEMA CREADO POR agency-tf/TitoFeijo</p></div>
         </div>
     </main>
@@ -1912,7 +1986,6 @@ input[type="number"] { -moz-appearance: textfield; }
         </div>
     </div>
 </div>
-
 <script>
 // === MOTOR DE LIMPIEZA Y NORMALIZACIÓN ===
 const cleanStr = (str) => {
@@ -2029,8 +2102,6 @@ let bonoRealFilters={dateFrom:'',dateTo:'',jugador:''};
 let pendingVerifyId=null,pendingAuthId=null,pendingBonoWinId=null,pendingGiroWinId=null;
 let inactivityTimer, autoSyncTimer, chartWeekInstance=null, chartMonthsInstance=null;
 let currentPlayersList=[],uploadData=[],bankUploadData=[],bonosRealesUploadData=[],bonosApuestasUploadData=[]; 
-
-// Variables CRM 
 let contactsMap = {}; let campaignsList = []; let campaignTargetsList = []; let currentCampaignId = null;
 
 const PAGE_SIZE=15;
@@ -2089,7 +2160,10 @@ window.onload=()=>{
             const el=document.getElementById(id);if(el){el.value=currentMonthStr;el.onchange=(e)=>changeGlobalMonth(e.target.value);}
         });
         const searchInf=document.getElementById('inf-search');if(searchInf)searchInf.onkeyup=resetPagesAndUpdate;
-        const todayStr=now.toISOString().split('T')[0];const nowLocalTimeStr=getLocalIsoDatetime();
+        
+        // CORRECCIÓN: Setear fechas con hora exacta para ingresos manuales iniciales
+        const todayStr=now.toISOString().split('T')[0];
+        const nowLocalTimeStr=getLocalIsoDatetime();
         ['gus-date','bono-date','ref-date','rend-date','giro-date','camp-date'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=todayStr;});
         ['reg-date','edit-date'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=nowLocalTimeStr;});
         
@@ -2108,26 +2182,17 @@ function populateMessageDropdown() {
     const sel = document.getElementById('msg-to');
     if(!sel) return;
     let html = '<option value="">Seleccione usuario...</option>';
-    
     const myType = USERS[cleanStr(currentUser)]?.type || 'user';
-    
     Object.keys(USERS).forEach(k => {
         if (k === '1311397689' || cleanStr(k) === cleanStr(currentUser)) return;
-        
         let canSend = false;
-        if (cleanStr(currentUser) === 'gussepy' || cleanStr(currentUser) === 'tito') {
-            canSend = true;
-        } 
+        if (cleanStr(currentUser) === 'gussepy' || cleanStr(currentUser) === 'tito') canSend = true;
         else if (['admin', 'user', 'bonos', 'cajero_afiliados'].includes(myType)) {
             if (['admin', 'user', 'master', 'bonos', 'cajero_afiliados'].includes(USERS[k].type)) canSend = true;
-        } 
-        else if (myType === 'influencer') {
+        } else if (myType === 'influencer') {
             if (cleanStr(k) === 'gussepy' || cleanStr(k) === 'tito') canSend = true;
         }
-
-        if (canSend) {
-            html += `<option value="${k}">${USERS[k].name}</option>`;
-        }
+        if (canSend) html += `<option value="${k}">${USERS[k].name}</option>`;
     });
     sel.innerHTML = html;
 }
@@ -2217,6 +2282,36 @@ function openSuperAdminSwitcher(){const select=document.getElementById('superadm
 function closeSuperAdminSwitcher(){if(document.getElementById('screen-app').classList.contains('hidden'))confirmSwitchUser('1311397689');else document.getElementById('modal-superadmin').classList.replace('flex','hidden');}
 function confirmSwitchUser(overrideId=null){const targetId=overrideId||document.getElementById('superadmin-select').value;const userObj={...USERS[targetId],id:targetId,baseType:'superadmin'};localStorage.setItem('sb_user_data',JSON.stringify(userObj));currentUser=targetId;loginUI(userObj);document.getElementById('modal-superadmin').classList.replace('flex','hidden');showToast('Vista cambiada exitosamente.','success');}
 
+// ==========================================
+// NUEVA FUNCIÓN: BORRADO DE RANGO (SUPERADMIN)
+// ==========================================
+async function deleteDataByDateRange() {
+    const from = document.getElementById('del-date-from').value;
+    const to = document.getElementById('del-date-to').value;
+    const mod = document.getElementById('del-module').value;
+    
+    if(!from || !to) return showToast("Selecciona fecha desde y hasta", "warning");
+    if(!confirm(`¿ESTÁS SEGURO? Vas a eliminar irreversiblemente los registros desde ${from} hasta ${to}.`)) return;
+    
+    const btn = document.querySelector('#tab-delete-data button');
+    const orig = btn.innerHTML; btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Eliminando...'; btn.disabled = true;
+    
+    try {
+        const tables = mod === 'all' ? ['records','advances','bonos','giros','referrals','rendimientos'] : [mod];
+        for (const t of tables) {
+            await db.from(t).delete().gte('date', from + 'T00:00:00').lte('date', to + 'T23:59:59');
+        }
+        showToast("Datos eliminados correctamente del servidor", "success");
+        document.getElementById('del-date-from').value = '';
+        document.getElementById('del-date-to').value = '';
+        await fetchData(true); // Refresco Síncrono Garantizado
+    } catch(e) {
+        showToast("Hubo un error al eliminar los datos", "error");
+    }
+    btn.innerHTML = orig; btn.disabled = false;
+}
+
+// CORRECCIÓN: PERMISOS DE PRIVACIDAD EN LOGIN
 function loginUI(user){
     const elUserDisplay=document.getElementById('user-display');if(elUserDisplay)elUserDisplay.innerText=user.name+(isSuperAdmin?" (Auditor)":"");
     const iconEl=document.getElementById('nav-icon');if(iconEl){iconEl.innerHTML=`<i class="fas ${user.icon||'fa-user'}"></i>`;iconEl.className=`w-10 h-10 rounded-xl text-white flex items-center justify-center text-lg shadow-md ${user.color||'bg-indigo-600'}`;}
@@ -2225,7 +2320,7 @@ function loginUI(user){
     populateMessageDropdown();
     resetInactivityTimer();
     
-    const allTabs=['tab-dashboard','tab-register','tab-gussepy','tab-auditoria','tab-maria-dash','tab-maria-add','tab-maria-list','tab-giros-add','tab-giros-list','tab-maria-ref-add','tab-maria-ref-list','tab-melanie-add','tab-melanie-list','tab-crm-contacts','tab-crm-campaigns','tab-crm-campaign-detail','tab-influencer-dash','tab-influencer-details','tab-inactivos','tab-sync-db','tab-bonos-reales','tab-gussepy-externas','tab-config','tab-buzon'];
+    const allTabs=['tab-dashboard','tab-register','tab-gussepy','tab-auditoria','tab-maria-dash','tab-maria-add','tab-maria-list','tab-giros-add','tab-giros-list','tab-maria-ref-add','tab-maria-ref-list','tab-melanie-add','tab-melanie-list','tab-crm-contacts','tab-crm-campaigns','tab-crm-campaign-detail','tab-influencer-dash','tab-influencer-details','tab-inactivos','tab-sync-db','tab-bonos-reales','tab-bonos-reales-add','tab-gussepy-externas','tab-config','tab-buzon','tab-delete-data'];
     allTabs.forEach(id=>{
         const btn=document.getElementById('btn-'+id);
         if(btn) btn.classList.add('hidden');
@@ -2241,8 +2336,7 @@ function loginUI(user){
         uploadSections.forEach(el => el.classList.remove('hidden'));
     }
     
-    // Habilitar la carga masiva bancaria exclusivamente para Tito y Jesús
-    if (cleanStr(currentUser) === 'tito' || cleanStr(currentUser) === 'jesus') {
+    if (cleanStr(currentUser) === 'tito' || cleanStr(currentUser) === 'jesus' || cleanStr(currentUser) === 'melanie') {
         const bankUpload = document.getElementById('bank-upload-card');
         if (bankUpload) bankUpload.classList.remove('hidden');
     }
@@ -2254,33 +2348,23 @@ function loginUI(user){
     }
 
     if(user.type==='admin'||user.type==='superadmin'){
-        ['btn-tab-dashboard','btn-tab-register','btn-tab-gussepy','btn-tab-auditoria','btn-tab-bonos-reales','divider-1'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('hidden');});
+        ['btn-tab-dashboard','btn-tab-register','btn-tab-gussepy','btn-tab-auditoria','btn-tab-bonos-reales','btn-tab-bonos-reales-add','divider-1'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('hidden');});
         ['panel-admin','panel-dash-movimientos','filter-user-container','admin-select-user','admin-select-user-bank'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('hidden');});
         if(user.type==='superadmin'){
-            ['btn-tab-maria-dash','btn-tab-maria-add','btn-tab-maria-list','btn-tab-giros-add','btn-tab-giros-list','divider-2','btn-tab-maria-ref-add','btn-tab-maria-ref-list','btn-tab-melanie-add','btn-tab-melanie-list','btn-tab-crm-contacts','btn-tab-crm-campaigns','btn-tab-influencer-dash','btn-tab-influencer-details','btn-tab-inactivos','divider-3','btn-tab-sync-db','btn-tab-gussepy-externas','btn-tab-config'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('hidden');});
+            ['btn-tab-maria-dash','btn-tab-maria-add','btn-tab-maria-list','btn-tab-giros-add','btn-tab-giros-list','divider-2','btn-tab-maria-ref-add','btn-tab-maria-ref-list','btn-tab-melanie-add','btn-tab-melanie-list','btn-tab-crm-contacts','btn-tab-crm-campaigns','btn-tab-influencer-dash','btn-tab-influencer-details','btn-tab-inactivos','divider-3','btn-tab-sync-db','btn-tab-gussepy-externas','btn-tab-config','btn-tab-delete-data'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('hidden');});
         }
         switchTab('tab-dashboard');
     }else if(user.type==='master'){
-        ['btn-tab-dashboard','btn-tab-gussepy-externas','btn-tab-config','btn-tab-gussepy','btn-tab-maria-list','btn-tab-giros-list','btn-tab-maria-ref-list','btn-tab-melanie-list','btn-tab-crm-contacts','btn-tab-crm-campaigns','btn-tab-inactivos','btn-tab-bonos-reales','divider-1','divider-2'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('hidden');});
+        ['btn-tab-dashboard','btn-tab-gussepy-externas','btn-tab-config','btn-tab-gussepy','btn-tab-maria-list','btn-tab-giros-list','btn-tab-maria-ref-list','btn-tab-melanie-list','btn-tab-crm-contacts','btn-tab-crm-campaigns','btn-tab-inactivos','btn-tab-bonos-reales','btn-tab-bonos-reales-add','divider-1','divider-2'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('hidden');});
         ['panel-admin','panel-dash-movimientos','panel-gussepy-bonos'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('hidden');});
-        
-        if(document.getElementById('crm-upload-contacts-panel')) document.getElementById('crm-upload-contacts-panel').classList.add('hidden');
-        if(document.getElementById('crm-create-campaign-panel')) document.getElementById('crm-create-campaign-panel').classList.add('hidden');
-        if(document.getElementById('cd-upload-panel')) document.getElementById('cd-upload-panel').classList.add('hidden');
-
         switchTab('tab-dashboard');
     }else if(user.type==='bonos'){
-        ['btn-tab-maria-dash','btn-tab-maria-add','btn-tab-maria-list','btn-tab-giros-add','btn-tab-giros-list','divider-2','btn-tab-maria-ref-add','btn-tab-maria-ref-list'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('hidden');});
+        ['btn-tab-maria-dash','btn-tab-maria-add','btn-tab-maria-list','btn-tab-giros-add','btn-tab-giros-list','divider-2','btn-tab-maria-ref-add','btn-tab-maria-ref-list','btn-tab-bonos-reales-add'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('hidden');});
         ['bonos-masivo-card'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('hidden');});
         switchTab('tab-maria-dash');
     }else if(user.type==='cajero_afiliados'){
-        ['btn-tab-register', 'btn-tab-melanie-add', 'btn-tab-melanie-list', 'btn-tab-crm-contacts', 'btn-tab-crm-campaigns', 'btn-tab-bonos-reales'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('hidden');});
+        ['btn-tab-register', 'btn-tab-melanie-add', 'btn-tab-melanie-list', 'btn-tab-crm-contacts', 'btn-tab-crm-campaigns', 'btn-tab-bonos-reales', 'btn-tab-bonos-reales-add', 'btn-tab-maria-add'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('hidden');});
         ['admin-select-user', 'admin-select-user-bank'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('hidden');});
-        
-        if(document.getElementById('crm-upload-contacts-panel')) document.getElementById('crm-upload-contacts-panel').classList.remove('hidden');
-        if(document.getElementById('crm-create-campaign-panel')) document.getElementById('crm-create-campaign-panel').classList.remove('hidden');
-        if(document.getElementById('cd-upload-panel')) document.getElementById('cd-upload-panel').classList.add('hidden');
-
         switchTab('tab-melanie-add');
     }else if(user.type==='influencer'){
         ['btn-tab-influencer-dash','btn-tab-influencer-details'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('hidden');});
@@ -2295,7 +2379,7 @@ function loginUI(user){
 
 function switchTab(tabId){
     document.querySelectorAll('.tab-content').forEach(el=>el.classList.add('hidden'));
-    ['tab-dashboard','tab-register','tab-gussepy','tab-auditoria','tab-maria-dash','tab-maria-add','tab-maria-list','tab-giros-add','tab-giros-list','tab-maria-ref-add','tab-maria-ref-list','tab-melanie-add','tab-melanie-list','tab-crm-contacts','tab-crm-campaigns','tab-crm-campaign-detail','tab-inactivos','tab-influencer-dash','tab-influencer-details','tab-bonos-reales','tab-sync-db','tab-gussepy-externas','tab-config','tab-buzon'].forEach(id=>{
+    ['tab-dashboard','tab-register','tab-gussepy','tab-auditoria','tab-maria-dash','tab-maria-add','tab-maria-list','tab-giros-add','tab-giros-list','tab-maria-ref-add','tab-maria-ref-list','tab-melanie-add','tab-melanie-list','tab-crm-contacts','tab-crm-campaigns','tab-crm-campaign-detail','tab-inactivos','tab-influencer-dash','tab-influencer-details','tab-bonos-reales','tab-bonos-reales-add','tab-sync-db','tab-gussepy-externas','tab-config','tab-buzon','tab-delete-data'].forEach(id=>{
         const btn=document.getElementById('btn-'+id);
         if(btn){
             btn.classList.remove('bg-indigo-50','text-indigo-600','bg-rose-50','bg-pink-50','text-pink-600','bg-purple-50','text-purple-600','text-rose-600','bg-emerald-50','text-emerald-600','bg-amber-50','text-amber-600','bg-blue-50','text-blue-600','bg-sky-50','text-sky-600','bg-slate-800','text-white');
@@ -2316,15 +2400,16 @@ function switchTab(tabId){
         else if(tabId.includes('sync-db'))activeBtn.classList.add('bg-blue-50','text-blue-600');
         else if(tabId.includes('buzon'))activeBtn.classList.add('bg-sky-50','text-sky-600');
         else if(tabId.includes('config'))activeBtn.classList.add('bg-slate-800','text-white');
+        else if(tabId.includes('delete-data'))activeBtn.classList.add('bg-rose-50','text-rose-600');
         else activeBtn.classList.add('bg-indigo-50','text-indigo-600');
     }
     toggleMenu(false);
-    
     if(tabId === 'tab-buzon') { fetchMessages(true); }
 }
 
-const safeData = (res) => (res && res.data && Array.isArray(res.data)) ? res.data : [];
+const safeData = (res) => (res && res.status === 'fulfilled' && res.value && res.value.data && Array.isArray(res.value.data)) ? res.value.data : [];
 
+// CORRECCIÓN: FETCH DATA ANTI-FALLOS CON Promise.allSettled
 async function fetchData(isBackground=false){
     if(!isBackground)document.getElementById('global-loader').classList.remove('hidden');
     else document.querySelectorAll('button[title="Recargar"] i').forEach(i=>i.classList.add('fa-spin'));
@@ -2332,27 +2417,44 @@ async function fetchData(isBackground=false){
     try {
         if (!db) throw new Error("Base de datos inalcanzable");
         
-        let resContacts=null, resCamps=null, resCampTargs=null;
-        const promises = [
+        const pBase = await Promise.allSettled([
             db.from('users').select('*'),
-            db.from('records').select('*'),
-            db.from('advances').select('*'),
-            db.from('bonos').select('*'),
-            db.from('giros').select('*'),
-            db.from('referrals').select('*'),
-            db.from('rendimientos').select('*')
-        ];
+            db.from('records').select('*').order('id', { ascending: false }).limit(5000),
+            db.from('advances').select('*').order('id', { ascending: false }).limit(3000),
+            db.from('bonos').select('*').order('id', { ascending: false }).limit(5000),
+            db.from('giros').select('*').order('id', { ascending: false }).limit(3000),
+            db.from('referrals').select('*').order('id', { ascending: false }).limit(3000),
+            db.from('rendimientos').select('*').order('id', { ascending: false }).limit(5000)
+        ]);
         
-        const results = await Promise.all(promises);
-        const [resUsers, resRec, resAdv, resBon, resGir, resRef, resRend] = results;
+        const resUsers = pBase[0].status === 'fulfilled' ? pBase[0].value : null;
+        if (resUsers && resUsers.data && Array.isArray(resUsers.data)) {
+            resUsers.data.forEach(u => {
+                let com = parseFloat(u.comision); if(com>0 && com<=1) com = com*100;
+                USERS[cleanStr(u.id)] = { name: u.name||u.id, type: u.type, icon: u.icon||'fa-user', color: u.color||'bg-slate-600', comision: com||20 };
+            });
+        }
 
+        records = safeData(pBase[1]).map(r => ({...r, assignedTo: r.assigned_to, createdBy: r.created_by, isSueldo: r.is_sueldo}));
+        advances = safeData(pBase[2]).map(r => ({...r, createdBy: r.created_by}));
+        bonos = safeData(pBase[3]).map(r => ({...r, assignedTo: r.assigned_to, createdBy: r.created_by, amountWon: r.amount_won}));
+        giros = safeData(pBase[4]).map(r => ({...r, amountWon: r.amount_won, createdBy: r.created_by}));
+        referrals = safeData(pBase[5]).map(r => ({...r, createdBy: r.created_by, isInfluencer: r.is_influencer}));
+        rendimientos = safeData(pBase[6]).map(r => ({...r, createdBy: r.created_by}));
+
+        allReceipts = records.map(r => r.receipt).filter(r => r && r !== 'Sin Ref');
+        records.sort(sortDataDesc); advances.sort(sortDataDesc); bonos.sort(sortDataDesc); giros.sort(sortDataDesc); referrals.sort(sortDataDesc); rendimientos.sort(sortDataDesc);
+
+        // Bloque CRM Aislado
         try {
-            const crmResults = await Promise.all([
+            const pCRM = await Promise.allSettled([
                 db.from('contacts').select('*'),
                 db.from('campaigns').select('*'),
                 db.from('campaign_targets').select('*')
             ]);
-            resContacts = crmResults[0]; resCamps = crmResults[1]; resCampTargs = crmResults[2];
+            const resContacts = pCRM[0].status === 'fulfilled' ? pCRM[0].value : null;
+            const resCamps = pCRM[1].status === 'fulfilled' ? pCRM[1].value : null;
+            const resCampTargs = pCRM[2].status === 'fulfilled' ? pCRM[2].value : null;
             
             if(resContacts && resContacts.data) {
                 contactsMap = {};
@@ -2364,18 +2466,19 @@ async function fetchData(isBackground=false){
             }
             if(resCamps && resCamps.data) campaignsList = resCamps.data;
             if(resCampTargs && resCampTargs.data) campaignTargetsList = resCampTargs.data;
-        } catch(e) { console.warn("Aviso: Módulo CRM no disponible."); }
+        } catch(e) {}
 
+        // Bloque Extras Aislado
         try {
-            const extraResults = await Promise.all([
+            const pExtra = await Promise.allSettled([
                 db.from('external_commissions').select('*'),
                 db.from('messages').select('*'),
                 db.from('settings').select('*')
             ]);
-            if(extraResults[0].data) externalCommissions = extraResults[0].data;
-            if(extraResults[1].data) messages = extraResults[1].data;
-            if(extraResults[2].data) {
-                extraResults[2].data.forEach(s => { globalSettings[s.key] = parseFloat(s.value); });
+            if(pExtra[0].status === 'fulfilled' && pExtra[0].value.data) externalCommissions = pExtra[0].value.data;
+            if(pExtra[1].status === 'fulfilled' && pExtra[1].value.data) messages = pExtra[1].value.data;
+            if(pExtra[2].status === 'fulfilled' && pExtra[2].value.data) {
+                pExtra[2].value.data.forEach(s => { globalSettings[s.key] = parseFloat(s.value); });
                 if(document.getElementById('cfg-jesus-ambos')) {
                     document.getElementById('cfg-jesus-ambos').value = globalSettings.jesus_ambos_marcan_pct || 10;
                     document.getElementById('cfg-jesus-sepy').value = globalSettings.jesus_sepybet_pct || 5;
@@ -2384,31 +2487,14 @@ async function fetchData(isBackground=false){
                     document.getElementById('cfg-tito-chiche').value = globalSettings.tito_chichesepy_pct || 5;
                 }
             }
-        } catch(e) { console.warn("Aviso: Módulos Extras no creados en Supabase aún."); }
-
-        if (resUsers && resUsers.data && Array.isArray(resUsers.data)) {
-            resUsers.data.forEach(u => {
-                let com = parseFloat(u.comision); if(com>0 && com<=1) com = com*100;
-                USERS[cleanStr(u.id)] = { name: u.name||u.id, type: u.type, icon: u.icon||'fa-user', color: u.color||'bg-slate-600', comision: com||20 };
-            });
-        }
-
-        records = safeData(resRec).map(r => ({...r, assignedTo: r.assigned_to, createdBy: r.created_by, isSueldo: r.is_sueldo}));
-        advances = safeData(resAdv).map(r => ({...r, createdBy: r.created_by}));
-        bonos = safeData(resBon).map(r => ({...r, assignedTo: r.assigned_to, createdBy: r.created_by, amountWon: r.amount_won}));
-        giros = safeData(resGir).map(r => ({...r, amountWon: r.amount_won, createdBy: r.created_by}));
-        referrals = safeData(resRef).map(r => ({...r, createdBy: r.created_by, isInfluencer: r.is_influencer}));
-        rendimientos = safeData(resRend).map(r => ({...r, createdBy: r.created_by}));
-
-        allReceipts = records.map(r => r.receipt).filter(r => r && r !== 'Sin Ref');
-        records.sort(sortDataDesc); advances.sort(sortDataDesc); bonos.sort(sortDataDesc); giros.sort(sortDataDesc); referrals.sort(sortDataDesc); rendimientos.sort(sortDataDesc);
+        } catch(e) {}
 
         resetPagesAndUpdate(); 
         updateBonoDatalist(); 
         updateMelanieDropdowns();
         fetchMessages(false);
     } catch(err) {
-        if(!isBackground) showToast("Base de datos en modo local temporal.", "warning");
+        if(!isBackground) showToast("Conectando en modo sin conexión temporal.", "warning");
         resetPagesAndUpdate(); 
     } finally {
         if(!isBackground)document.getElementById('global-loader').classList.add('hidden');
@@ -2416,12 +2502,7 @@ async function fetchData(isBackground=false){
     }
 }
 
-const getProp = (obj, possibleKeys) => {
-    const lowerKeys = possibleKeys.map(k => cleanStr(k));
-    for (let k in obj) { if (lowerKeys.includes(cleanStr(k))) return obj[k]; }
-    return undefined;
-};
-
+// ... Todas las funciones CRM quedan igual ...
 // === CRM: CONTACTOS Y CAMPAÑAS ===
 function handleContactsUpload(e) {
     const file = e.target.files[0]; if(!file) return;
@@ -2463,7 +2544,7 @@ function handleContactsUpload(e) {
                     await db.from('contacts').upsert(chunk, { onConflict: 'username' });
                 }
                 showToast("Libreta actualizada correctamente", "success");
-                fetchData(true);
+                await fetchData(true);
             } else {
                 showToast("No hay contactos válidos", "warning");
             }
@@ -2477,26 +2558,11 @@ function renderContactsTable() {
     const tbody = document.getElementById('crm-contacts-table-body');
     if(!tbody) return;
     const filter = document.getElementById('search-contacts')?.value.toLowerCase().trim() || '';
-    
-    let list = Object.keys(contactsMap).map(k => ({
-        norm: k, orig: contactsMap[k].orig || '-', phone: contactsMap[k].phone || '-'
-    }));
-    
-    if(filter) {
-        list = list.filter(c => c.norm.includes(filter) || String(c.phone).includes(filter) || String(c.orig).toLowerCase().includes(filter));
-    }
-    
+    let list = Object.keys(contactsMap).map(k => ({ norm: k, orig: contactsMap[k].orig || '-', phone: contactsMap[k].phone || '-' }));
+    if(filter) list = list.filter(c => c.norm.includes(filter) || String(c.phone).includes(filter) || String(c.orig).toLowerCase().includes(filter));
     let html = '';
     const pag = paginate(list, 'contacts');
-    pag.forEach(c => {
-        html += `
-        <tr class="border-b border-slate-50 hover:bg-slate-50/50 transition-colors">
-            <td data-label="Usuario Limpio" class="p-4 pl-8 font-black text-purple-600 uppercase">${c.norm}</td>
-            <td data-label="Nombre Original" class="p-4 text-xs text-slate-500">${c.orig}</td>
-            <td data-label="Teléfono" class="p-4 font-mono text-sm font-bold text-slate-700">${c.phone}</td>
-            <td data-label="Acción" class="p-4 pr-8 text-center"><span class="text-emerald-500"><i class="fas fa-check-circle"></i></span></td>
-        </tr>`;
-    });
+    pag.forEach(c => { html += `<tr class="border-b border-slate-50 hover:bg-slate-50/50 transition-colors"><td data-label="Usuario Limpio" class="p-4 pl-8 font-black text-purple-600 uppercase">${c.norm}</td><td data-label="Nombre Original" class="p-4 text-xs text-slate-500">${c.orig}</td><td data-label="Teléfono" class="p-4 font-mono text-sm font-bold text-slate-700">${c.phone}</td><td data-label="Acción" class="p-4 pr-8 text-center"><span class="text-emerald-500"><i class="fas fa-check-circle"></i></span></td></tr>`; });
     tbody.innerHTML = html || `<tr><td colspan="4" class="p-8 text-center text-sm font-bold text-slate-400">No hay contactos guardados o no coinciden con la búsqueda.</td></tr>`;
 }
 
@@ -2504,9 +2570,7 @@ async function processCampaign() {
     const name = document.getElementById('camp-name').value.trim();
     const cDate = document.getElementById('camp-date').value;
     const fileInput = document.getElementById('upload-camp-file');
-    
     if(!name || !cDate || !fileInput.files.length) return showToast("Falta nombre, fecha o archivo", "warning");
-    
     const file = fileInput.files[0];
     const reader = new FileReader();
     reader.onload = async function(evt) {
@@ -2531,31 +2595,23 @@ async function processCampaign() {
                     if(normU) targetUsers.add(normU);
                 }
             }
-            
             if(targetUsers.size === 0) return showToast("No se encontraron usuarios", "error");
             
             const campId = 'CAMP_' + Date.now();
             const newCamp = { id: campId, name: name, date_sent: cDate, created_by: cleanStr(currentUser) };
-            
             showToast(`Creando campaña (${targetUsers.size} usuarios)...`, "info");
-            
             await db.from('campaigns').insert([newCamp]);
             
-            let targetRows = Array.from(targetUsers).map(u => ({ 
-                campaign_id: campId, username: u, deposited: false, amount_deposited: 0 
-            }));
-            
+            let targetRows = Array.from(targetUsers).map(u => ({ campaign_id: campId, username: u, deposited: false, amount_deposited: 0 }));
             const chunkSize = 1000;
             for (let i = 0; i < targetRows.length; i += chunkSize) {
                 const chunk = targetRows.slice(i, i + chunkSize);
                 await db.from('campaign_targets').insert(chunk);
             }
-            
             showToast("Campaña creada. Entra a 'Ver Detalles' para analizar el ROI.", "success");
             document.getElementById('camp-name').value = '';
             fileInput.value = '';
-            fetchData(true);
-            
+            await fetchData(true);
         } catch(err) { showToast("Error procesando campaña", "error"); console.log(err); }
     };
     reader.readAsBinaryString(file);
@@ -2564,35 +2620,19 @@ async function processCampaign() {
 function renderCampaignsTable() {
     const tbody = document.getElementById('campaigns-table-body');
     if(!tbody) return;
-    
     let html = '';
     campaignsList.sort((a,b) => new Date(b.date_sent) - new Date(a.date_sent)).forEach(camp => {
         const targets = campaignTargetsList.filter(t => t.campaign_id === camp.id);
         const totalContacted = targets.length;
-        
         let convertedCount = targets.filter(t => t.deposited).length;
         let totalRevenue = targets.reduce((acc, t) => acc + parseFloat(t.amount_deposited || 0), 0);
-        
         const conversionRate = totalContacted > 0 ? ((convertedCount / totalContacted) * 100).toFixed(1) : 0;
-        
         const ud=JSON.parse(localStorage.getItem('sb_user_data'));
         const isMaster = ud && ud.type === 'master';
-        
         let actBtns = `<button onclick="viewCampaignDetails('${camp.id}')" class="px-4 py-2.5 bg-purple-100 hover:bg-purple-200 text-purple-700 rounded-xl text-xs font-bold transition-colors shadow-sm whitespace-nowrap"><i class="fas fa-search mr-1.5"></i> Detalles y ROI</button>`;
         if(!isMaster) actBtns += `<button onclick="deleteCampaign('${camp.id}')" class="w-10 h-10 bg-rose-50 hover:bg-rose-100 text-rose-500 rounded-xl transition-colors shadow-sm ml-2 flex items-center justify-center"><i class="fas fa-trash"></i></button>`;
-
-        html += `
-        <tr class="border-b border-slate-50 hover:bg-slate-50/50 transition-colors">
-            <td data-label="Campaña" class="p-5 pl-8 font-black text-slate-800">${camp.name}</td>
-            <td data-label="Fecha" class="p-5 text-xs font-bold text-slate-500">${fmtDate(camp.date_sent)}</td>
-            <td data-label="Contactados" class="p-5 text-center font-black text-slate-600">${totalContacted}</td>
-            <td data-label="Conversión" class="p-5 text-center font-black ${conversionRate > 0 ? 'text-emerald-500' : 'text-slate-400'}">${conversionRate}% (${convertedCount})</td>
-            <td data-label="ROI (Ingresos)" class="p-5 text-right font-black text-purple-600">${fmt(totalRevenue)}</td>
-            <td data-label="Acción" class="p-5 pr-8 text-center flex justify-end gap-1">${actBtns}</td>
-        </tr>
-        `;
+        html += `<tr class="border-b border-slate-50 hover:bg-slate-50/50 transition-colors"><td data-label="Campaña" class="p-5 pl-8 font-black text-slate-800">${camp.name}</td><td data-label="Fecha" class="p-5 text-xs font-bold text-slate-500">${fmtDate(camp.date_sent)}</td><td data-label="Contactados" class="p-5 text-center font-black text-slate-600">${totalContacted}</td><td data-label="Conversión" class="p-5 text-center font-black ${conversionRate > 0 ? 'text-emerald-500' : 'text-slate-400'}">${conversionRate}% (${convertedCount})</td><td data-label="ROI (Ingresos)" class="p-5 text-right font-black text-purple-600">${fmt(totalRevenue)}</td><td data-label="Acción" class="p-5 pr-8 text-center flex justify-end gap-1">${actBtns}</td></tr>`;
     });
-    
     tbody.innerHTML = html || `<tr><td colspan="6" class="p-8 text-center text-sm font-bold text-slate-400">No hay campañas registradas.</td></tr>`;
 }
 
@@ -2600,13 +2640,10 @@ function viewCampaignDetails(id) {
     currentCampaignId = id;
     const camp = campaignsList.find(c => c.id === id);
     if(!camp) return;
-
     document.getElementById('cd-title').innerText = camp.name;
     document.getElementById('cd-date').innerText = fmtDate(camp.date_sent);
-    
     const selFilter = document.getElementById('cd-filter-status');
     if(selFilter) selFilter.value = 'all';
-
     renderCampaignDetails();
     switchTab('tab-crm-campaign-detail');
 }
@@ -2614,7 +2651,6 @@ function viewCampaignDetails(id) {
 function renderCampaignDetails() {
     if(!currentCampaignId) return;
     const allTargets = campaignTargetsList.filter(t => t.campaign_id === currentCampaignId);
-    
     const total = allTargets.length;
     const conv = allTargets.filter(t => t.deposited).length;
     const rev = allTargets.reduce((acc, t) => acc + parseFloat(t.amount_deposited || 0), 0);
@@ -2637,14 +2673,7 @@ function renderCampaignDetails() {
         let phone = contactsMap[t.username] ? contactsMap[t.username].phone : '-';
         let badge = t.deposited ? `<span class="px-3 py-1.5 bg-emerald-50 text-emerald-600 border border-emerald-100 rounded-xl text-[10px] font-black uppercase"><i class="fas fa-check mr-1"></i> Sí depositó</span>` : `<span class="px-3 py-1.5 bg-slate-50 text-slate-400 border border-slate-200 rounded-xl text-[10px] font-black uppercase"><i class="fas fa-times mr-1"></i> No</span>`;
         let amtClass = t.deposited ? 'text-emerald-600' : 'text-slate-300';
-        
-        html += `
-        <tr class="border-b border-slate-50 hover:bg-slate-50/50 transition-colors">
-            <td data-label="Usuario" class="p-4 pl-8 font-black uppercase text-purple-600">${t.username}</td>
-            <td data-label="Teléfono" class="p-4 font-mono text-sm font-bold text-slate-600">${phone}</td>
-            <td data-label="Depositó" class="p-4 text-center">${badge}</td>
-            <td data-label="Monto" class="p-4 pr-8 text-right font-black ${amtClass}">${fmt(t.amount_deposited)}</td>
-        </tr>`;
+        html += `<tr class="border-b border-slate-50 hover:bg-slate-50/50 transition-colors"><td data-label="Usuario" class="p-4 pl-8 font-black uppercase text-purple-600">${t.username}</td><td data-label="Teléfono" class="p-4 font-mono text-sm font-bold text-slate-600">${phone}</td><td data-label="Depositó" class="p-4 text-center">${badge}</td><td data-label="Monto" class="p-4 pr-8 text-right font-black ${amtClass}">${fmt(t.amount_deposited)}</td></tr>`;
     });
     tbody.innerHTML = html || `<tr><td colspan="4" class="p-8 text-center text-sm font-bold text-slate-400">No hay usuarios con este filtro.</td></tr>`;
 }
@@ -2724,7 +2753,7 @@ function analyzeCampaignFile() {
                 }
                 showToast("Análisis completado, métricas actualizadas", "success");
                 fileInput.value = '';
-                fetchData(true); 
+                await fetchData(true); 
             } else {
                 showToast("Ningún usuario de la campaña registró depósitos en este reporte", "warning");
             }
@@ -2788,11 +2817,10 @@ async function deleteCampaign(id) {
         await db.from('campaigns').delete().eq('id', id);
         showToast("Campaña eliminada", "success");
         if(currentCampaignId === id) switchTab('tab-crm-campaigns');
-        fetchData(true);
+        await fetchData(true);
     } catch(e) { showToast("Error eliminando campaña", "error"); }
 }
 
-// === CÁLCULO DE COMISIONES EXTERNAS (GUSSEPY) ===
 async function saveGlobalSettings(e) {
     e.preventDefault();
     const btn = e.target.querySelector('button');
@@ -2862,7 +2890,7 @@ async function handleComisionesExt(e) {
             com_plat_total: complat, jesus_cut: jesus_cut, tito_cut: tito_cut, 
             details: detailsStr, created_by: cleanStr(currentUser)
         });
-        if(!error) { showToast("Recibo generado y asignado con éxito", "success"); fetchData(true); }
+        if(!error) { showToast("Recibo generado y asignado con éxito", "success"); await fetchData(true); }
         else throw error;
     } catch(e) { showToast("Error al guardar", "error"); }
     btn.innerHTML = orig; btn.disabled = false;
@@ -2872,7 +2900,7 @@ async function actionDeleteExt(id) {
     if(!confirm("¿Eliminar este recibo de comisión?")) return;
     try {
         const {error} = await db.from('external_commissions').delete().eq('id', id);
-        if(!error) { showToast("Cálculo eliminado", "warning"); fetchData(true); }
+        if(!error) { showToast("Cálculo eliminado", "warning"); await fetchData(true); }
     } catch(e) { showToast("Error eliminando", "error"); }
 }
 
@@ -2880,9 +2908,7 @@ function viewExtDetailTitoJesus() {
     const extComMonth = externalCommissions.find(x => x.month === document.getElementById('dash-month-filter').value);
     if(extComMonth && extComMonth.details) {
         document.getElementById('ext-det-month').innerText = 'PERIODO: ' + extComMonth.month;
-        
         const isTito = cleanStr(currentUser) === 'tito';
-        
         let specificDetail = '';
         if (isTito) {
             specificDetail = `
@@ -2907,12 +2933,9 @@ function viewExtDetailTitoJesus() {
                 </div>
             `;
         }
-        
         document.getElementById('ext-det-body').innerHTML = specificDetail;
         document.getElementById('modal-ext-detail').classList.replace('hidden', 'flex');
-    } else {
-        showToast("No hay detalles guardados para este mes.", "warning");
-    }
+    } else { showToast("No hay detalles guardados para este mes.", "warning"); }
 }
 
 function viewExtDetailGussepy(idMes=null) {
@@ -2922,17 +2945,127 @@ function viewExtDetailGussepy(idMes=null) {
         document.getElementById('ext-det-month').innerText = 'PERIODO: ' + extComMonth.month;
         document.getElementById('ext-det-body').innerHTML = extComMonth.details;
         document.getElementById('modal-ext-detail').classList.replace('hidden', 'flex');
-    } else {
-        showToast("Aún no se ha generado el recibo para este periodo", "warning");
-    }
+    } else { showToast("Aún no se ha generado el recibo para este periodo", "warning"); }
 }
 
 function closeExtDetailModal() {
     document.getElementById('modal-ext-detail').classList.replace('flex', 'hidden');
 }
 
+// ==========================================
+// MÓDULO: CARGA DE BONOS REALES EXCLUSIVA
+// ==========================================
+// CORRECCIÓN: Concatenación de hora exacta
+function handleBonosRealesUpload(e) {
+    const file = e.target.files[0]; if(!file) return;
+    const reader = new FileReader();
+    reader.onload = function(evt) {
+        try {
+            const workbook = XLSX.read(evt.target.result, {type:'binary'});
+            const sheet = workbook.Sheets[workbook.SheetNames[0]];
+            const rows = XLSX.utils.sheet_to_json(sheet, {header:1});
+            
+            let hIdx=-1, cIdx={f:-1, jug:-1, monto:-1, com:-1};
+            
+            for(let i=0; i<Math.min(30, rows.length); i++){
+                const r = Array.from(rows[i]||[]).map(x=>x?String(x).toLowerCase().trim():"");
+                const f = r.findIndex(x=>x.includes('fech'));
+                const jug = r.findIndex(x=>x.includes('jugador')||x.includes('usuario')||x.includes('agente'));
+                const monto = r.findIndex(x=>x.includes('monto')||x.includes('valor'));
+                const com = r.findIndex(x=>x.includes('comentario')||x.includes('comment')||x.includes('detalle'));
+                
+                if(f!==-1 && jug!==-1 && monto!==-1) { hIdx=i; cIdx={f,jug,monto,com}; break; }
+            }
+            if(hIdx===-1){showToast("No se detectaron columnas Fecha, Jugador y Monto.", "error");return;}
+            
+            bonosRealesUploadData = [];
+            
+            for(let i=hIdx+1; i<rows.length; i++){
+                const row = rows[i]||[];
+                if(!row.length) continue;
+                
+                let comentarioOriginal = cIdx.com !== -1 && row[cIdx.com] ? String(row[cIdx.com]).trim() : '';
+                let comentarioLower = comentarioOriginal.toLowerCase();
+                
+                if(comentarioLower.includes('bono') || comentarioLower.includes('bonus')) {
+                    let rawMonto = getVal(row[cIdx.monto]);
+                    if(rawMonto !== 0) {
+                        // CORRECCIÓN: Append current exact time
+                        let dateBase = excelToISO(row[cIdx.f]);
+                        let timePart = getLocalIsoDatetime().split('T')[1]; 
+                        
+                        bonosRealesUploadData.push({
+                            date: `${dateBase}T${timePart}`,
+                            jugador: String(row[cIdx.jug]||'Desconocido').trim(),
+                            monto: Math.abs(rawMonto),
+                            comentario: comentarioOriginal
+                        });
+                    }
+                }
+            }
+            renderBonosRealesPreview();
+            if(bonosRealesUploadData.length > 0) showToast(`Se detectaron ${bonosRealesUploadData.length} bonos.`, 'success');
+            else showToast("El archivo se leyó, pero no se encontró la palabra 'Bono' en los comentarios.", "warning");
+        } catch(err) { showToast("Error leyendo reporte", "error"); console.log(err); }
+    };
+    reader.readAsBinaryString(file);
+}
 
-// === LÓGICA DE BONOS REPARADA PARA M. EMILIA ===
+function renderBonosRealesPreview() {
+    const tbody = document.getElementById('bonos-reales-preview-body');
+    const cont = document.getElementById('bonos-reales-preview-container');
+    if(!bonosRealesUploadData.length){cont.classList.add('hidden');cont.classList.remove('flex');return;}
+    
+    tbody.innerHTML = bonosRealesUploadData.map((r,i) => `
+        <tr>
+            <td class="py-2 text-[10px] font-bold">${r.date}</td>
+            <td class="py-2 text-[10px] uppercase font-bold text-indigo-600">${r.jugador}</td>
+            <td class="py-2 text-[10px] text-right font-black text-emerald-600">${fmt(r.monto)}</td>
+            <td class="py-2 text-[10px] italic text-slate-500">${r.comentario}</td>
+            <td class="py-2 text-center"><button onclick="bonosRealesUploadData.splice(${i},1); renderBonosRealesPreview()" class="text-rose-500"><i class="fas fa-times"></i></button></td>
+        </tr>
+    `).join('');
+    cont.classList.add('flex'); cont.classList.remove('hidden');
+}
+
+// CORRECCIÓN: Sincronía estricta y refresco de interfaz
+async function submitBonosRealesData() {
+    if(!bonosRealesUploadData.length)return;
+    const btn = document.getElementById('btn-upload-bonos-reales'); 
+    btn.disabled = true;
+    btn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i> Subiendo...`;
+    
+    let upsertData = bonosRealesUploadData.map((r, i) => ({
+        id: 'TX_BN_REAL_' + Date.now() + '_' + i,
+        date: r.date,
+        amount: r.monto,
+        assigned_to: 'tito', 
+        concept: 'Bono Saldo Real - ' + r.comentario,
+        created_by: cleanStr(currentUser),
+        status: 'Verificado', 
+        receipt: r.jugador, 
+        is_sueldo: false
+    }));
+    
+    try {
+        const { error } = await db.from('records').insert(upsertData);
+        if(!error) { 
+            showToast("Bonos Reales procesados correctamente.", "success"); 
+            await fetchData(true); // Refresco inmediato síncrono
+        } else { showToast("Error subiendo datos.", "error"); }
+    } catch(e) { showToast("Error de red.", "error"); }
+    
+    document.getElementById('bonos-reales-preview-container').classList.add('hidden');
+    document.getElementById('upload-bonos-reales-file').value = '';
+    bonosRealesUploadData = []; 
+    btn.innerHTML = '<i class="fas fa-upload mr-2"></i> Registrar Bonos en el Sistema'; 
+    btn.disabled = false;
+}
+
+// ==========================================
+// MÓDULO BONOS APUESTAS 
+// ==========================================
+// CORRECCIÓN: Concatenación de hora exacta
 function handleBonosApuestasUpload(e) {
     const file = e.target.files[0]; if(!file) return;
     const reader = new FileReader();
@@ -2978,9 +3111,7 @@ function handleBonosApuestasUpload(e) {
                         stDisplay = 'Ganado';
                     } else if (resLow.includes('lost') || resLow.includes('perdid') || resLow.includes('void') || resLow.includes('cancel')) {
                         stDisplay = 'Perdido';
-                    } else {
-                        stDisplay = 'Entregado'; 
-                    }
+                    } else { stDisplay = 'Entregado'; }
 
                     if (stDisplay === 'Ganado' && rawGanancia === 0) {
                         if (cIdx.gananciaPosible !== undefined && cIdx.gananciaPosible !== -1) {
@@ -2988,11 +3119,16 @@ function handleBonosApuestasUpload(e) {
                         }
                     }
 
+                    // CORRECCIÓN: Append current exact time
+                    let dateBase = excelToISO(row[cIdx.fecha]);
+                    let timePart = getLocalIsoDatetime().split('T')[1]; 
+
                     bonosApuestasUploadData.push({
                         id_apuesta: String(row[cIdx.id]||Date.now()+'_'+i),
                         jugador: String(row[cIdx.jug]||'Desconocido').trim(),
                         monto: rawMonto, ganancia: rawGanancia, estado: stDisplay,
-                        fecha: excelToISO(row[cIdx.fecha]), agente: String(row[cIdx.agente]||'Sepybet').trim()
+                        fecha: `${dateBase}T${timePart}`, 
+                        agente: String(row[cIdx.agente]||'Sepybet').trim()
                     });
                 }
             }
@@ -3012,14 +3148,13 @@ function renderBonosApuestasPreview() {
     cont.classList.add('flex');cont.classList.remove('hidden');
 }
 
+// CORRECCIÓN: Sincronía estricta y refresco de interfaz
 async function submitBonosApuestasData() {
     if(!bonosApuestasUploadData.length)return;
     const btn=document.getElementById('btn-upload-bonos-apuestas');btn.disabled=true;
     
     const uniqueBonosMap = new Map();
-    bonosApuestasUploadData.forEach(r => {
-        uniqueBonosMap.set(r.id_apuesta, r);
-    });
+    bonosApuestasUploadData.forEach(r => { uniqueBonosMap.set(r.id_apuesta, r); });
     
     let upsertData = Array.from(uniqueBonosMap.values()).map(r => ({
         id: 'BN_AP_' + r.id_apuesta, date: r.fecha, amount: r.monto, assigned_to: r.jugador,
@@ -3030,15 +3165,17 @@ async function submitBonosApuestasData() {
     btn.innerHTML=`<i class="fas fa-spinner fa-spin mr-2"></i> Actualizando...`;
     try {
         const { error } = await db.from('bonos').upsert(upsertData, { onConflict: 'id' }); 
-        if(!error) { showToast("Bonos procesados y actualizados correctamente.", "success"); fetchData(true); }
-        else { showToast("Error subiendo datos.", "error"); }
+        if(!error) { 
+            showToast("Bonos procesados y actualizados correctamente.", "success"); 
+            await fetchData(true); // Refresco inmediato síncrono
+        } else { showToast("Error subiendo datos.", "error"); }
     } catch(e) { showToast("Error de red.", "error"); }
     document.getElementById('bonos-apuestas-preview-container').classList.add('hidden');
     document.getElementById('upload-bonos-apuestas-file').value='';
     bonosApuestasUploadData=[]; btn.innerHTML='<i class="fas fa-sync mr-2"></i> Procesar y Actualizar Bonos'; btn.disabled=false;
 }
 
-// === BANDEJA DE MENSAJES CON VISTAS GMAIL ===
+// === BANDEJA DE MENSAJES ===
 let msgAttachmentB64 = '';
 let msgAttachmentName = '';
 let currentInboxView = 'received';
@@ -3111,16 +3248,11 @@ function readMessage(id) {
         link.href = m.attachment;
         link.download = m.attachment_name;
         document.getElementById('read-attachment-name').innerText = m.attachment_name;
-    } else {
-        attachCont.classList.add('hidden');
-    }
+    } else { attachCont.classList.add('hidden'); }
 
     const replyBtn = document.getElementById('read-reply-container');
-    if (currentInboxView === 'received') {
-        replyBtn.classList.remove('hidden');
-    } else {
-        replyBtn.classList.add('hidden');
-    }
+    if (currentInboxView === 'received') replyBtn.classList.remove('hidden');
+    else replyBtn.classList.add('hidden');
 }
 
 function replyMessage() {
@@ -3134,29 +3266,18 @@ function replyMessage() {
 function convertMsgFile(e) {
     const file = e.target.files[0];
     const ind = document.getElementById('msg-file-indicator');
-    if(!file) { 
-        msgAttachmentB64=''; msgAttachmentName=''; 
-        if(ind) ind.classList.add('hidden');
-        return; 
-    }
-    if(file.size > 2 * 1024 * 1024) { 
-        showToast("El archivo no puede exceder 2MB", "warning"); 
-        e.target.value=''; 
-        if(ind) ind.classList.add('hidden');
-        return; 
-    }
+    if(!file) { msgAttachmentB64=''; msgAttachmentName=''; if(ind) ind.classList.add('hidden'); return; }
+    if(file.size > 2 * 1024 * 1024) { showToast("El archivo no puede exceder 2MB", "warning"); e.target.value=''; if(ind) ind.classList.add('hidden'); return; }
     const reader = new FileReader();
     reader.onload = (evt) => {
         msgAttachmentB64 = evt.target.result;
         msgAttachmentName = file.name;
-        if(ind) {
-            ind.innerHTML = `<i class="fas fa-check-circle"></i> Archivo cargado: ${file.name}`;
-            ind.classList.remove('hidden');
-        }
+        if(ind) { ind.innerHTML = `<i class="fas fa-check-circle"></i> Archivo cargado: ${file.name}`; ind.classList.remove('hidden'); }
     };
     reader.readAsDataURL(file);
 }
 
+// CORRECCIÓN: Sincronía estricta y refresco de interfaz
 async function handleSendMessage(e) {
     e.preventDefault();
     const to = document.getElementById('msg-to').value;
@@ -3167,13 +3288,8 @@ async function handleSendMessage(e) {
     const orig = btn.innerHTML; btn.innerHTML = 'Enviando...'; btn.disabled = true;
     try {
         const {error} = await db.from('messages').insert([{
-            sender_id: cleanStr(currentUser),
-            receiver_id: to,
-            subject: subject,
-            body: body,
-            attachment: msgAttachmentB64,
-            attachment_name: msgAttachmentName,
-            is_read: false
+            sender_id: cleanStr(currentUser), receiver_id: to, subject: subject,
+            body: body, attachment: msgAttachmentB64, attachment_name: msgAttachmentName, is_read: false
         }]);
         if(!error) { 
             showToast("Mensaje enviado con éxito", "success"); 
@@ -3181,7 +3297,7 @@ async function handleSendMessage(e) {
             msgAttachmentB64=''; msgAttachmentName=''; 
             document.getElementById('msg-file-indicator').classList.add('hidden');
             closeCompose();
-            fetchData(true); 
+            await fetchData(true); // Refresco inmediato síncrono
         }
         else throw error;
     } catch(err) { showToast("Error al enviar mensaje", "error"); }
@@ -3241,129 +3357,6 @@ function fetchMessages(manual = false) {
     });
     list.innerHTML = h;
     if(manual) showToast("Bandeja actualizada", "success");
-}
-
-// === SINCRONIZACIÓN Y OTRAS FUNCIONES BASE ===
-async function handleMasterSync() {
-    const fileInput = document.getElementById('upload-sync-file');
-    if(!fileInput.files.length) { showToast("Seleccione un archivo de Excel", "error"); return; }
-    if(!db) { showToast("No hay conexión con Supabase", "error"); return; }
-    const file = fileInput.files[0];
-    const btn = document.getElementById('btn-sync-db');
-    const orig = btn.innerHTML;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Subiendo a Base de Datos...';
-    btn.disabled = true;
-
-    const reader = new FileReader();
-    reader.onload = async function(e) {
-        try {
-            const workbook = XLSX.read(e.target.result, {type: 'binary'});
-            let successCount = 0;
-            for (const sheetName of workbook.SheetNames) {
-                const rows = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
-                if(rows.length === 0) continue;
-                let tableName = ''; let formattedRows = [];
-                const sName = sheetName.toUpperCase().trim();
-                if (sName === 'USUARIOS') {
-                    tableName = 'users';
-                    formattedRows = rows.map(r => ({
-                        id: getProp(r, ['usuario', 'id']) ? cleanStr(getProp(r, ['usuario', 'id'])) : '',
-                        pass: getProp(r, ['clave', 'pass']) ? String(getProp(r, ['clave', 'pass'])) : 'admin2026',
-                        name: getProp(r, ['nombre', 'name']) || '',
-                        type: getProp(r, ['rol', 'type']) || 'user',
-                        color: getProp(r, ['color']) || 'bg-slate-600',
-                        icon: getProp(r, ['icono', 'icon']) || 'fa-user',
-                        comision: parseFloat(getProp(r, ['comision', 'comisión', 'comision '])) || 20
-                    })).filter(r => r.id !== '');
-                } else if (sName.includes('REGISTROS') || sName.includes('BACKOFFICE')) {
-                    tableName = 'records';
-                    formattedRows = rows.map(r => ({
-                        id: getProp(r, ['id', 'id_tx']) || 'TX_'+Date.now()+'_'+Math.random(),
-                        date: excelToISO(getProp(r, ['fecha', 'date'])),
-                        amount: getVal(getProp(r, ['monto', 'amount'])),
-                        concept: getProp(r, ['concepto', 'concept', 'tipo']) || '',
-                        assigned_to: cleanStr(getProp(r, ['cuenta', 'asignado a', 'asignado', 'jugador', 'usuario ', 'usuario'])) || '',
-                        created_by: cleanStr(getProp(r, ['creado por', 'creado', 'usuario'])) || cleanStr(currentUser),
-                        status: getProp(r, ['estado', 'status']) || 'Verificado',
-                        comment: getProp(r, ['comentario', 'comment']) || '',
-                        receipt: String(getProp(r, ['ref', 'comprobante', 'receipt', 'referencia', 'comprobante_vinculado']) || ''),
-                        is_sueldo: getProp(r, ['sueldo', 'is_sueldo']) ? true : false
-                    }));
-                } else if (sName.includes('ADELANTOS')) {
-                    tableName = 'advances';
-                    formattedRows = rows.map(r => ({
-                        id: getProp(r, ['id']) || 'ADV_'+Date.now()+'_'+Math.random(),
-                        date: excelToISO(getProp(r, ['fecha', 'date'])),
-                        amount: getVal(getProp(r, ['monto', 'amount'])),
-                        concept: getProp(r, ['concepto', 'concept']) || '',
-                        status: getProp(r, ['estado', 'status']) || 'Pendiente',
-                        detail: getProp(r, ['detalle', 'detail']) || '',
-                        created_by: cleanStr(getProp(r, ['creado por'])) || cleanStr(currentUser)
-                    }));
-                } else if (sName.includes('RENDIMIENTO')) {
-                    tableName = 'rendimientos';
-                    formattedRows = rows.map(r => ({
-                        id: getProp(r, ['id']) || 'RND_'+Date.now()+'_'+Math.random(),
-                        date: excelToISO(getProp(r, ['fecha', 'date'])),
-                        referrer: getProp(r, ['influencer', 'referente', 'referrer']) || '',
-                        referred: getProp(r, ['jugador', 'referido', 'referred']) || '',
-                        depositos: getVal(getProp(r, ['depositos', 'depósitos'])),
-                        retiros: getVal(getProp(r, ['retiros'])),
-                        neto: getVal(getProp(r, ['neto'])),
-                        comision: getVal(getProp(r, ['comision', 'comisión', 'comision 20%'])),
-                        created_by: cleanStr(getProp(r, ['creado por'])) || cleanStr(currentUser)
-                    })).filter(r => r.referrer && r.referred);
-                } else if (sName.includes('BONOS')) {
-                    tableName = 'bonos';
-                    formattedRows = rows.map(r => ({
-                        id: getProp(r, ['id']) || 'BN_'+Date.now()+'_'+Math.random(),
-                        date: excelToISO(getProp(r, ['fecha', 'date'])),
-                        amount: getVal(getProp(r, ['monto', 'inicial'])),
-                        assigned_to: getProp(r, ['jugador', 'asignado', 'destinatario']) || '',
-                        concept: getProp(r, ['detalle', 'concepto']) || '',
-                        status: getProp(r, ['estado', 'status', 'estado bono']) || 'Entregado',
-                        amount_won: getVal(getProp(r, ['ganancia', 'real', 'monto ganado'])),
-                        company: getProp(r, ['plataforma', 'agencia', 'company']) || 'Sepybet',
-                        created_by: cleanStr(getProp(r, ['creado por'])) || cleanStr(currentUser)
-                    })).filter(r => r.assigned_to);
-                } else if (sName.includes('GIROS')) {
-                    tableName = 'giros';
-                    formattedRows = rows.map(r => ({
-                        id: getProp(r, ['id']) || 'GR_'+Date.now()+'_'+Math.random(),
-                        date: excelToISO(getProp(r, ['fecha', 'date'])),
-                        company: getProp(r, ['plataforma', 'agencia', 'company']) || 'Sepybet',
-                        dest: getProp(r, ['jugador', 'destino', 'dest']) || '',
-                        game: getProp(r, ['juego', 'game']) || '',
-                        qty: parseInt(getProp(r, ['giros', 'cantidad', 'qty', 'cant. giros'])) || 0,
-                        status: getProp(r, ['estado', 'status']) || 'Entregado',
-                        amount_won: getVal(getProp(r, ['ganancia', 'real', 'monto ganado', 'ganancia real'])),
-                        created_by: cleanStr(getProp(r, ['creado por'])) || cleanStr(currentUser)
-                    })).filter(r => r.dest);
-                } else if (sName.includes('REFERIDOS')) {
-                    tableName = 'referrals';
-                    formattedRows = rows.map(r => ({
-                        id: getProp(r, ['id']) || 'REF_'+Date.now()+'_'+Math.random(),
-                        date: excelToISO(getProp(r, ['fecha', 'date'])),
-                        amount: getVal(getProp(r, ['pago', 'premio', 'monto', 'amount'])),
-                        referrer: getProp(r, ['referente', 'referrer']) || '',
-                        referred: getProp(r, ['nuevo referido', 'referido', 'referred']) || '',
-                        cedula: String(getProp(r, ['cédula', 'cedula']) || ''),
-                        is_influencer: !!getProp(r, ['vip', 'influencer', 'es_vip']),
-                        company: getProp(r, ['plataforma', 'agencia', 'company']) || 'Sepybet',
-                        created_by: cleanStr(getProp(r, ['creado por'])) || cleanStr(currentUser)
-                    })).filter(r => r.referrer && r.referred);
-                }
-                if (tableName && formattedRows.length > 0) {
-                    const { error } = await db.from(tableName).upsert(formattedRows);
-                    if (!error) successCount++;
-                }
-            }
-            showToast(`Sincronización maestra completada (${successCount} tablas)`, 'success');
-            fetchData(true); 
-        } catch(err) { showToast('Error procesando el Excel.', 'error'); }
-        btn.innerHTML = orig; btn.disabled = false; fileInput.value = '';
-    };
-    reader.readAsBinaryString(file);
 }
 
 function updateBonoDatalist(){
@@ -3451,6 +3444,7 @@ function selectPlayer(name){const input=document.getElementById('rend-referred')
 function clearPlayerSelection(){const input=document.getElementById('rend-referred');if(input){input.value='';input.focus();}filterPlayerDropdown();openPlayerDropdown();}
 document.addEventListener('click',function(e){const input=document.getElementById('rend-referred');const dropdown=document.getElementById('custom-player-dropdown');const btnClear=document.getElementById('btn-clear-player');if(input&&dropdown){if(!input.contains(e.target)&&!dropdown.contains(e.target)&&(!btnClear||!btnClear.contains(e.target)))closePlayerDropdown();}});
 
+// CORRECCIÓN: Concatenación de hora exacta
 function handleBankUpload(e){
     const file=e.target.files[0];if(!file)return;const reader=new FileReader();
     reader.onload=function(evt){
@@ -3471,7 +3465,18 @@ function handleBankUpload(e){
                     let montoStr=String(row[cIdx.m]).replace(/[^0-9,-]/g,'').replace(',','.');let monto=parseFloat(montoStr);
                     if(isNaN(monto)||monto===0)continue;
                     if(cIdx.t!==-1&&row[cIdx.t]!==undefined){const tipo=String(row[cIdx.t]).toLowerCase();if(tipo.includes('deb')||tipo.includes('déb'))monto=-Math.abs(monto);else if(tipo.includes('cred')||tipo.includes('créd'))monto=Math.abs(monto);}
-                    let localDate=excelToISO(row[cIdx.f]);let conceptStr=row[cIdx.c]!==undefined?String(row[cIdx.c]).trim():'Movimiento Banco';let refStr=(cIdx.ref!==-1&&row[cIdx.ref]!==undefined&&String(row[cIdx.ref]).trim()!=="")?String(row[cIdx.ref]).trim():'';
+                    
+                    let dateBase=excelToISO(row[cIdx.f]);
+                    let timePart=getLocalIsoDatetime().split('T')[1];
+                    let localDate=`${dateBase}T${timePart}`;
+                    
+                    let conceptStr=row[cIdx.c]!==undefined?String(row[cIdx.c]).trim():'Movimiento Banco';
+                    
+                    if (conceptStr.toLowerCase().includes('bono') && !conceptStr.toLowerCase().includes('saldo real')) {
+                        conceptStr = 'Bono Saldo Real - ' + conceptStr;
+                    }
+                    
+                    let refStr=(cIdx.ref!==-1&&row[cIdx.ref]!==undefined&&String(row[cIdx.ref]).trim()!=="")?String(row[cIdx.ref]).trim():'';
                     currentTx={date:localDate,concept:conceptStr,amount:monto,receipt:refStr};bankUploadData.push(currentTx);
                 }else if(currentTx&&row.length>0){
                     let possibleRef=Array.from(row).find(x=>x&&String(x).trim().match(/^[0-9]+$/)&&String(x).trim().length>=5);
@@ -3490,6 +3495,7 @@ function renderBankPreview(){
     cont.classList.remove('hidden');cont.classList.add('flex');
 }
 
+// CORRECCIÓN: Sincronía estricta y refresco de interfaz
 async function submitBankData(){
     if(!bankUploadData.length)return;const btn=document.getElementById('btn-upload-bank');btn.disabled=true;
     let assigned=cleanStr(currentUser);
@@ -3507,12 +3513,16 @@ async function submitBankData(){
     btn.innerHTML=`<i class="fas fa-spinner fa-spin mr-2"></i> Subiendo registros...`;
     try {
         const { error } = await db.from('records').insert(newTxs);
-        if (!error) { showToast(`Carga masiva completada.`,'success'); fetchData(true); }
-        else { showToast('Error en la carga masiva', 'error'); }
+        if (!error) { 
+            showToast(`Carga masiva completada.`,'success'); 
+            await fetchData(true); // Refresco inmediato síncrono
+        } else { showToast('Error en la carga masiva', 'error'); }
     } catch (e) { showToast('Fallo la red.','error'); }
     document.getElementById('bank-preview-container').classList.add('hidden');document.getElementById('upload-bank-file').value='';bankUploadData=[];btn.innerHTML='<i class="fas fa-upload mr-2"></i> Subir Registros al Sistema';btn.disabled=false;
 }
 
+// Carga Manual de Rendimientos de Afiliados (No se detectan bonos aquí para evitar cruces con el nuevo módulo)
+// CORRECCIÓN: Concatenación de hora exacta
 function handleMelanieUpload(e){
     const file=e.target.files[0];if(!file)return;const reader=new FileReader();
     reader.onload=function(evt){
@@ -3529,22 +3539,54 @@ function handleMelanieUpload(e){
             if(hIdx===-1){showToast("No se detectaron columnas de Fecha, Jugador y Monto.","error");return;}
             const referralMap={};
             referrals.forEach(ref=>{if(ref.referred&&ref.referrer){referralMap[cleanStr(ref.referred)] = cleanStr(ref.referrer);}});
+            
+            const groupedPlayers = {};
             let procesadosCount=0,noEncontradosCount=0;
+            
             for(let i=hIdx+1;i<rows.length;i++){
                 const row=rows[i]||[];let fVal=row[cIdx.f],jugVal=row[cIdx.jug];if(fVal===undefined||jugVal===undefined)continue;
-                let localDate=excelToISO(fVal);let jugadorOriginal=String(jugVal).trim();let jugadorKey=cleanStr(jugadorOriginal);
+                
+                let dateBase=excelToISO(fVal);
+                let timePart=getLocalIsoDatetime().split('T')[1];
+                let localDate=`${dateBase}T${timePart}`;
+                
+                let jugadorOriginal=String(jugVal).trim();let jugadorKey=cleanStr(jugadorOriginal);
+                
                 let influencerAsignado=referralMap[jugadorKey]||'Sin Influyente';
                 if(influencerAsignado==='Sin Influyente'){noEncontradosCount++;continue;}
+                
                 let dep=0,ret=0;
-                if(cIdx.dep!==-1&&cIdx.ret!==-1){dep=getVal(row[cIdx.dep]);ret=getVal(row[cIdx.ret]);}else if(cIdx.monto!==-1){let mVal=getVal(row[cIdx.monto]);let tVal=cIdx.tipo!==-1?String(row[cIdx.tipo]).toLowerCase():'';if(tVal.includes('retiro')||tVal.includes('egreso')||mVal<0)ret=Math.abs(mVal);else dep=Math.abs(mVal);}
-                let neto=dep-ret;
-                const rateKey=cleanStr(influencerAsignado);
+                if(cIdx.dep!==-1&&cIdx.ret!==-1){dep=getVal(row[cIdx.dep]);ret=getVal(row[cIdx.ret]);}
+                else if(cIdx.monto!==-1){
+                    let mVal=getVal(row[cIdx.monto]);
+                    let tVal=cIdx.tipo!==-1?String(row[cIdx.tipo]).toLowerCase():'';
+                    if(tVal.includes('retiro')||tVal.includes('egreso')||mVal<0)ret=Math.abs(mVal);
+                    else dep=Math.abs(mVal);
+                }
+                
+                if (!groupedPlayers[jugadorKey]) {
+                    groupedPlayers[jugadorKey] = {
+                        date: localDate, influencer: influencerAsignado, jugador: jugadorOriginal,
+                        depositos: 0, retiros: 0
+                    };
+                }
+                groupedPlayers[jugadorKey].depositos += dep;
+                groupedPlayers[jugadorKey].retiros += ret;
+            }
+            
+            Object.values(groupedPlayers).forEach(p => {
+                let neto = p.depositos - p.retiros;
+                const rateKey=cleanStr(p.influencer);
                 let rateUser=USERS[rateKey]||Object.values(USERS).find(u=>cleanStr(u.name)===rateKey);
                 let rate=rateUser&&rateUser.comision?(rateUser.comision/100):0.20;
-                let com=neto*rate;
-                uploadData.push({date:localDate,influencer:influencerAsignado,jugador:jugadorOriginal,depositos:dep,retiros:ret,neto:neto,comision:com});procesadosCount++;
-            }
-            renderMelaniePreview();showToast(`Detectados ${procesadosCount} registros. (${noEncontradosCount} sin red)`,'success');
+                let com = neto > 0 ? neto * rate : 0; 
+                
+                uploadData.push({...p, neto: neto, comision: com});
+                procesadosCount++;
+            });
+            
+            renderMelaniePreview();
+            showToast(`Detectados ${procesadosCount} jug. activos. (${noEncontradosCount} sin red)`,'success');
         }catch(err){showToast("Error leyendo archivo de Backoffice","error");console.error(err);}
     };reader.readAsBinaryString(file);
 }
@@ -3556,17 +3598,22 @@ function renderMelaniePreview(){
     cont.classList.add('flex');cont.classList.remove('hidden');
 }
 
+// CORRECCIÓN: Sincronía estricta y refresco de interfaz
 async function submitMelanieUploadData(){
-    if(!uploadData.length)return;const btn=document.getElementById('btn-upload-data');btn.disabled=true;const uploadDate=new Date().toISOString().split('T')[0];
-    uploadData.sort((a,b)=>new Date(a.date||uploadDate)-new Date(b.date||uploadDate));let newRends=[];
+    if(!uploadData.length)return;
+    const btn=document.getElementById('btn-upload-data');btn.disabled=true;
+    uploadData.sort((a,b)=>new Date(a.date)-new Date(b.date));let newRends=[];
     for(let i=0;i<uploadData.length;i++){
         const r=uploadData[i];
-        newRends.push({id:'RND_XL_'+Date.now()+'_'+i, date:r.date||uploadDate, referrer:r.influencer, referred:r.jugador, depositos:r.depositos, retiros:r.retiros, neto:r.neto, comision:r.comision, created_by:cleanStr(currentUser)});
+        newRends.push({id:'RND_XL_'+Date.now()+'_'+i, date:r.date, referrer:r.influencer, referred:r.jugador, depositos:r.depositos, retiros:r.retiros, neto:r.neto, comision:r.comision, created_by:cleanStr(currentUser)});
     }
     btn.innerHTML=`<i class="fas fa-spinner fa-spin mr-2"></i> Subiendo...`;
     try {
         const { error } = await db.from('rendimientos').insert(newRends);
-        if (!error) { showToast(`Carga masiva completada.`,'success'); fetchData(true); }
+        if (!error) { 
+            showToast(`Carga masiva completada.`,'success'); 
+            await fetchData(true); // Refresco inmediato síncrono
+        }
         else { showToast('Error guardando en Supabase', 'error'); }
     } catch(e) { showToast('Fallo de Red','error'); }
     document.getElementById('upload-preview-container').classList.add('hidden');document.getElementById('upload-file').value='';uploadData=[];btn.innerHTML='<i class="fas fa-magic mr-2"></i> Procesar y Asignar a la Red';btn.disabled=false;
@@ -3588,6 +3635,7 @@ function isSameMonth(dateStr,filterValue){
     }catch(e){return true;}
 }
 
+// CORRECCIÓN: Sincronía estricta y refresco de interfaz para registros manuales
 async function handleRegister(e){
     e.preventDefault();const btn=e.target.querySelector('button[type="submit"]');const orig=btn.innerHTML;
     let amt=getVal(document.getElementById('reg-amount').value);if(isNaN(amt)||amt<=0){showToast('Monto inválido','error');return;}
@@ -3605,7 +3653,8 @@ async function handleRegister(e){
             document.getElementById('reg-amount').value='';document.getElementById('reg-concept').value='';
             document.querySelector('input[name="reg-type"][value="ingreso"]').checked=true;
             toggleAmountStyle(); document.getElementById('reg-date').value=getLocalIsoDatetime();
-            showToast(isSueldo ? 'Retiro de Sueldo guardado' : 'Registro guardado','success'); fetchData(true);
+            showToast(isSueldo ? 'Retiro de Sueldo guardado' : 'Registro guardado','success'); 
+            await fetchData(true);
         } else showToast('Error en el servidor', 'error');
     } catch(e){ showToast('Fallo en la Red', 'error'); }
     btn.innerHTML=orig;btn.disabled=false;
@@ -3618,7 +3667,7 @@ async function handleGussepy(e){
     btn.innerHTML='Procesando...';btn.disabled=true;
     try {
         const { error } = await db.from('advances').insert([newAdv]);
-        if(!error) { document.getElementById('form-gussepy').reset(); document.getElementById('gus-date').value=new Date().toISOString().split('T')[0]; showToast('Adelanto registrado','success'); fetchData(true); }
+        if(!error) { document.getElementById('form-gussepy').reset(); document.getElementById('gus-date').value=new Date().toISOString().split('T')[0]; showToast('Adelanto registrado','success'); await fetchData(true); }
     } catch(e) { showToast('Fallo en la Red', 'error'); }
     btn.innerHTML=orig;btn.disabled=false;
 }
@@ -3631,7 +3680,7 @@ async function handleBono(e){
     btn.innerHTML='Enviando...';btn.disabled=true;
     try {
         const { error } = await db.from('bonos').insert([newBono]);
-        if(!error) { document.getElementById('form-bonos').reset(); document.getElementById('bono-date').value=getLocalIsoDatetime(); showToast('Bono emitido','success'); fetchData(true); }
+        if(!error) { document.getElementById('form-bonos').reset(); document.getElementById('bono-date').value=getLocalIsoDatetime(); showToast('Bono emitido','success'); await fetchData(true); }
     } catch(e){ showToast('Fallo en la Red', 'error'); }
     btn.innerHTML=orig;btn.disabled=false;
 }
@@ -3644,7 +3693,7 @@ async function handleGiro(e){
     btn.innerHTML='Enviando...';btn.disabled=true;
     try {
         const { error } = await db.from('giros').insert([newGiro]);
-        if(!error){ document.getElementById('form-giros').reset(); document.getElementById('giro-date').value=getLocalIsoDatetime(); showToast('Giros registrados','success'); fetchData(true); }
+        if(!error){ document.getElementById('form-giros').reset(); document.getElementById('giro-date').value=getLocalIsoDatetime(); showToast('Giros registrados','success'); await fetchData(true); }
     } catch(e){ showToast('Fallo en la Red', 'error'); }
     btn.innerHTML=orig;btn.disabled=false;
 }
@@ -3666,7 +3715,7 @@ async function handleReferral(e){
         }
         await Promise.all([ db.from('referrals').insert([newRef]), db.from('bonos').insert([newBonoFromRef]) ]);
         document.getElementById('form-referrals').reset(); document.getElementById('ref-date').value=getLocalIsoDatetime();
-        showToast('Referido guardado.','success'); fetchData(true);
+        showToast('Referido guardado.','success'); await fetchData(true);
     } catch(e) { showToast('Fallo en la Red', 'error'); }
     btn.innerHTML=orig;btn.disabled=false;
 }
@@ -3679,12 +3728,12 @@ async function handleRendimiento(e){
     const rateKey = cleanStr(referrer);
     const rateUser = USERS[rateKey] || Object.values(USERS).find(u => cleanStr(u.name) === rateKey);
     const rate = (rateUser && rateUser.comision ? parseFloat(rateUser.comision) : 20) / 100;
-    const comision=neto*rate;
+    const comision = neto > 0 ? neto * rate : 0;
     const newRend={id:'RND'+Date.now(), date:document.getElementById('rend-date').value, referrer, referred, depositos, retiros, neto, comision, created_by:cleanStr(currentUser)};
     btn.innerHTML='Guardando...';btn.disabled=true;
     try {
         const { error } = await db.from('rendimientos').insert([newRend]);
-        if(!error) { document.getElementById('form-rendimiento').reset(); document.getElementById('rend-date').value=new Date().toISOString().split('T')[0]; clearPlayerSelection(); showToast('Rendimiento guardado.','success'); fetchData(true); }
+        if(!error) { document.getElementById('form-rendimiento').reset(); document.getElementById('rend-date').value=new Date().toISOString().split('T')[0]; clearPlayerSelection(); showToast('Rendimiento guardado.','success'); await fetchData(true); }
     } catch(e) { showToast('Fallo en la Red', 'error'); }
     btn.innerHTML=orig;btn.disabled=false;
 }
@@ -3699,7 +3748,7 @@ async function confirmVerify(){
     const btn=document.getElementById('btn-verify-confirm');const orig=btn.innerHTML;btn.innerHTML='...';btn.disabled=true;
     try {
         const { error } = await db.from('records').update({ status: 'Verificado', comment: commentText }).eq('id', targetId);
-        if(!error){ closeModal(); showToast("Aprobado y comentado","success"); fetchData(true); }
+        if(!error){ closeModal(); showToast("Aprobado y comentado","success"); await fetchData(true); }
     } catch(e) { showToast('Fallo en la Red', 'error'); }
     btn.innerHTML=orig;btn.disabled=false;
 }
@@ -3712,7 +3761,7 @@ async function approveSelected(){
     const commentVal=document.getElementById('mass-comment')?.value.trim()||'';const ids=Array.from(checkedBoxes).map(cb=>cb.value);
     try {
         const { error } = await db.from('records').update({ status: 'Verificado', comment: commentVal }).in('id', ids);
-        if(!error){ if(document.getElementById('mass-comment'))document.getElementById('mass-comment').value=''; showToast(`Aprobación masiva exitosa.`,'success'); fetchData(true); }
+        if(!error){ if(document.getElementById('mass-comment'))document.getElementById('mass-comment').value=''; showToast(`Aprobación masiva exitosa.`,'success'); await fetchData(true); }
     } catch(e) { showToast('Fallo en la Red', 'error'); }
 }
 
@@ -3735,7 +3784,7 @@ async function confirmEdit(){
     let fSueldo=document.getElementById('edit-sueldo') ? document.getElementById('edit-sueldo').checked : false;
     try {
         const { error } = await db.from('records').update({ date: fDate, amount: fAmt, concept: fConc, is_sueldo: fSueldo }).eq('id', id);
-        if(!error){ closeEditModal(); showToast("Editado","success"); fetchData(true); }
+        if(!error){ closeEditModal(); showToast("Editado","success"); await fetchData(true); }
     } catch(e) { showToast('Fallo en la Red', 'error'); }
     btn.innerHTML=orig;btn.disabled=false;
 }
@@ -3753,14 +3802,14 @@ async function confirmEditRend(){
     const rateKey=cleanStr(rend.referrer);
     const rateUser=Object.values(USERS).find(u=>u.name&&cleanStr(u.name)===rateKey) || USERS[rateKey];
     const rate=rateUser&&rateUser.comision?(parseFloat(rateUser.comision)/100):0.20;
-    let fCom=fNet*rate;
+    let fCom = fNet > 0 ? fNet * rate : 0;
 
     try {
         const { error } = await db.from('rendimientos').update({ date: fDate, depositos: fDep, retiros: fRet, neto: fNet, comision: fCom }).eq('id', id);
         if(!error){
             closeEditRendModal();
             showToast("Editado","success");
-            fetchData(true);
+            await fetchData(true);
         }
     } catch(e) { showToast('Fallo en la Red', 'error'); }
     btn.innerHTML=orig;btn.disabled=false;
@@ -3769,7 +3818,7 @@ async function confirmEditRend(){
 async function actionDeny(id){
     try {
         const { error } = await db.from('records').update({ status: 'Denegado' }).eq('id', String(id));
-        if(!error){ showToast("Denegado","warning"); fetchData(true); }
+        if(!error){ showToast("Denegado","warning"); await fetchData(true); }
     } catch(e) { showToast('Fallo en la Red', 'error'); }
 }
 
@@ -3779,7 +3828,7 @@ async function confirmGussepyAuth(){
     if(!pendingAuthId)return;const detail=document.getElementById('input-gussepy-detail').value.trim()||'Aprobado';
     try {
         const { error } = await db.from('advances').update({ status: 'Autorizado', detail: detail }).eq('id', pendingAuthId);
-        if(!error){ closeGussepyModal(); showToast("Autorizado","success"); fetchData(true); }
+        if(!error){ closeGussepyModal(); showToast("Autorizado","success"); await fetchData(true); }
     } catch(e) { showToast('Fallo en la Red', 'error'); }
 }
 
@@ -3792,10 +3841,10 @@ async function confirmBonoWin(){
     try {
         if(pendingBonoWinId){
             const { error } = await db.from('bonos').update({ status: 'Ganado', amount_won: wonAmt }).eq('id', pendingBonoWinId);
-            if(!error){ closeBonoWinModal(); showToast("Guardado","success"); fetchData(true); }
+            if(!error){ closeBonoWinModal(); showToast("Guardado","success"); await fetchData(true); }
         } else if(pendingGiroWinId){
             const { error } = await db.from('giros').update({ status: 'Ganado', amount_won: wonAmt }).eq('id', pendingGiroWinId);
-            if(!error){ closeBonoWinModal(); showToast("Guardado","success"); fetchData(true); }
+            if(!error){ closeBonoWinModal(); showToast("Guardado","success"); await fetchData(true); }
         }
     } catch(e) { showToast('Fallo en la Red', 'error'); }
 }
@@ -3804,7 +3853,7 @@ async function actionDelete(id,type='record'){
     let table = type==='advance'?'advances':type==='bono'?'bonos':type==='giro'?'giros':type==='referral'?'referrals':type==='rendimiento'?'rendimientos':'records';
     try {
         const { error } = await db.from(table).delete().eq('id', String(id));
-        if(!error){ showToast("Eliminado","warning"); fetchData(true); }
+        if(!error){ showToast("Eliminado","warning"); await fetchData(true); }
     } catch(e) { showToast('Fallo en la Red', 'error'); }
 }
 
@@ -4004,7 +4053,6 @@ function updateAllViews(){
             const elDashPersonal=document.getElementById('dash-personal');
             if(elDashPersonal)elDashPersonal.innerText=fmt(fRecords.reduce((sum,r)=>(cleanStr(r.assignedTo)===cleanStr(currentUser)&&r.status==='Verificado'&&!r.isSueldo)?sum+(parseFloat(r.amount)||0):sum,0));
             
-            // Garantizar aislamiento estricto en la vista de tarjetas de administración
             const cardJesusAdmin = document.getElementById('card-admin-saldo-jesus');
             const cardTitoAdmin = document.getElementById('card-admin-saldo-tito');
             if(cleanStr(currentUser) === 'tito') {
@@ -4075,7 +4123,6 @@ function updateAllViews(){
         
         let totalComPlatAuto = 0;
 
-        // CALCULAR COMISIONES DE LA RED Y EXTRAER EL 5% DE LA PLATAFORMA
         if(userType==='master'||userType==='bonos'||isSuperAdmin||userType==='admin'){
             const gusInfMF=document.getElementById('gus-inf-month-filter')?.value||dashMF;const infStatsGus={};
             referrals.forEach(r=>{
@@ -4092,7 +4139,7 @@ function updateAllViews(){
                 
                 if(!infStatsGus[refKey])infStatsGus[refKey]={name:rawRef,refs:0,dep:0,ret:0,net:0,com:0};
                 let dep=getVal(r.depositos);let ret=getVal(r.retiros);let net=getVal(r.neto);let com=getVal(r.comision);
-                if (!com && net !== 0) com = net * rate;
+                if (!com && net !== 0) com = net > 0 ? net * rate : 0;
                 infStatsGus[refKey].dep+=dep;infStatsGus[refKey].ret+=ret;infStatsGus[refKey].net+=net;infStatsGus[refKey].com+=com;
             });
 
@@ -4206,71 +4253,49 @@ function updateAllViews(){
             }
         }
 
-        // MOSTRAR COMISIONES EXTERNAS CALCULADAS PARA TITO Y JESÚS EN SU PANEL PERSONAL (BLOQUE PRIVADO Y AISLADO)
+        // CORRECCIÓN: PRIVACIDAD ESTRICTA SOBRE SALDOS EXTRA
         const extComMonth = externalCommissions.find(x => x.month === globalMF);
         const isTito = cleanStr(currentUser) === 'tito';
         const isJesus = cleanStr(currentUser) === 'jesus';
+        const isMaster = userType === 'master';
+        const isSuperAdminUser = isSuperAdmin || userType === 'superadmin';
+        const isAdmin = userType === 'admin'; // Michelle
 
-        if (isTito || isJesus) {
-            const myExtCard = document.getElementById('card-ext-user');
-            if(myExtCard) myExtCard.classList.remove('hidden');
-            
-            const valEl = document.getElementById('dash-ext-user-val');
-            const breakdownEl = document.getElementById('dash-ext-user-breakdown');
+        // Ocultar todas inicialmente
+        const cardUser = document.getElementById('card-ext-user');
+        const cardGusTito = document.getElementById('card-ext-gus-tito');
+        const cardGusJesus = document.getElementById('card-ext-gus-jesus');
+        
+        if(cardUser) cardUser.classList.add('hidden');
+        if(cardGusTito) cardGusTito.classList.add('hidden');
+        if(cardGusJesus) cardGusJesus.classList.add('hidden');
 
-            if(extComMonth) {
-                if (isTito) {
-                    valEl.innerText = fmt(extComMonth.tito_cut);
-                    breakdownEl.innerHTML = `<ul class="text-xs space-y-1 mt-2 text-slate-100"><li class="flex justify-between"><span>Sepybet</span> <span class="font-black">${fmt(extComMonth.sepybet_income * (globalSettings.tito_sepybet_pct/100))}</span></li><li class="flex justify-between"><span>Chichesepy</span> <span class="font-black">${fmt(extComMonth.chichesepy_income * (globalSettings.tito_chichesepy_pct/100))}</span></li><li class="flex justify-between"><span>Com. Plataforma VIP (Auto)</span> <span class="font-black">${fmt(extComMonth.com_plat_total)}</span></li></ul>`;
-                } else if (isJesus) {
-                    valEl.innerText = fmt(extComMonth.jesus_cut);
-                    breakdownEl.innerHTML = `<ul class="text-xs space-y-1 mt-2 text-slate-100"><li class="flex justify-between"><span>Ambos Marcan</span> <span class="font-black">${fmt(extComMonth.ambos_marcan_income * (globalSettings.jesus_ambos_marcan_pct/100))}</span></li><li class="flex justify-between"><span>Sepybet</span> <span class="font-black">${fmt(extComMonth.sepybet_income * (globalSettings.jesus_sepybet_pct/100))}</span></li><li class="flex justify-between"><span>Chichesepy</span> <span class="font-black">${fmt(extComMonth.chichesepy_income * (globalSettings.jesus_chichesepy_pct/100))}</span></li></ul>`;
+        if (isAdmin) {
+            // Se mantienen ocultas de manera absoluta
+        } else if (isTito || isJesus) {
+            if(cardUser) {
+                cardUser.classList.remove('hidden');
+                const valEl = document.getElementById('dash-ext-user-val');
+                const breakdownEl = document.getElementById('dash-ext-user-breakdown');
+                
+                if(extComMonth) {
+                    if (isTito) {
+                        valEl.innerText = fmt(extComMonth.tito_cut);
+                        breakdownEl.innerHTML = `<ul class="text-xs space-y-1 mt-2 text-slate-100"><li class="flex justify-between"><span>Sepybet</span> <span class="font-black">${fmt(extComMonth.sepybet_income * (globalSettings.tito_sepybet_pct/100))}</span></li><li class="flex justify-between"><span>Chichesepy</span> <span class="font-black">${fmt(extComMonth.chichesepy_income * (globalSettings.tito_chichesepy_pct/100))}</span></li><li class="flex justify-between"><span>Com. Plataforma VIP (Auto)</span> <span class="font-black">${fmt(extComMonth.com_plat_total)}</span></li></ul>`;
+                    } else {
+                        valEl.innerText = fmt(extComMonth.jesus_cut);
+                        breakdownEl.innerHTML = `<ul class="text-xs space-y-1 mt-2 text-slate-100"><li class="flex justify-between"><span>Ambos Marcan</span> <span class="font-black">${fmt(extComMonth.ambos_marcan_income * (globalSettings.jesus_ambos_marcan_pct/100))}</span></li><li class="flex justify-between"><span>Sepybet</span> <span class="font-black">${fmt(extComMonth.sepybet_income * (globalSettings.jesus_sepybet_pct/100))}</span></li><li class="flex justify-between"><span>Chichesepy</span> <span class="font-black">${fmt(extComMonth.chichesepy_income * (globalSettings.jesus_chichesepy_pct/100))}</span></li></ul>`;
+                    }
+                } else {
+                    valEl.innerText = '$0.00';
+                    breakdownEl.innerHTML = '<p class="text-xs font-bold text-amber-100">Sin cálculo para este mes.</p>';
                 }
-            } else {
-                valEl.innerText = '$0.00';
-                breakdownEl.innerHTML = '<p class="text-xs font-bold text-amber-100">Sin cálculo para este mes.</p>';
             }
-        } else {
-            // OCULTA FORZOSAMENTE EL CARD DE SALDO EXTRA PARA MICHELLE U OTROS ROLES
-            document.getElementById('card-ext-user')?.classList.add('hidden');
-        }
-
-        // PANEL DE MASTER Y SUPERADMIN - MUESTRAN LOS GLOBALES DE AMBOS
-        if (userType === 'master' || isSuperAdmin) {
-            document.getElementById('card-ext-gus-tito')?.classList.remove('hidden');
-            document.getElementById('card-ext-gus-jesus')?.classList.remove('hidden');
-            
+        } else if (isMaster || isSuperAdminUser) {
+            if(cardGusTito) cardGusTito.classList.remove('hidden');
+            if(cardGusJesus) cardGusJesus.classList.remove('hidden');
             if(document.getElementById('dash-ext-gus-tito')) document.getElementById('dash-ext-gus-tito').innerText = extComMonth ? fmt(extComMonth.tito_cut) : '$0.00';
             if(document.getElementById('dash-ext-gus-jesus')) document.getElementById('dash-ext-gus-jesus').innerText = extComMonth ? fmt(extComMonth.jesus_cut) : '$0.00';
-        } else {
-            // Se ocultan forzosamente para Michelle o cualquier otro rol no autorizado
-            document.getElementById('card-ext-gus-tito')?.classList.add('hidden');
-            document.getElementById('card-ext-gus-jesus')?.classList.add('hidden');
-        }
-
-        // TABLA DE COMISIONES EXTERNAS PARA GUSSEPY Y SUPERADMIN (AHORA CON LA LUPA)
-        if (userType === 'master' || isSuperAdmin) {
-            const tbodyExt = document.getElementById('table-ext-commissions');
-            if(tbodyExt) {
-                let hE = '';
-                [...externalCommissions].sort((a,b) => b.month.localeCompare(a.month)).forEach(ex => {
-                    hE += `
-                    <tr class="border-b border-slate-50 hover:bg-slate-50/50">
-                        <td data-label="Mes" class="p-5 pl-8 font-black uppercase text-amber-600">${ex.month}</td>
-                        <td data-label="Ambos M." class="p-5 text-right font-black">${fmt(ex.ambos_marcan_income)}</td>
-                        <td data-label="Sepybet" class="p-5 text-right font-black">${fmt(ex.sepybet_income)}</td>
-                        <td data-label="Chichesepy" class="p-5 text-right font-black">${fmt(ex.chichesepy_income)}</td>
-                        <td data-label="Com. Plat" class="p-5 text-right font-black text-slate-500">${fmt(ex.com_plat_total)}</td>
-                        <td data-label="Para Jesús" class="p-5 text-right font-black text-blue-600">${fmt(ex.jesus_cut)}</td>
-                        <td data-label="Para Tito" class="p-5 text-right font-black text-emerald-600">${fmt(ex.tito_cut)}</td>
-                        <td data-label="Acción" class="p-5 pr-8 text-center flex justify-end gap-1">
-                            <button onclick="viewExtDetailGussepy('${ex.month}')" class="w-8 h-8 bg-sky-50 hover:bg-sky-100 transition-colors text-sky-500 rounded-xl" title="Ver Recibo Detallado"><i class="fas fa-search"></i></button>
-                            <button onclick="actionDeleteExt('${ex.id}')" class="w-8 h-8 bg-rose-50 hover:bg-rose-100 transition-colors text-rose-500 rounded-xl"><i class="fas fa-trash"></i></button>
-                        </td>
-                    </tr>`;
-                });
-                tbodyExt.innerHTML = hE || `<tr><td colspan="8" class="p-8 text-center text-sm font-bold text-slate-400">No hay comisiones calculadas.</td></tr>`;
-            }
         }
     }
 
@@ -4318,9 +4343,9 @@ function updateAllViews(){
         }
         
         // --- BONOS SALDO REAL ---
-        let fBonosReal = records.filter(r => r.concept && String(r.concept).toLowerCase().includes('bono saldo real'));
+        let fBonosReal = records.filter(r => r.concept && String(r.concept).toLowerCase().includes('bono'));
         if(bonoRealFilters.dateFrom || bonoRealFilters.dateTo) fBonosReal = fBonosReal.filter(r => isWithinDateRange(r.date, bonoRealFilters.dateFrom, bonoRealFilters.dateTo));
-        if(bonoRealFilters.jugador) fBonosReal = fBonosReal.filter(r => String(r.receipt).toLowerCase().includes(bonoRealFilters.jugador) || String(r.comment).toLowerCase().includes(bonoRealFilters.jugador));
+        if(bonoRealFilters.jugador) fBonosReal = fBonosReal.filter(r => String(r.receipt).toLowerCase().includes(bonoRealFilters.jugador) || String(r.comment).toLowerCase().includes(bonoRealFilters.jugador) || String(r.concept).toLowerCase().includes(bonoRealFilters.jugador));
         
         const elTotalBonoReal = document.getElementById('bonoreal-total-sum');
         if(elTotalBonoReal) elTotalBonoReal.innerText = fmt(fBonosReal.reduce((sum, r) => sum + Math.abs(r.amount), 0));
@@ -4381,12 +4406,12 @@ function updateAllViews(){
             let com = getVal(r.comision);
             
             if (!com && net !== 0) {
-                 if(userType === 'influencer') com = net * (userRate / 100); 
+                 if(userType === 'influencer') com = net > 0 ? net * (userRate / 100) : 0; 
                  else {
                      const indKey = cleanStr(r.referrer);
                      const indRateObj = Object.values(USERS).find(u=>u.name&&cleanStr(u.name)===indKey) || USERS[indKey];
                      const indRate = (indRateObj&&indRateObj.comision)?parseFloat(indRateObj.comision):20;
-                     com = net * (indRate / 100);
+                     com = net > 0 ? net * (indRate / 100) : 0;
                  }
             }
             
@@ -4454,12 +4479,12 @@ function updateAllViews(){
                     let dep=getVal(r.depositos);let ret=getVal(r.retiros);let neto=getVal(r.neto);
                     let com = getVal(r.comision);
                     if (!com && neto !== 0) {
-                         if(userType === 'influencer') com = neto * (userRate / 100); 
+                         if(userType === 'influencer') com = neto > 0 ? neto * (userRate / 100) : 0; 
                          else {
                              const indKey = cleanStr(r.referrer);
                              const indRateObj = Object.values(USERS).find(u=>u.name&&cleanStr(u.name)===indKey) || USERS[indKey];
                              const indRate = (indRateObj&&indRateObj.comision)?parseFloat(indRateObj.comision):20;
-                             com = neto * (indRate / 100);
+                             com = neto > 0 ? neto * (indRate / 100) : 0;
                          }
                     }
                     hDet+=`<tr class="border-b border-slate-50 hover:bg-slate-50/50 transition-colors"><td data-label="Fecha" class="p-5 pl-8 text-xs font-bold text-slate-500">${fmtDate(r.date)}</td><td data-label="Depósitos" class="p-5 text-sm font-black text-emerald-500 text-right">${fmt(dep)}</td><td data-label="Retiros" class="p-5 text-sm font-black text-rose-500 text-right">${fmt(ret)}</td><td data-label="Neto Generado" class="p-5 text-sm font-black text-slate-700 text-right">${fmt(neto)}</td><td data-label="Mi Comisión" class="p-5 pr-8 text-sm font-black text-purple-600 text-right">${fmt(com)}</td></tr>`;
@@ -4566,7 +4591,6 @@ function renderTimeline() {
         return html;
     };
 
-    // Para Admin / Cajeros / Master / Gussepy
     if(adminFeedContainer) {
         let adminEvents = events;
         if (uType === 'bonos') adminEvents = events.filter(e => e.type === 'bono');
@@ -4574,7 +4598,6 @@ function renderTimeline() {
         adminFeedContainer.innerHTML = buildHtml(adminEvents);
     }
 
-    // Para Influencers
     if(infFeedContainer) {
         let infEvents = events.filter(e => e.type === 'referral' && (cleanStr(e.user) === myKey || cleanStr(e.user) === myNameClean));
         infFeedContainer.innerHTML = buildHtml(infEvents);
@@ -4588,4 +4611,4 @@ function viewPlayerDetails(playerName){
 }
 </script>
 </body>
-</html> 
+</html>
